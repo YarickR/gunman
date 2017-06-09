@@ -1,9 +1,12 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Networking;
 
-public class PlayerController : MonoBehaviour
+public class PlayerController : NetworkBehaviour
 {
+    public Transform cameraPlaceHolder;
+
     public PlayerCamera cam;
     public PlayerInput input;
 
@@ -11,9 +14,21 @@ public class PlayerController : MonoBehaviour
     public float targetMoveSpeed;
     public float targetRotateSpeed;
 
+    public override void OnStartLocalPlayer()
+    {
+        if (isLocalPlayer)
+        {
+            cam = PlayerCamera.instance;
+            cam.SetFollowTransform(cameraPlaceHolder);
+        }
+    }
+
     private void Update()
     {
-        ApplyMove(); 
+        if (isLocalPlayer)
+        {
+            ApplyMove();
+        }
     }
 
     private void ApplyMove()

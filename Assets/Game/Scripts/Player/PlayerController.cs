@@ -11,7 +11,10 @@ public class PlayerController : NetworkBehaviour
     public PlayerInput input;
     public PlayerAnimator animator;
 
+    public ProcessLineOfSights LineOfSights;
+
     private CharacterController characterController;
+    private Targetable selfTargetable;
 
     [Header("Move params")]
     public float targetMoveSpeed;
@@ -30,6 +33,7 @@ public class PlayerController : NetworkBehaviour
     void Awake()
     {
         characterController = GetComponent<CharacterController>();
+        selfTargetable = GetComponent<Targetable>();
     }
 
     public override void OnStartServer()
@@ -45,6 +49,12 @@ public class PlayerController : NetworkBehaviour
         {
             cam = PlayerCamera.instance;
             cam.SetFollowTransform(cameraPlaceHolder);
+            LineOfSights.gameObject.SetActive(true);
+            LineOfSights.IgnoreTarget = selfTargetable;
+        }
+        else
+        {
+            LineOfSights.gameObject.SetActive(false);
         }
     }
 

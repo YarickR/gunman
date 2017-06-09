@@ -23,39 +23,28 @@ public class LineOfSight : MonoBehaviour
     private LayerMask _cullingMask = -1;
 
     [Header("Materials")]
-    [SerializeField, Tooltip("Material of Idle status")]
-    private Material _idle;
-    [SerializeField, Tooltip("Material of Suspicious status")]
-    private Material _suspicious;
-    [SerializeField, Tooltip("Material of Alerted status")]
-    private Material _alerted;
+    [SerializeField, Tooltip("Material")]
+    private Material Material;
 
-    [Header("Other")]
-    [SerializeField, Tooltip("Default status of viewer")]
-    private Status _currentStatus;
     [SerializeField, Tooltip("Turn on to display rays in editor window")]
     private bool _displayRaysInEditor = false;
 
     //////////////////////////
     /// PUBLIC METHODS
     //////////////////////////
+    /// 
+    ///
 
-    /// <summary>
-    /// Set current status of viewer.
-    /// </summary>
-    /// <param name="status"></param>
-    public void SetStatus(Status status)
-    {
-        _currentStatus = status;
+    public float MaxAngle {
+        get {
+            return _maxAngle;
+        }
     }
 
-    /// <summary>
-    /// Get current status of viewer.
-    /// </summary>
-    /// <returns></returns>
-    public Status GetStatus()
-    {
-        return _currentStatus;
+    public float MaxDistance {
+        get {
+            return _maxDistance;
+        }
     }
 
     /// <summary>
@@ -77,17 +66,7 @@ public class LineOfSight : MonoBehaviour
     {
         return _hits.Any(function);
     }
-
-    /// <summary>
-    /// Status of viewer.
-    /// </summary>
-    public enum Status
-    {
-        Idle,
-        Suspicious,
-        Alerted
-    }
-
+       
     //////////////////////////
     /// INTERNALS
     //////////////////////////
@@ -103,7 +82,7 @@ public class LineOfSight : MonoBehaviour
         _hits = new List<RaycastHit>();
         _mesh = GetComponent<MeshFilter>().mesh;
         _meshRenderer = GetComponent<MeshRenderer>();
-        _meshRenderer.material = GetMaterialForStatus(_currentStatus);
+        _meshRenderer.material = Material;
     }
 
     private void Update()
@@ -114,7 +93,6 @@ public class LineOfSight : MonoBehaviour
     private void LateUpdate()
     {
         UpdateMesh();
-        UpdateMeshMaterial();
     }
 
     private void OnDrawGizmosSelected()
@@ -191,24 +169,5 @@ public class LineOfSight : MonoBehaviour
 
         _mesh.RecalculateNormals();
         _mesh.RecalculateBounds();
-    }
-
-    private Material GetMaterialForStatus(Status status)
-    {
-        switch (status)
-        {
-            case Status.Idle:
-                return _idle;
-            case Status.Suspicious:
-                return _suspicious;
-            case Status.Alerted:
-                return _alerted;
-        }
-        return null;
-    }
-
-    private void UpdateMeshMaterial()
-    {
-        _meshRenderer.material = GetMaterialForStatus(_currentStatus);
     }
 }

@@ -45,7 +45,6 @@ public class PlayerController : NetworkBehaviour
         {
             cam = PlayerCamera.instance;
             cam.SetFollowTransform(cameraPlaceHolder);
-			input = GetComponent<JoystickPlayerInput>();
         }
     }
 

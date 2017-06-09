@@ -11,6 +11,6 @@ public class KeyboardPlayerInput : PlayerInput
 
     public override Vector2 GetLookDirection()
     {
-        return new Vector2(Input.mousePosition.x, Input.mousePosition.y) - new Vector2(Screen.width / 2, Screen.height / 2);
+        return Input.GetMouseButton(0) ? new Vector2(Input.mousePosition.x, Input.mousePosition.y) - new Vector2(Screen.width / 2, Screen.height / 2) : Vector2.zero;
     }
 }

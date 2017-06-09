@@ -9,6 +9,7 @@ public class PlayerController : NetworkBehaviour
 
     public PlayerCamera cam;
     public PlayerInput input;
+    public PlayerAnimator animator;
 
     private CharacterController characterController;
 

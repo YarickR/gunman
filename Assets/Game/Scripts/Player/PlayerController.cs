@@ -1,4 +1,4 @@
-﻿using System.Collections;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Networking;
@@ -40,13 +40,13 @@ public class PlayerController : NetworkBehaviour
 
     private void ApplyMove()
     {
-        Vector3 newPos = Vector3.zero;
+        var moveDirection = computeDirection(input.GetMoveDirection());
+        Vector3 moveDelta = moveDirection * Time.deltaTime * targetMoveSpeed;
 
-        var inputRaw = input.GetInput();
-        var inputDirection = computeDirection(inputRaw);
-        newPos += inputDirection * Time.deltaTime * targetMoveSpeed;
+        characterController.Move(moveDelta);
 
-        characterController.Move(newPos);
+        var lookDirection = computeDirection(input.GetLookDirection());
+        transform.rotation = Quaternion.LookRotation(lookDirection, Vector3.up);
     }
 
     Vector3 computeDirection(Vector2 rawInput)

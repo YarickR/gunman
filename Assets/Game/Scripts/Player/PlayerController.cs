@@ -17,9 +17,26 @@ public class PlayerController : NetworkBehaviour
     public float targetMoveSpeed;
     public float targetRotateSpeed;
 
+    [Header("RPG parameters")]
+    public float MaxHealth;
+
+    //+++++ net params
+    [SyncVar(hook = "OnChangeHealth")]
+    private float _currentHealth;
+    //----- net params
+
+    private bool _isDead = false;
+
     void Awake()
     {
         characterController = GetComponent<CharacterController>();
+    }
+
+    public override void OnStartServer()
+    {
+        base.OnStartServer();
+
+        InitRPGParams();
     }
 
     public override void OnStartLocalPlayer()
@@ -34,7 +51,7 @@ public class PlayerController : NetworkBehaviour
 
     private void Update()
     {
-        if (isLocalPlayer)
+        if (IsInputAvalible())
         {
             ApplyMove();
         }
@@ -75,5 +92,29 @@ public class PlayerController : NetworkBehaviour
         Vector3 upVector = Vector3.ProjectOnPlane(cam.transform.forward, Vector3.up).normalized;
         Vector3 rightVector = new Vector3(upVector.z, 0, -upVector.x).normalized;
         return rightVector * rawInput.x + upVector * rawInput.y;
+    }
+
+    #region RPG parameters methods
+    private void InitRPGParams()
+    {
+        _currentHealth = MaxHealth;
+    }
+
+
+    #endregion
+
+    #region network hooks
+    private void OnChangeHealth(float value)
+    {
+        bool isDead = value <= 0.0f;
+
+        _isDead = isDead;
+        animator.SetDeadState(isDead);
+    }
+    #endregion
+
+    private bool IsInputAvalible()
+    {
+        return isLocalPlayer && !_isDead;
     }
 }

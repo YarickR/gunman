@@ -64,6 +64,11 @@ namespace Prototype.NetworkLobby
             //will be created with the right value currently on server
             OnMyName(playerName);
             OnMyColor(playerColor);
+
+            if (LobbyManager.s_Singleton.StartMode == LobbyManager.StartModeT.SinglePlayer)
+            {
+                SendReadyToBeginMessage();
+            }
         }
 
         public override void OnStartAuthority()

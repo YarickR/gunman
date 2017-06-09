@@ -11,10 +11,17 @@ namespace Prototype.NetworkLobby
 {
     public class LobbyManager : NetworkLobbyManager 
     {
+        public enum StartModeT
+        {
+            DoNothing,
+            SinglePlayer
+        }
+
+        public StartModeT StartMode;
+
         static short MsgKicked = MsgType.Highest + 1;
 
         static public LobbyManager s_Singleton;
-
 
         [Header("Unity UI Lobby")]
         [Tooltip("Time in second between all players ready & match start")]
@@ -65,6 +72,12 @@ namespace Prototype.NetworkLobby
             DontDestroyOnLoad(gameObject);
 
             SetServerInfo("Offline", "None");
+
+            if (StartMode == LobbyManager.StartModeT.SinglePlayer)
+            {
+                prematchCountdown = 0;
+                StartHost();
+            }
         }
 
         public override void OnLobbyClientSceneChanged(NetworkConnection conn)

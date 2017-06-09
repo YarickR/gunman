@@ -8,10 +8,57 @@ public class Targeter : MonoBehaviour {
 
     public float TargetMaxDistance = 5;
     public float TargetAngle = 15.0f;
+
+    public LineRenderer VisibleLineRendererPrefab;
+    public LineRenderer TargetLineRendererPrefab;
+
+    LineRenderer visibleLineRenderer;
+    LineRenderer targetLineRenderer;
+
+    void Awake()
+    {
+        instantiateDebugLines();
+    }
+
+    private void instantiateDebugLines()
+    {
+        if (VisibleLineRendererPrefab != null)
+        {
+            visibleLineRenderer = Instantiate(VisibleLineRendererPrefab);
+            visibleLineRenderer.positionCount = 3;
+        }
+
+        if (TargetLineRendererPrefab != null)
+        {
+            targetLineRenderer = Instantiate(TargetLineRendererPrefab);
+            targetLineRenderer.positionCount = 3;
+        }
+    }
     
     void Update()
     {
         CheckForTargets();
+
+        drawDebugLines();
+    }
+
+    void drawDebugLines()
+    {
+        Vector3 floorOffset = 0.1f * Vector3.up;
+        if (visibleLineRenderer != null)
+        {
+            var visibilityForward = VisibilityMaxDistance * transform.forward;
+            visibleLineRenderer.SetPosition(0, transform.position + floorOffset);
+            visibleLineRenderer.SetPosition(1, transform.position + Quaternion.Euler(0, VisibilityAngle / 2, 0) * visibilityForward + floorOffset);
+            visibleLineRenderer.SetPosition(2, transform.position + Quaternion.Euler(0, -VisibilityAngle / 2, 0) * visibilityForward + floorOffset);
+        }
+        if (targetLineRenderer != null)
+        {
+            var targetForward = TargetMaxDistance * transform.forward;
+            targetLineRenderer.SetPosition(0, transform.position + floorOffset);
+            targetLineRenderer.SetPosition(1, transform.position + Quaternion.Euler(0, TargetAngle / 2, 0) * targetForward + floorOffset);
+            targetLineRenderer.SetPosition(2, transform.position + Quaternion.Euler(0, -TargetAngle / 2, 0) * targetForward + floorOffset);
+        }
     }
 
     void OnDrawGizmos()

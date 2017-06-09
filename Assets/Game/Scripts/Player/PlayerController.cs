@@ -46,7 +46,8 @@ public class PlayerController : NetworkBehaviour
         characterController.Move(moveDelta);
 
         var lookDirection = computeDirection(input.GetLookDirection());
-        transform.rotation = Quaternion.LookRotation(lookDirection, Vector3.up);
+
+        transform.rotation = Quaternion.RotateTowards(transform.rotation, Quaternion.LookRotation(lookDirection, Vector3.up), targetRotateSpeed * Time.deltaTime);
     }
 
     Vector3 computeDirection(Vector2 rawInput)

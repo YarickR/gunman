@@ -11,6 +11,6 @@ public class PlayerInput : MonoBehaviour
 
     public Vector2 GetLookDirection()
     {
-        return new Vector2(1, 1);
+        return GetMoveDirection();
     }
 }

@@ -19,14 +19,17 @@ public class PlayerController : NetworkBehaviour
     void Awake()
     {
         characterController = GetComponent<CharacterController>();
+
     }
 
     public override void OnStartLocalPlayer()
     {
+    	Debug.Log("OnStartLocalPlayer");
         if (isLocalPlayer)
         {
             cam = PlayerCamera.instance;
             cam.SetFollowTransform(cameraPlaceHolder);
+            input = GetComponent<JoystickPlayerInput>();
         }
     }
 

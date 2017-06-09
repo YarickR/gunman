@@ -9,6 +9,7 @@ public class PlayerController : NetworkBehaviour
 
     public PlayerCamera cam;
     public PlayerInput input;
+    public PlayerAnimator animator;
 
     private CharacterController characterController;
 
@@ -19,17 +20,15 @@ public class PlayerController : NetworkBehaviour
     void Awake()
     {
         characterController = GetComponent<CharacterController>();
-
     }
 
     public override void OnStartLocalPlayer()
     {
-    	Debug.Log("OnStartLocalPlayer");
         if (isLocalPlayer)
         {
             cam = PlayerCamera.instance;
             cam.SetFollowTransform(cameraPlaceHolder);
-            input = GetComponent<JoystickPlayerInput>();
+			input = GetComponent<JoystickPlayerInput>();
         }
     }
 
@@ -55,6 +54,20 @@ public class PlayerController : NetworkBehaviour
         }
 
         transform.rotation = Quaternion.RotateTowards(transform.rotation, Quaternion.LookRotation(lookDirection, Vector3.up), targetRotateSpeed * Time.deltaTime);
+
+        //applyToAnimation
+        bool isMoving = moveDelta.sqrMagnitude > Mathf.Epsilon;
+        animator.SetMoveState(isMoving);
+        if (isMoving)
+        {
+            var cosForward = Vector3.Dot(transform.forward, moveDelta.normalized);
+            var cosRight = Vector3.Dot(transform.right, moveDelta.normalized);
+
+            float angle = Mathf.Acos(cosForward) * Mathf.Rad2Deg;
+            angle = cosRight > 0 ? angle : -angle;
+
+            animator.SetMoveAngleFromView(angle);
+        }
     }
 
     Vector3 computeDirection(Vector2 rawInput)

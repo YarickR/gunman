@@ -11,6 +11,6 @@ public class PlayerInput : MonoBehaviour
 
     public Vector2 GetLookDirection()
     {
-        return GetMoveDirection();
+        return new Vector2(Input.mousePosition.x, Input.mousePosition.y) - new Vector2(Screen.width / 2, Screen.height / 2);
     }
 }

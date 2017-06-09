@@ -73,7 +73,7 @@ namespace Prototype.NetworkLobby
 
             SetServerInfo("Offline", "None");
 
-            if (StartMode == LobbyManager.StartModeT.SinglePlayer)
+            if (Application.isEditor && StartMode == LobbyManager.StartModeT.SinglePlayer)
             {
                 prematchCountdown = 0;
                 StartHost();

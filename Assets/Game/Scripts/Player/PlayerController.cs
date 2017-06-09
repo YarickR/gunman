@@ -10,9 +10,16 @@ public class PlayerController : NetworkBehaviour
     public PlayerCamera cam;
     public PlayerInput input;
 
+    private CharacterController characterController;
+
     [Header("Move params")]
     public float targetMoveSpeed;
     public float targetRotateSpeed;
+
+    void Awake()
+    {
+        characterController = GetComponent<CharacterController>();
+    }
 
     public override void OnStartLocalPlayer()
     {
@@ -36,9 +43,17 @@ public class PlayerController : NetworkBehaviour
         Vector3 newPos = Vector3.zero;
 
         var inputRaw = input.GetInput();
-        var inputDirection = new Vector3(inputRaw.x, 0f, inputRaw.y).normalized;
+        var inputDirection = computeDirection(inputRaw);
+
         newPos += inputDirection * Time.deltaTime * targetMoveSpeed;
 
-        transform.position = transform.position + newPos;
+        characterController.Move(newPos);
+    }
+
+    Vector3 computeDirection(Vector2 rawInput)
+    {
+        Vector3 upVector = Vector3.ProjectOnPlane(cam.transform.forward, Vector3.up).normalized;
+        Vector3 rightVector = new Vector3(upVector.z, 0, -upVector.x).normalized;
+        return rightVector * rawInput.x + upVector * rawInput.y;
     }
 }

@@ -65,7 +65,7 @@ namespace Prototype.NetworkLobby
             OnMyName(playerName);
             OnMyColor(playerColor);
 
-            if (LobbyManager.s_Singleton.StartMode == LobbyManager.StartModeT.SinglePlayer)
+            if (Application.isEditor && LobbyManager.s_Singleton.StartMode == LobbyManager.StartModeT.SinglePlayer)
             {
                 SendReadyToBeginMessage();
             }

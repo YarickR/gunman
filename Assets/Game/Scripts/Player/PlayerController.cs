@@ -46,6 +46,10 @@ public class PlayerController : NetworkBehaviour
         characterController.Move(moveDelta);
 
         var lookDirection = computeDirection(input.GetLookDirection());
+        if (lookDirection.sqrMagnitude < 0.01f)
+        {
+            lookDirection = transform.forward;
+        }
 
         transform.rotation = Quaternion.RotateTowards(transform.rotation, Quaternion.LookRotation(lookDirection, Vector3.up), targetRotateSpeed * Time.deltaTime);
     }

@@ -19,3 +19,4 @@ MonoBehaviour:
   HealthLootDecreasePercentPerStep: 0.05
   baseMoveSpeed: 2.5
   baseRotateSpeed: 200
+  basePickUpTime: 5

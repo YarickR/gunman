@@ -17,6 +17,7 @@ public class MultiPlayerInput : PlayerInput {
     public override Vector2 GetLookDirection()
     {
         var ld1 = Input1.GetLookDirection();
+        if (Input2 == null) return ld1;
         var ld2 = Input2.GetLookDirection();
         if (ld2.sqrMagnitude > 0)
         {
@@ -31,6 +32,7 @@ public class MultiPlayerInput : PlayerInput {
     public override Vector2 GetMoveDirection()
     {
         var md1 = Input1.GetMoveDirection();
+        if (Input2 == null) return md1;
         var md2 = Input2.GetMoveDirection();
 
         if (md1.sqrMagnitude > md2.sqrMagnitude)

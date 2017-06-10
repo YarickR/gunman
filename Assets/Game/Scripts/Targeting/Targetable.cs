@@ -2,11 +2,14 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Targetable : MonoBehaviour {
+public class Targetable : MonoBehaviour
+{
     static HashSet<Targetable> s_allTargets = new HashSet<Targetable>();
 
     public Collider Collider;
     public float Radius;
+
+    public bool isVisibleOnly = false;
 
     public PlayerController PlayerController;
 

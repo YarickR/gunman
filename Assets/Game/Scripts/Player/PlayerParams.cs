@@ -54,6 +54,10 @@ public class PlayerParams : ScriptableObject
     public float baseMoveSpeed;
     public float baseRotateSpeed;
 
+    [Header("RPG interact speed")]
+    [Range(0.0f, 30.0f)]
+    public float basePickUpTime;
+
 #if UNITY_EDITOR
     [MenuItem("RPGParams/Params/Create player params", false, 100)]
     public static void CreatePlayerParams()

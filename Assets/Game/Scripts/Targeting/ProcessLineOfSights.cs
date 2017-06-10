@@ -171,7 +171,7 @@ public class ProcessLineOfSights : MonoBehaviour {
         else
         {
             int hitsCount = Physics.RaycastNonAlloc(transform.position, direction, hits, maxDistance);
-            Debug.DrawRay(transform.position, delta, Color.red);
+            //Debug.DrawRay(transform.position, delta, Color.red);
 
             Array.Sort<RaycastHit>(hits, 0, hitsCount, sortByHitDistanceComparer);
 

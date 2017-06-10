@@ -16,12 +16,14 @@ public class PlayerController : NetworkBehaviour
     private CharacterController characterController;
     private Targetable selfTargetable;
 
-    [Header("Move params")]
-    public float targetMoveSpeed;
-    public float targetRotateSpeed;
-
     [Header("RPG parameters")]
     public float MaxHealth;
+
+    [Header("RPG Move params")]
+    public float baseMoveSpeed;
+    public float baseRotateSpeed;
+
+    [Space]
 
     //+++++ net params
     [SyncVar(hook = "OnChangeHealth")]
@@ -69,7 +71,7 @@ public class PlayerController : NetworkBehaviour
     private void ApplyMove()
     {
         var moveDirection = computeDirection(input.GetMoveDirection());
-        Vector3 moveDelta = moveDirection * Time.deltaTime * targetMoveSpeed;
+        Vector3 moveDelta = moveDirection * Time.deltaTime * baseMoveSpeed;
 
         characterController.Move(moveDelta);
 
@@ -79,7 +81,7 @@ public class PlayerController : NetworkBehaviour
             lookDirection = transform.forward;
         }
 
-        transform.rotation = Quaternion.RotateTowards(transform.rotation, Quaternion.LookRotation(lookDirection, Vector3.up), targetRotateSpeed * Time.deltaTime);
+        transform.rotation = Quaternion.RotateTowards(transform.rotation, Quaternion.LookRotation(lookDirection, Vector3.up), baseRotateSpeed * Time.deltaTime);
 
         //applyToAnimation
         bool isMoving = moveDelta.sqrMagnitude > Mathf.Epsilon;

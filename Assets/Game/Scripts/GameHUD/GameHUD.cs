@@ -18,6 +18,7 @@ public class GameHUD : MonoBehaviour {
         EndScreen.SetEndStatus(isVictory, playerPlace, maxPlayers);
         EndScreen.gameObject.SetActive(true);
     }
+
 	public void Start() {
 		LocalPlayer = null;
 
@@ -62,11 +63,17 @@ public class GameHUD : MonoBehaviour {
         UseButton.gameObject.SetActive(enabled);
     }
 
+    public void SetUseButtonInteractable(bool enabled)
+    {
+        UseButton.interactable = enabled;
+    }
+
     private void OnUseButtonClicked()
     {
+        Debug.LogFormat("USE BUTTON CLICKED");
         if (LocalPlayer != null)
         {
-            //LocalPlayer.StartUse();
+            LocalPlayer.StartUse();
         }
     }
 }

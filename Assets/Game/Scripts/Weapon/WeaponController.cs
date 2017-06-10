@@ -132,7 +132,7 @@ public class WeaponController : MonoBehaviour
             _isFirstEmptyTarget = true;
             _currentAimProcent += aimValue / _rpgParams.StartFireDelay;
             _currentAimProcent = Mathf.Clamp01(_currentAimProcent);
-			playerController.UpdateTimer(_currentAimProcent, 1.0f);
+			//playerController.UpdateTimer(_currentAimProcent, 1.0f);
             return;
         }
 
@@ -162,7 +162,7 @@ public class WeaponController : MonoBehaviour
         {
             _lastTarget = currentTarget;
         }
-        playerController.UpdateTimer(_currentAimProcent, 1.0f);
+     //   playerController.UpdateTimer(_currentAimProcent, 1.0f);
     }
 
     private void UpdateFire()

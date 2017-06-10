@@ -140,6 +140,10 @@ public class PlayerController : NetworkBehaviour
     private void InitRPGParams()
     {
         _currentHealth = rpgParams.MaxHealth;
+        if (isLocalPlayer)
+        {
+            GameLogic.Instance.OnPlayerAlive();
+        }
     }
 
     private void ReceiveDamage(float damageValue)
@@ -155,6 +159,18 @@ public class PlayerController : NetworkBehaviour
 
         _isDead = isDead;
         animator.SetDeadState(isDead);
+
+        if (isLocalPlayer)
+        {
+            if (_isDead)
+            {
+                GameLogic.Instance.OnPlayerDeath();
+            }
+            else
+            {
+                GameLogic.Instance.OnPlayerAlive();
+            }
+        }
     }
     #endregion
 

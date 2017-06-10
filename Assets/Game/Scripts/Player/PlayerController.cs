@@ -19,11 +19,18 @@ public class PlayerController : NetworkBehaviour
     [Header("RPG parameters")]
     public float MaxHealth;
 
+    [Range(0.0f, 1.0f)]
+    public float HealthStepDecreasePercent;
+    [Range(0.0f, 1.0f)]
+    public float HealthMoveSpeedDecreasePercentPerStep;
+    [Range(0.0f, 1.0f)]
+    public float HealthRotateSpeedDecreasePercentPerStep;
+    [Range(0.0f, 1.0f)]
+    public float HealthLootDecreasePercentPerStep;
+
     [Header("RPG Move params")]
     public float baseMoveSpeed;
     public float baseRotateSpeed;
-
-    [Space]
 
     //+++++ net params
     [SyncVar(hook = "OnChangeHealth")]
@@ -75,10 +82,11 @@ public class PlayerController : NetworkBehaviour
         }
     }
 
+    #region Movement
     private void ApplyMove()
     {
         var moveDirection = computeDirection(input.GetMoveDirection());
-        Vector3 moveDelta = moveDirection * Time.deltaTime * baseMoveSpeed;
+        Vector3 moveDelta = moveDirection * Time.deltaTime * CalcMoveSpeed();
 
         characterController.Move(moveDelta);
 
@@ -88,7 +96,7 @@ public class PlayerController : NetworkBehaviour
             lookDirection = transform.forward;
         }
 
-        transform.rotation = Quaternion.RotateTowards(transform.rotation, Quaternion.LookRotation(lookDirection, Vector3.up), baseRotateSpeed * Time.deltaTime);
+        transform.rotation = Quaternion.RotateTowards(transform.rotation, Quaternion.LookRotation(lookDirection, Vector3.up), CalcRotateSpeed() * Time.deltaTime);
 
         //applyToAnimation
         bool isMoving = moveDelta.sqrMagnitude > Mathf.Epsilon;
@@ -104,6 +112,26 @@ public class PlayerController : NetworkBehaviour
             animator.SetMoveAngleFromView(angle);
         }
     }
+
+    private float CalcMoveSpeed()
+    {
+        var percentMissingHealth = 1.0f - (_currentHealth / MaxHealth);
+        var steps = Mathf.FloorToInt(percentMissingHealth / HealthStepDecreasePercent);
+        var actualPercent = 1.0f - steps * HealthMoveSpeedDecreasePercentPerStep;
+
+        return baseMoveSpeed * actualPercent;
+    }
+
+    private float CalcRotateSpeed()
+    {
+        var percentMissingHealth = 1.0f - (_currentHealth / MaxHealth);
+        var steps = Mathf.FloorToInt(percentMissingHealth / HealthStepDecreasePercent);
+        var actualPercent = 1.0f - steps * HealthRotateSpeedDecreasePercentPerStep;
+
+        return baseRotateSpeed * actualPercent;
+    }
+    #endregion
+
 
     Vector3 computeDirection(Vector2 rawInput)
     {

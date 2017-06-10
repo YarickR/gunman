@@ -35,6 +35,10 @@ public static class CreateScriptableObject
 
 public class PlayerParams : ScriptableObject
 {
+    [Range(0.0f, 360.0f)]
+    public float RangeOfView;
+
+    [Header("RPG Health params")]
     public float MaxHealth;
 
     [Range(0.0f, 1.0f)]

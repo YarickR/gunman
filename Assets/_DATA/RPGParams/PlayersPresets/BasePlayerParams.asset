@@ -11,6 +11,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6fe736f8613dbad459385d88d8ab7759, type: 3}
   m_Name: BasePlayerParams
   m_EditorClassIdentifier: 
+  RangeOfView: 45
   MaxHealth: 100
   HealthStepDecreasePercent: 0.2
   HealthMoveSpeedDecreasePercentPerStep: 0.1

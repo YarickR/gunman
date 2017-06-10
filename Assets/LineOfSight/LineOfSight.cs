@@ -36,14 +36,26 @@ public class LineOfSight : MonoBehaviour
     ///
 
     public float MaxAngle {
-        get {
+        get
+        {
             return _maxAngle;
+        }
+
+        set
+        {
+            _maxAngle = (int)value;
         }
     }
 
     public float MaxDistance {
-        get {
+        get
+        {
             return _maxDistance;
+        }
+
+        set
+        {
+            _maxDistance = value;
         }
     }
 

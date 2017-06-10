@@ -19,6 +19,9 @@ public class PlayerController : NetworkBehaviour
     [Header("RPG parameters")]
     public PlayerParams rpgParams;
 
+    [Header("Current weapon params")]
+    public WeaponParams weaponParams;
+
     //+++++ net params
     [SyncVar(hook = "OnChangeHealth")]
     private float _currentHealth;
@@ -47,7 +50,12 @@ public class PlayerController : NetworkBehaviour
             cam.SetFollowTransform(cameraPlaceHolder);
             LineOfSights.gameObject.SetActive(true);
             LineOfSights.IgnoreTarget = selfTargetable;
+            LineOfSights.VisibilityLineOfSight.MaxAngle = rpgParams.RangeOfView;
             name = "Player_" + playerControllerId.ToString();
+
+            //weapon tmp
+            LineOfSights.TargetingLineOfSight.MaxAngle = weaponParams.RangeOfAiming;
+            LineOfSights.TargetingLineOfSight.MaxDistance = weaponParams.FireDistance;
         }
         else
         {

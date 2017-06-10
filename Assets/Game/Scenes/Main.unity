@@ -209,105 +209,7 @@ Prefab:
       propertyPath: m_Name
       value: GameHUD
       objectReference: {fileID: 0}
-    - target: {fileID: 224574227423222174, guid: 48146c280b2224394b5aad097d1d48d4,
-        type: 2}
-      propertyPath: m_LocalScale.x
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 224574227423222174, guid: 48146c280b2224394b5aad097d1d48d4,
-        type: 2}
-      propertyPath: m_LocalScale.y
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 224574227423222174, guid: 48146c280b2224394b5aad097d1d48d4,
-        type: 2}
-      propertyPath: m_LocalScale.z
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 224186428589856614, guid: 48146c280b2224394b5aad097d1d48d4,
-        type: 2}
-      propertyPath: m_AnchoredPosition.x
-      value: -200
-      objectReference: {fileID: 0}
-    - target: {fileID: 114736228516677962, guid: 48146c280b2224394b5aad097d1d48d4,
-        type: 2}
-      propertyPath: m_Enabled
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 224113372315185102, guid: 48146c280b2224394b5aad097d1d48d4,
-        type: 2}
-      propertyPath: m_AnchoredPosition.x
-      value: 200
-      objectReference: {fileID: 0}
-    - target: {fileID: 224113372315185102, guid: 48146c280b2224394b5aad097d1d48d4,
-        type: 2}
-      propertyPath: m_AnchoredPosition.y
-      value: 200
-      objectReference: {fileID: 0}
-    - target: {fileID: 224186428589856614, guid: 48146c280b2224394b5aad097d1d48d4,
-        type: 2}
-      propertyPath: m_AnchoredPosition.y
-      value: 200
-      objectReference: {fileID: 0}
-    - target: {fileID: 114269481348733194, guid: 48146c280b2224394b5aad097d1d48d4,
-        type: 2}
-      propertyPath: joystickZone
-      value: 30
-      objectReference: {fileID: 0}
-    - target: {fileID: 114269481348733194, guid: 48146c280b2224394b5aad097d1d48d4,
-        type: 2}
-      propertyPath: JoystickZoneType
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 114323178226055994, guid: 48146c280b2224394b5aad097d1d48d4,
-        type: 2}
-      propertyPath: joystickZone
-      value: 30
-      objectReference: {fileID: 0}
-    - target: {fileID: 114323178226055994, guid: 48146c280b2224394b5aad097d1d48d4,
-        type: 2}
-      propertyPath: JoystickZoneType
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 224063926822620986, guid: 48146c280b2224394b5aad097d1d48d4,
-        type: 2}
-      propertyPath: m_AnchoredPosition.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 224063926822620986, guid: 48146c280b2224394b5aad097d1d48d4,
-        type: 2}
-      propertyPath: m_SizeDelta.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 224063926822620986, guid: 48146c280b2224394b5aad097d1d48d4,
-        type: 2}
-      propertyPath: m_AnchoredPosition.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 224063926822620986, guid: 48146c280b2224394b5aad097d1d48d4,
-        type: 2}
-      propertyPath: m_SizeDelta.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 224063926822620986, guid: 48146c280b2224394b5aad097d1d48d4,
-        type: 2}
-      propertyPath: m_LocalScale.x
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 224063926822620986, guid: 48146c280b2224394b5aad097d1d48d4,
-        type: 2}
-      propertyPath: m_LocalScale.y
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 224063926822620986, guid: 48146c280b2224394b5aad097d1d48d4,
-        type: 2}
-      propertyPath: m_LocalScale.z
-      value: 1
-      objectReference: {fileID: 0}
-    m_RemovedComponents:
-    - {fileID: 114736228516677962, guid: 48146c280b2224394b5aad097d1d48d4, type: 2}
-    - {fileID: 114366364932086834, guid: 48146c280b2224394b5aad097d1d48d4, type: 2}
-    - {fileID: 223221190321896272, guid: 48146c280b2224394b5aad097d1d48d4, type: 2}
+    m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 48146c280b2224394b5aad097d1d48d4, type: 2}
   m_IsPrefabParent: 0
 --- !u!1001 &639629578
@@ -462,7 +364,7 @@ Camera:
   m_Enabled: 1
   serializedVersion: 2
   m_ClearFlags: 2
-  m_BackGroundColor: {r: 0, g: 0, b: 0, a: 0}
+  m_BackGroundColor: {r: 1, g: 1, b: 1, a: 0}
   m_NormalizedViewPortRect:
     serializedVersion: 2
     x: 0

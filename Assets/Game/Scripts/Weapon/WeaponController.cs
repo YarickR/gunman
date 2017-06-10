@@ -133,7 +133,11 @@ public class WeaponController : MonoBehaviour
         _lastTarget.PlayerController.CmdSendDamageToServer(damage);
 
         _lastFireTime = Time.time;
-
+		if (playerController.muzzleFlash != null) {
+        	playerController.muzzleFlash.Flash();
+        } else {
+        	Debug.Log("No muzzle flash instantiated");
+        }
         //Debug.Log("Fire!");
     }
 

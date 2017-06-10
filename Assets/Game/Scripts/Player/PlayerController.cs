@@ -10,7 +10,7 @@ public class PlayerController : NetworkBehaviour
     public PlayerCamera cam;
     public PlayerInput input;
     public PlayerAnimator animator;
-
+    public MuzzleFlash muzzleFlash;
     public ProcessLineOfSights LineOfSights;
 
     private CharacterController characterController;

@@ -179,7 +179,9 @@ public class PlayerController : NetworkBehaviour
     #region network hooks
     private void OnChangeHealth(float value)
     {
-        Debug.LogFormat("ONCHANGE HEALTH");
+        Debug.LogFormat("ONCHANGE HEALTH:" + value);
+
+        _currentHealth = value;
         bool isDead = value <= 0.0f;
 
         _isDead = isDead;
@@ -207,6 +209,16 @@ public class PlayerController : NetworkBehaviour
     public void CmdSendDamageToServer(float damageValue)
     {
         ReceiveDamage(damageValue);
+    }
+
+    [Command]
+    public void CmdSendDamageToPlayer(float damageValue, NetworkInstanceId netId)
+    {
+        var playerGO = NetworkServer.FindLocalObject(netId);
+        if (playerGO != null)
+        {
+            playerGO.GetComponent<PlayerController>().ReceiveDamage(damageValue);
+        }
     }
     #endregion
 

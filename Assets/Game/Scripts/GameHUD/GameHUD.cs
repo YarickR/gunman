@@ -5,7 +5,7 @@ using UnityEngine.UI;
 using System;
 public class GameHUD : MonoBehaviour {
     public JoystickPlayerInput Joystick;
-    public Slider HP;
+    public Slider HP, Timer;
     public GameObject Weap1, Cons1, Ammo1;
     public Text InfoPanel, LeftAlive;
     public GameObject DeathScreen;
@@ -22,8 +22,10 @@ public class GameHUD : MonoBehaviour {
         DeathScreen.gameObject.SetActive(false);
     }
     public void SetHP(float newHP, float maxHP) {
-    	Debug.Log(String.Format("SetHP {0}/{1}", newHP, maxHP));
     	HP.value = (Mathf.Min(Mathf.Max((newHP * 100)/maxHP, 0), 100));
+    }
+    public void SetTimer(float currValue, float maxValue) {
+		Timer.value = (Mathf.Min(Mathf.Max((currValue * 100)/maxValue, 0), 100));
     }
     public void ClearText() { 
 		InfoPanel.text = "";
@@ -46,4 +48,5 @@ public class GameHUD : MonoBehaviour {
     public void UpdateInventory(PlayerController player = null) {
     	
     }
+
 }

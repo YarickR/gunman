@@ -1699,6 +1699,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 46171878215524f459ed6f2ee89f6dd9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  PickupRadius: 2
+  InteractionTime: 1
 --- !u!114 &2072146503
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1805,7 +1807,7 @@ MonoBehaviour:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 2072146501}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: ae61b325d3d3a2f4c9996ff2a803f7df, type: 3}
   m_Name: 

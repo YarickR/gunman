@@ -85,7 +85,11 @@ public class PlayerController : NetworkBehaviour
             LineOfSights.TargetingLineOfSight.MaxAngle = weaponParams.RangeOfAiming;
             LineOfSights.TargetingLineOfSight.MaxDistance = weaponParams.FireDistance;
 
-            InteractSystem.gameObject.SetActive(true);
+            if (InteractSystem == null)
+            {
+                InteractSystem = gameObject.AddComponent<InteractSystem>();
+            }
+            InteractSystem.enabled = true;
 
             GameLogic.Instance.HUD.SwitchToLive();
             GameLogic.Instance.HUD.SetHP(_currentHealth, rpgParams.MaxHealth);
@@ -97,7 +101,10 @@ public class PlayerController : NetworkBehaviour
         else
         {
             LineOfSights.gameObject.SetActive(false);
-            InteractSystem.gameObject.SetActive(false);
+            if (InteractSystem != null)
+            {
+                InteractSystem.enabled = false;
+            }
         }
     }
 

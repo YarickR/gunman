@@ -6,6 +6,14 @@ using UnityEngine;
 using UnityEditor;
 #endif
 
+public enum AmmoType
+{
+    Knife = 0,
+    Pistol = 10,
+    Machinegun = 20,
+    Rifle = 30,
+}
+
 public class WeaponParams : ScriptableObject
 {
     public float Damage;
@@ -28,6 +36,7 @@ public class WeaponParams : ScriptableObject
     public float FireRate;
 
     [Header("Ammo params")]
+    public AmmoType AmmoType;
     public int ClipSize;
     public int MaxAmmo;
 
@@ -42,6 +51,7 @@ public class WeaponParams : ScriptableObject
     public float CritMultiplier = 1.0f;
 
     public GameObject InHandsModel;
+    public GameObject PicablePrefab;
     public int WeaponId;
 
 #if UNITY_EDITOR

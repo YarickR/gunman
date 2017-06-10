@@ -65,6 +65,13 @@ public class PlayerController : NetworkBehaviour
         if (IsInputAvalible())
         {
             ApplyMove();
+
+            #if UNITY_EDITOR
+            if (Input.GetKeyDown(KeyCode.Y))
+            {
+                CmdSendDamageToServer(20.0f);
+            }
+            #endif
         }
     }
 
@@ -111,7 +118,10 @@ public class PlayerController : NetworkBehaviour
         _currentHealth = MaxHealth;
     }
 
-
+    private void ReceiveDamage(float damageValue)
+    {
+        _currentHealth -= damageValue;
+    }
     #endregion
 
     #region network hooks
@@ -121,6 +131,17 @@ public class PlayerController : NetworkBehaviour
 
         _isDead = isDead;
         animator.SetDeadState(isDead);
+    }
+    #endregion
+
+    #region Server actions
+    #endregion
+
+    #region Client commands
+    [Command]
+    public void CmdSendDamageToServer(float damageValue)
+    {
+        ReceiveDamage(damageValue);
     }
     #endregion
 

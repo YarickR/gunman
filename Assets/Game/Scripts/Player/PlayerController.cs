@@ -79,11 +79,10 @@ public class PlayerController : NetworkBehaviour
             LineOfSights.VisibilityLineOfSight.MaxAngle = rpgParams.RangeOfView;
             LineOfSights.VisibilityLineOfSight.MaxDistance = rpgParams.ViewDistance;
 
-            //weapon tmp!!!
-            weaponController.InitWithParams(weaponParams, weaponParams.ClipSize, weaponParams.MaxAmmo);
+            weaponController.InitWithParams(rpgParams.StartWeapon, rpgParams.StartWeapon.ClipSize, rpgParams.StartWeapon.MaxAmmo);
 
-            LineOfSights.TargetingLineOfSight.MaxAngle = weaponParams.RangeOfAiming;
-            LineOfSights.TargetingLineOfSight.MaxDistance = weaponParams.FireDistance;
+            LineOfSights.TargetingLineOfSight.MaxAngle = rpgParams.StartWeapon.RangeOfAiming;
+            LineOfSights.TargetingLineOfSight.MaxDistance = rpgParams.StartWeapon.FireDistance;
 
             if (InteractSystem == null)
             {

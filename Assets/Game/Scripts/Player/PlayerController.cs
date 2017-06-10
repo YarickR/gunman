@@ -158,7 +158,7 @@ public class PlayerController : NetworkBehaviour
     private void ReceiveDamage(float damageValue)
     {
         _currentHealth -= damageValue;
-
+        notifyLogicAboutDeath(_currentHealth <= 0);
         // notifyLogicAboutDeath();
     }
 
@@ -196,8 +196,6 @@ public class PlayerController : NetworkBehaviour
                 GameLogic.Instance.HUD.SwitchToDeath();
             }
         }
-
-        notifyLogicAboutDeath(_isDead);
     }
     #endregion
 

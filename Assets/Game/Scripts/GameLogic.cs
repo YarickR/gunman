@@ -71,8 +71,7 @@ public class GameLogic : NetworkBehaviour
     {
         Debug.LogFormat("player death {0}", localPlayer);
         if (player.playerControllerId != -1)
-        {
-           
+        {  
             PlayerKilled(player);
         }
     }

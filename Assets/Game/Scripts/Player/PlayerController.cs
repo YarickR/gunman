@@ -11,8 +11,6 @@ public class PlayerController : NetworkBehaviour
 
     private static PlayerController LocalClientController;
 
-    private Dictionary<NetworkInstanceId, GameObject> _cachedControllers = new Dictionary<NetworkInstanceId, GameObject>();
-
     public Transform cameraPlaceHolder;
 
     public PlayerCamera cam;
@@ -298,25 +296,9 @@ public class PlayerController : NetworkBehaviour
     private void RpcShotAct(NetworkInstanceId DamagerNetId)
     {
         GameObject playerGO = null;
-        if (_cachedControllers.ContainsKey(DamagerNetId))
+        if (ClientScene.objects.ContainsKey(DamagerNetId))
         {
-            playerGO = _cachedControllers[DamagerNetId];
-        }
-        else
-        {
-            NetworkIdentity[] identities = NetworkIdentity.FindObjectsOfType<NetworkIdentity>();
-            for (int i = 0, l = identities.Length; i < l; ++i)
-            {
-                if (!_cachedControllers.ContainsKey(identities[i].netId))
-                {
-                    _cachedControllers[identities[i].netId] = identities[i].gameObject;
-                }
-
-                if (identities[i].netId == DamagerNetId)
-                {
-                    playerGO = identities[i].gameObject;
-                }
-            }
+            playerGO = ClientScene.objects[DamagerNetId].gameObject;
         }
 
         if (playerGO == null)
@@ -471,6 +453,7 @@ public class PlayerController : NetworkBehaviour
             !selfTargetable.additionalParts.Contains(additionalPart))
         {
             selfTargetable.additionalParts.Add(additionalPart);
+            additionalPart.SetVisible(selfTargetable.Visible);
         }
     }
 }

@@ -178,7 +178,7 @@ public class ProcessLineOfSights : MonoBehaviour {
 
                 
 
-                if (hit.collider.gameObject.layer == LayerMask.NameToLayer("Targets"))
+                if (hit.collider.gameObject.layer == 8)
                 {
                     if (hit.collider == col)
                     {

@@ -9,16 +9,16 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 4f4daaef367ae8841b1071bdf0743837, type: 3}
-  m_Name: BaseWeaponParams
+  m_Name: SR-1
   m_EditorClassIdentifier: 
-  Damage: 10
-  StartFireDelay: 2
+  Damage: 70
+  StartFireDelay: 4
   RangeOfAiming: 30
-  FireDistance: 7.5
+  FireDistance: 24
   DropTargetPercent: 0.5
-  FireRate: 5
-  ClipSize: 20
-  MaxAmmo: 20
+  FireRate: 0.5
+  ClipSize: 1
+  MaxAmmo: 4
   ReloadTime: 3
-  CritChance: 0.25
-  CritMultiplier: 1.25
+  CritChance: 0.34
+  CritMultiplier: 1.5

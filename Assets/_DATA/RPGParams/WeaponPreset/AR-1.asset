@@ -1,0 +1,24 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4f4daaef367ae8841b1071bdf0743837, type: 3}
+  m_Name: AR-1
+  m_EditorClassIdentifier: 
+  Damage: 10
+  StartFireDelay: 2
+  RangeOfAiming: 45
+  FireDistance: 7.5
+  DropTargetPercent: 0.5
+  FireRate: 5
+  ClipSize: 20
+  MaxAmmo: 20
+  ReloadTime: 3
+  CritChance: 0.25
+  CritMultiplier: 1.25

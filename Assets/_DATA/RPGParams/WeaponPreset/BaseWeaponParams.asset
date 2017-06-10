@@ -11,14 +11,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4f4daaef367ae8841b1071bdf0743837, type: 3}
   m_Name: BaseWeaponParams
   m_EditorClassIdentifier: 
-  Damage: 34
+  Damage: 10
   StartFireDelay: 2
-  RangeOfAiming: 15
-  FireDistance: 10
+  RangeOfAiming: 30
+  FireDistance: 7.5
   DropTargetPercent: 0.5
-  FireRate: 1
+  FireRate: 5
   ClipSize: 20
-  MaxAmmo: 100
+  MaxAmmo: 20
   ReloadTime: 3
   CritChance: 0.25
   CritMultiplier: 1.25

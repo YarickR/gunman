@@ -7,6 +7,19 @@ public class ProcessLineOfSights : MonoBehaviour {
     public LineOfSight TargetingLineOfSight;
 
     public Targetable IgnoreTarget;
+
+    private Targetable currentTarget;
+    private float currentTargetAcquireTime;
+
+    public Targetable CurrentTarget
+    {
+        get { return currentTarget; }
+    }
+
+    public float TargetDuration
+    {
+        get { return Time.time - currentTargetAcquireTime; }
+    }
 	
 	// Update is called once per frame
 	void Update () {
@@ -23,20 +36,27 @@ public class ProcessLineOfSights : MonoBehaviour {
         var maxTargetingDistanceSqr = maxTargetingDistance * maxTargetingDistance;
         var minTargetingCosAngle = Mathf.Cos(TargetingLineOfSight.MaxAngle/2 * Mathf.Deg2Rad);
 
-        Targetable currentTarget = null;
+        if (currentTarget != null)
+        {
+            Vector3 midPoint, leftPoint, rightPoint;
+            calcPoints(currentTarget, out midPoint, out leftPoint, out rightPoint);
+            if (!HitTestPoint(midPoint, maxVisibleDistance, maxVisibleDistanceSqr, minVisibleCosAngle, currentTarget.Collider) ||
+                    HitTestPoint(leftPoint, maxVisibleDistance, maxVisibleDistanceSqr, minVisibleCosAngle, currentTarget.Collider) ||
+                    HitTestPoint(rightPoint, maxVisibleDistance, maxVisibleDistanceSqr, minVisibleCosAngle, currentTarget.Collider))
+            {
+                updateCurrentTarget(null);
+            }
+        }
+
+        Targetable candidateTarget = null;
         float sqrDistToTarget = float.MaxValue;
 
         foreach (var targetable in Targetable.AllTargets)
         {
             if (targetable != IgnoreTarget)
             {
-                var direction = (targetable.transform.position - transform.position).normalized;
-                var rotatedDirection = new Vector3(direction.z, 0, -direction.x);
-
-                var midPoint = targetable.transform.position;
-                var leftPoint = midPoint + rotatedDirection * targetable.Radius;
-                var rightPoint = midPoint - rotatedDirection * targetable.Radius;
-
+                Vector3 midPoint, leftPoint, rightPoint;
+                calcPoints(targetable, out midPoint, out leftPoint, out rightPoint);
 
                 if (HitTestPoint(midPoint, maxVisibleDistance, maxVisibleDistanceSqr, minVisibleCosAngle, targetable.Collider) ||
                     HitTestPoint(leftPoint, maxVisibleDistance, maxVisibleDistanceSqr, minVisibleCosAngle, targetable.Collider) ||
@@ -44,21 +64,24 @@ public class ProcessLineOfSights : MonoBehaviour {
                 {
                     OnTargetVisible(targetable);
 
-                    if (HitTestPoint(midPoint, maxTargetingDistance, maxTargetingDistanceSqr, minTargetingCosAngle, targetable.Collider) ||
+                    if (currentTarget == null)
+                    {
+                        if (HitTestPoint(midPoint, maxTargetingDistance, maxTargetingDistanceSqr, minTargetingCosAngle, targetable.Collider) ||
                         HitTestPoint(leftPoint, maxTargetingDistance, maxTargetingDistanceSqr, minTargetingCosAngle, targetable.Collider) ||
                         HitTestPoint(rightPoint, maxTargetingDistance, maxTargetingDistanceSqr, minTargetingCosAngle, targetable.Collider))
-                    {
-                        if (currentTarget == null)
                         {
-                            currentTarget = targetable;
-                        }
-                        else
-                        {
-                            var sqrDistance = (targetable.transform.position - transform.position).sqrMagnitude;
-                            if (sqrDistance < sqrDistToTarget)
+                            if (candidateTarget == null)
                             {
-                                sqrDistToTarget = sqrDistance;
-                                currentTarget = targetable;
+                                candidateTarget = targetable;
+                            }
+                            else
+                            {
+                                var sqrDistance = (targetable.transform.position - transform.position).sqrMagnitude;
+                                if (sqrDistance < sqrDistToTarget)
+                                {
+                                    sqrDistToTarget = sqrDistance;
+                                    candidateTarget = targetable;
+                                }
                             }
                         }
                     }
@@ -70,10 +93,32 @@ public class ProcessLineOfSights : MonoBehaviour {
             }
         }
 
+        if (candidateTarget != null)
+        {
+            updateCurrentTarget(candidateTarget);
+        }
+    }
+
+    void calcPoints(Targetable targetable, out Vector3 midPoint, out Vector3 leftPoint, out Vector3 rightPoint)
+    {
+        var direction = (targetable.transform.position - transform.position).normalized;
+        var rotatedDirection = new Vector3(direction.z, 0, -direction.x);
+
+        midPoint = targetable.transform.position;
+        float k = 0.95f;
+        leftPoint = midPoint + k * rotatedDirection * targetable.Radius;
+        rightPoint = midPoint - k * rotatedDirection * targetable.Radius;
+    }
+
+    void updateCurrentTarget(Targetable target)
+    {
         if (currentTarget != null)
         {
-       //     Debug.LogFormat("Current target {0}", currentTarget.name);
+            Debug.LogFormat("LOST CURRENT TARGET {0} | {1}", currentTarget != null ? currentTarget.name : null, TargetDuration);
         }
+        Debug.LogFormat("CURRENT TARGET {0}", target != null ? target.name : null);
+        currentTarget = target;
+        currentTargetAcquireTime = Time.time;
     }
 
     void OnTargetVisible(Targetable target) {
@@ -88,6 +133,7 @@ public class ProcessLineOfSights : MonoBehaviour {
         var delta = point - transform.position;
         if (delta.sqrMagnitude > maxDistanceSquared)
         {
+            //Debug.LogFormat("TOO FAR");
             return false;
         }
 
@@ -97,6 +143,7 @@ public class ProcessLineOfSights : MonoBehaviour {
         var cosAngle = Vector3.Dot(forward, direction);
         if (cosAngle < minCosAngle)
         {
+            //Debug.LogFormat("NOT IN ANGLE");
             return false;
         }
 
@@ -104,10 +151,20 @@ public class ProcessLineOfSights : MonoBehaviour {
 
         if (Physics.Raycast(transform.position, direction, out hit, maxDistance))
         {
+            if (hit.collider != col)
+            {
+                //var t = col.GetComponent<Targetable>();
+                //if (t != null)
+                //{
+                //  //  Debug.LogFormat("hit other col {0}", t.PlayerController.playerControllerId);
+                //}
+            }
             return hit.collider == col;
         }
-       
-
+        else
+        {
+           // Debug.LogFormat("No hits");
+        }
         return false;
     }
 }

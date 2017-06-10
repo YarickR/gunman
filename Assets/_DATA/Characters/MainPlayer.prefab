@@ -1600,7 +1600,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1533686014343484}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: 0, y: 1, z: 0.6}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 4583084595440390}
@@ -1995,7 +1995,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1914502386584208}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: 0, y: -0.9, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 4197646564297960}
@@ -2137,7 +2137,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1262691080867756}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: 0, y: -0.9, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 4197646564297960}
@@ -2204,7 +2204,7 @@ Transform:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1607758169599916}
-  m_LocalRotation: {x: 0.5326752, y: 0.070340455, z: 0.83613276, w: -0.110415146}
+  m_LocalRotation: {x: 0.53267515, y: 0.07034045, z: 0.83613265, w: -0.11041513}
   m_LocalPosition: {x: 0.000022271464, y: -0.00006150465, z: 0.026027026}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
@@ -2781,6 +2781,10 @@ MonoBehaviour:
   animator: {fileID: 114944049602832776}
   LineOfSights: {fileID: 114083709861723670}
   MaxHealth: 100
+  HealthStepDecreasePercent: 0.2
+  HealthMoveSpeedDecreasePercentPerStep: 0.1
+  HealthRotateSpeedDecreasePercentPerStep: 0.05
+  HealthLootDecreasePercentPerStep: 0.05
   baseMoveSpeed: 2.5
   baseRotateSpeed: 200
 --- !u!114 &114284989702213096
@@ -2815,6 +2819,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Collider: {fileID: 136399965468151256}
   Radius: 0
+  PlayerController: {fileID: 0}
 --- !u!114 &114368953832850228
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -2876,7 +2881,7 @@ MonoBehaviour:
   _maxDistance: 15
   _cullingMask:
     serializedVersion: 2
-    m_Bits: 4294967295
+    m_Bits: 4294967039
   Material: {fileID: 2100000, guid: 7d45aa89bb92b1e408a3075062b7a306, type: 2}
   _displayRaysInEditor: 0
 --- !u!114 &114791087730128324

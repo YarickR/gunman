@@ -11,9 +11,9 @@ public class GameLogic : NetworkBehaviour
     [Range(0, 60)]
     public float EndGameDuration = 10f;
 
-    int currentPlayerCount = 0;
+    int playersCount = 0;
 
-    Dictionary<short, PlayerController> activePlayers = new Dictionary<short, PlayerController>();
+    Dictionary<NetworkInstanceId, PlayerController> activePlayers = new Dictionary<NetworkInstanceId, PlayerController>();
 
     public static GameLogic Instance
     {
@@ -54,14 +54,14 @@ public class GameLogic : NetworkBehaviour
     public void OnEnterLobby()
     {
         activePlayers.Clear();
+        playersCount = 0;
         HUD.gameObject.SetActive(false);
         Debug.LogFormat("ON ENTER LOBBY");
     }
 
     public void OnPlayerAlive(PlayerController player, bool localPlayer)
     {
-        Debug.LogFormat("player alive {0}", localPlayer);
-        if (player.playerControllerId != -1)
+        if (player.netId != NetworkInstanceId.Invalid && player.playerControllerId != -1)
         {
             PlayerSpawned(player);
         }
@@ -70,7 +70,7 @@ public class GameLogic : NetworkBehaviour
     public void OnPlayerDeath(PlayerController player, bool localPlayer)
     {
         Debug.LogFormat("player death {0}", localPlayer);
-        if (player.playerControllerId != -1)
+        if (player.netId != NetworkInstanceId.Invalid)
         {  
             PlayerKilled(player);
         }
@@ -79,17 +79,25 @@ public class GameLogic : NetworkBehaviour
     [Server]
     void PlayerSpawned(PlayerController player)
     {
-        activePlayers[player.playerControllerId] = player;
-        Debug.LogFormat("OnPlayerAlive {0}", player.playerControllerId);
+        if (!activePlayers.ContainsKey(player.netId))
+        {
+            playersCount += 1;
+            activePlayers[player.netId] = player;
+
+            Debug.LogFormat("SPAWN PLAYER {0}/{1}", activePlayers.Count, playersCount);
+        }
     }
 
     [Server]
     void PlayerKilled(PlayerController player)
     {
-        if (activePlayers.ContainsKey(player.playerControllerId))
+        if (activePlayers.ContainsKey(player.netId))
         {
-            Debug.LogFormat("OnPlayerDeath {0}", player.playerControllerId);
-            activePlayers.Remove(player.playerControllerId);
+
+            Debug.LogFormat("KILL PLAYER {0}/{1}", activePlayers.Count, playersCount);
+            player.RpcEnd(false, activePlayers.Count, playersCount);
+            activePlayers.Remove(player.netId);
+            
             checkWinConditions();
         }
     }
@@ -107,6 +115,12 @@ public class GameLogic : NetworkBehaviour
     void endGame()
     {
         Debug.LogFormat("END GAME");
+
+        foreach (var player in activePlayers)
+        {
+            player.Value.RpcEnd(true, 1, playersCount);
+        }
+        activePlayers.Clear();
 
         StartCoroutine(waitAndRestart());
     }

@@ -8,18 +8,20 @@ public class GameHUD : MonoBehaviour {
     public Slider HP, Timer;
     public GameObject Weap1, Cons1, Ammo1;
     public Text InfoPanel, LeftAlive;
-    public GameObject DeathScreen;
+    public EndScreen EndScreen;
     public PlayerController LocalPlayer;
-    public void SwitchToDeath() {
+
+    public void SwitchToEnd(bool isVictory, int playerPlace, int maxPlayers) {
         Joystick.gameObject.SetActive(false);
-        DeathScreen.gameObject.SetActive(true);
+        EndScreen.SetEndStatus(isVictory, playerPlace, maxPlayers);
+        EndScreen.gameObject.SetActive(true);
     }
 	public void Start() {
 		LocalPlayer = null;
 	}
     public void SwitchToLive() {
         Joystick.gameObject.SetActive(true);
-        DeathScreen.gameObject.SetActive(false);
+        EndScreen.gameObject.SetActive(false);
     }
     public void SetHP(float newHP, float maxHP) {
     	HP.value = (Mathf.Min(Mathf.Max((newHP * 100)/maxHP, 0), 100));

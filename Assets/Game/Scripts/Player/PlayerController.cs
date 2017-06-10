@@ -157,6 +157,15 @@ public class PlayerController : NetworkBehaviour
     }
     #endregion
 
+    [ClientRpc]
+    public void RpcEnd(bool isVictory, int place, int maxPlayersCount)
+    {   
+        if (isLocalPlayer)
+        {
+            Debug.LogFormat("RpcEnd {0}/{1}", isVictory, place, maxPlayersCount);
+            GameLogic.Instance.HUD.SwitchToEnd(isVictory, place, maxPlayersCount);
+        }
+    }
 
     Vector3 computeDirection(Vector2 rawInput)
     {
@@ -208,11 +217,6 @@ public class PlayerController : NetworkBehaviour
         {
             Debug.LogFormat("ONCHANGE HEALTH(local):" + value);
             GameLogic.Instance.HUD.SetHP(value, rpgParams.MaxHealth);
-
-            if (_isDead)
-            {
-                GameLogic.Instance.HUD.SwitchToDeath();
-            }
         }
     }
     #endregion

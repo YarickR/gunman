@@ -7,22 +7,20 @@ public abstract class Interactable : NetworkBehaviour {
     public float PickupRadius = 1;
     public float InteractionTime = 1;
 
-    static HashSet<Interactable> s_all = new HashSet<Interactable>();
-
     public abstract void Interact(PlayerController player);
 
-    public static IEnumerable<Interactable> All
+    void Awake()
     {
-        get { return s_all; }
+        createTrigger();
     }
 
-    protected virtual void OnEnable()
+    void createTrigger()
     {
-        s_all.Add(this);
-    }
-
-    protected virtual void OnDisable()
-    {
-        s_all.Remove(this);
+        var go = new GameObject("trigger", typeof(SphereCollider), typeof(InteractableTrigger));
+        go.layer = 11;
+        var sc = go.GetComponent<SphereCollider>();
+        sc.isTrigger = true;
+        sc.radius = PickupRadius;
+        go.transform.SetParent(transform, false);
     }
 }

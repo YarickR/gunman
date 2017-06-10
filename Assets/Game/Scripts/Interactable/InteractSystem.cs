@@ -2,7 +2,8 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class InteractSystem : MonoBehaviour {
+public class InteractSystem : MonoBehaviour
+{
     PlayerController playerController;
 
     Interactable currentInteractable;
@@ -12,51 +13,30 @@ public class InteractSystem : MonoBehaviour {
         playerController = GetComponent<PlayerController>();
     }
 
-    void Update()
+    public void TryActivateInteractable(Interactable interactable)
     {
-        CheckInteracts();
-    }
-
-    void CheckInteracts()
-    {
-        if (currentInteractable != null)
-        {
-            if (!checkDistance(currentInteractable)) {
-                setCurrentInteractable(null);
-            }
-        }
-
         if (currentInteractable == null)
         {
-            foreach (var i in Interactable.All)
-            {
-                if (checkDistance(i))
-                {
-                    setCurrentInteractable(i);
-                    break;
-                }
-            }
+            setCurrentInteractable(interactable);
         }
     }
 
-    bool checkDistance(Interactable i)
+    public void TryDeactivateInteractable(Interactable interactable)
     {
-        var delta = i.transform.position - transform.position;
-        delta.y = 0;
-        
-        return delta.sqrMagnitude < i.PickupRadius * i.PickupRadius;
+        if (currentInteractable == interactable)
+        {
+            setCurrentInteractable(null);
+        }
     }
 
     void setCurrentInteractable(Interactable interactable)
     {
-        if (currentInteractable != interactable)
+        currentInteractable = interactable;
+        if (currentInteractable != null)
         {
-            Debug.LogFormat("Current interactable {0}", interactable);
-            currentInteractable = interactable;
-            if (currentInteractable != null)
-            {
-                currentInteractable.Interact(playerController);
-            }
+            Debug.LogFormat("Current interactable {0}", currentInteractable);
+
+            currentInteractable.Interact(playerController);
         }
     }
 }

@@ -324,7 +324,7 @@ public class PlayerController : NetworkBehaviour
             return;
         }
 
-        if (isLocalPlayer)
+        if (isLocalPlayer || LocalClientController.netId == DamagerNetId)
         {
             //show hit on self
             spawnHit();

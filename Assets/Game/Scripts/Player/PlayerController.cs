@@ -327,6 +327,7 @@ public class PlayerController : NetworkBehaviour
         if (isLocalPlayer)
         {
             //show hit on self
+            spawnHit();
         }
 
         var targetController = playerGO.GetComponent<PlayerController>();
@@ -445,6 +446,13 @@ public class PlayerController : NetworkBehaviour
     #region Client weapon
 
     #endregion
+
+    void spawnHit()
+    {
+        var prefab = Resources.Load<GameObject>("HitEffect");
+        var go = Instantiate<GameObject>(prefab, transform.position, prefab.transform.rotation);
+        go.transform.SetParent(transform, true);
+    }
 
     private bool IsInputAvalible()
     {

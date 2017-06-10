@@ -88,7 +88,7 @@ public class PlayerController : NetworkBehaviour
 
     private void OnDestroy()
     {
-        notifyLogicAboutDeath(_isDead);
+        notifyLogicAboutDeath(true);
     }
 
     #region Movement

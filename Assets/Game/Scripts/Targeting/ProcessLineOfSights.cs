@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -170,13 +171,14 @@ public class ProcessLineOfSights : MonoBehaviour {
         else
         {
             int hitsCount = Physics.RaycastNonAlloc(transform.position, direction, hits, maxDistance);
-            //Debug.DrawRay(transform.position, direction, Color.red);
+            Debug.DrawRay(transform.position, delta, Color.red);
+
+            Array.Sort<RaycastHit>(hits, 0, hitsCount, sortByHitDistanceComparer);
+
             //Debug.LogFormat("HITS COUNT {0}", hitsCount);
             for (int i = 0; i < hitsCount; ++i)
             {
                 var hit = hits[i];
-
-                
 
                 if (hit.collider.gameObject.layer == 8)
                 {
@@ -197,4 +199,15 @@ public class ProcessLineOfSights : MonoBehaviour {
 
         return false;
     }
+
+    static IComparer<RaycastHit> sortByHitDistanceComparer = new SortByDistanceComparer();
+
+    public class SortByDistanceComparer : IComparer<RaycastHit>
+    {
+        public int Compare(RaycastHit hit1, RaycastHit hit2)
+        {
+            return hit1.distance.CompareTo(hit2.distance);
+        }
+    }
+    
 }

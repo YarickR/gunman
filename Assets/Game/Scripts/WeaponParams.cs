@@ -8,6 +8,7 @@ using UnityEditor;
 
 public class WeaponParams : ScriptableObject
 {
+    [Header("Targeting params")]
     [Range(0.0f, 30.0f)]
     public float StartFireDelay;
 
@@ -17,9 +18,14 @@ public class WeaponParams : ScriptableObject
     [Range(0.0f, 100.0f)]
     public float FireDistance;
 
+    [Range(0.0f, 1.0f)]
+    public float DropTargetPercent;
+
+    [Header("Fire params")]
     [Range(0.0f, 10.0f)]
     public float FireRate;
 
+    [Header("Ammo params")]
     public float ClipSize;
     public float MaxAmmo;
     public float Damage;
@@ -27,6 +33,7 @@ public class WeaponParams : ScriptableObject
     [Range(0.0f, 30.0f)]
     public float ReloadSpeed;
 
+    [Header("Crit params")]
     [Range(0.0f, 1.0f)]
     public float CritChance;
 

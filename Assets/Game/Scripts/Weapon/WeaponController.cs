@@ -60,6 +60,7 @@ public class WeaponController : MonoBehaviour
     private void UpdateAiming()
     {
         var currentTarget = playerController.LineOfSights.CurrentTarget;
+
         if (_lastTarget == currentTarget && currentTarget != null)
         {
             if (_currentAimProcent >= 1.0f)
@@ -67,8 +68,21 @@ public class WeaponController : MonoBehaviour
                 return;
             }
 
+            //calc aim speed
+            var aimSpeedFactor = 1.0f;
+            if (playerController.IsMoving)
+            {
+                aimSpeedFactor = aimSpeedFactor - playerController.rpgParams.MoveAimSlowFactor;
+            }
+
+            var aimValue = Time.deltaTime * aimSpeedFactor;
+            if (aimValue <= 0.0f)
+            {
+                return;
+            }
+
             _isFirstEmptyTarget = true;
-            _currentAimProcent += Time.deltaTime / weaponParams.StartFireDelay;
+            _currentAimProcent += aimValue / weaponParams.StartFireDelay;
             _currentAimProcent = Mathf.Clamp01(_currentAimProcent);
 			playerController.UpdateTimer(_currentAimProcent, 1.0f);
             return;

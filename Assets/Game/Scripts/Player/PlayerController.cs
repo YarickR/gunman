@@ -14,6 +14,14 @@ public class PlayerController : NetworkBehaviour
     public MuzzleFlash muzzleFlash;
     public ProcessLineOfSights LineOfSights;
 
+    public bool IsMoving
+    {
+        get
+        {
+            return _isMoving;
+        }
+    }
+
     private CharacterController characterController;
     private Targetable selfTargetable;
 
@@ -29,6 +37,8 @@ public class PlayerController : NetworkBehaviour
     //----- net params
 
     private bool _isDead = false;
+
+    private bool _isMoving = false;
 
     void Awake()
     {
@@ -114,9 +124,9 @@ public class PlayerController : NetworkBehaviour
         transform.rotation = Quaternion.RotateTowards(transform.rotation, Quaternion.LookRotation(lookDirection, Vector3.up), CalcRotateSpeed() * Time.deltaTime);
 
         //applyToAnimation
-        bool isMoving = moveDelta.sqrMagnitude > Mathf.Epsilon;
-        animator.SetMoveState(isMoving);
-        if (isMoving)
+        _isMoving = moveDelta.sqrMagnitude > Mathf.Epsilon;
+        animator.SetMoveState(_isMoving);
+        if (_isMoving)
         {
             var cosForward = Vector3.Dot(transform.forward, moveDelta.normalized);
             var cosRight = Vector3.Dot(transform.right, moveDelta.normalized);

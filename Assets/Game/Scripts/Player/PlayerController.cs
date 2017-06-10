@@ -54,6 +54,11 @@ public class PlayerController : NetworkBehaviour
             name = "Player_" + playerControllerId.ToString();
 
             //weapon tmp
+            var weapon = this.gameObject.AddComponent<WeaponController>();
+            weapon.weaponParams = weaponParams;
+            weapon.playerController = this;
+            weapon.Init(weaponParams.ClipSize, weaponParams.MaxAmmo);
+
             LineOfSights.TargetingLineOfSight.MaxAngle = weaponParams.RangeOfAiming;
             LineOfSights.TargetingLineOfSight.MaxDistance = weaponParams.FireDistance;
         }

@@ -223,11 +223,9 @@ public class ProcessLineOfSights : MonoBehaviour {
 
         var position = camera.transform.position + 0.3f * Vector3.down;
         var direction = camera.transform.forward;
-
-
+        
         int hitsCount = Physics.SphereCastNonAlloc(position, 0.1f, direction, wallHits);
 
-        Debug.DrawRay(position, 10 * direction, Color.red);
         for (int i = 0; i < hitsCount; ++i)
         {
             var hit = wallHits[i];
@@ -235,6 +233,26 @@ public class ProcessLineOfSights : MonoBehaviour {
             var wallVisibility = hit.collider.GetComponent<WallVisibility>();
             if (wallVisibility != null) {
                 wallVisibility.SetTransparent();
+            }
+        }
+
+        float da = VisibilityLineOfSight.MaxAngle / 20;
+        for (float a = -VisibilityLineOfSight.MaxAngle/2; a <= VisibilityLineOfSight.MaxAngle/2; a += da)
+        {
+            RaycastHit hit;
+            var ray = new Ray(transform.position, Quaternion.Euler(0, a, 0) * transform.forward);
+            if (Physics.Raycast(ray, out hit, VisibilityLineOfSight.MaxDistance, LayerMask.GetMask("Walls")))
+            {
+                var localNormal = hit.collider.transform.InverseTransformDirection(hit.normal);
+
+                if (Vector3.Dot(hit.normal, direction) > 0 && Mathf.Abs(localNormal.z) < 0.1f)
+                {
+                    var wallVisibility = hit.collider.GetComponent<WallVisibility>();
+                    if (wallVisibility != null)
+                    {
+                        wallVisibility.SetTransparent();
+                    }
+                }
             }
         }
     }

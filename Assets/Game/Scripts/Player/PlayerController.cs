@@ -79,10 +79,11 @@ public class PlayerController : NetworkBehaviour
             LineOfSights.VisibilityLineOfSight.MaxAngle = rpgParams.RangeOfView;
             LineOfSights.VisibilityLineOfSight.MaxDistance = rpgParams.ViewDistance;
 
+            //--- remove after net init
             weaponController.InitWithParams(rpgParams.StartWeapon, rpgParams.StartWeapon.ClipSize, rpgParams.StartWeapon.MaxAmmo);
-
             LineOfSights.TargetingLineOfSight.MaxAngle = rpgParams.StartWeapon.RangeOfAiming;
             LineOfSights.TargetingLineOfSight.MaxDistance = rpgParams.StartWeapon.FireDistance;
+            //---
 
             if (InteractSystem == null)
             {
@@ -303,12 +304,21 @@ public class PlayerController : NetworkBehaviour
     }
 
     [ClientRpc]
-    private void RpcSetWeaponById(int weaponId)
+    private void RpcSetWeaponById(int weaponId, int clipAmmo, int backpackAmmo)
     {
         WeaponParams targetWeaponParams = WeaponsList.Instance.GetParamsByID(weaponId);
         if (targetWeaponParams == null)
         {
             return;
+        }
+
+        weaponController.InitWithParams(targetWeaponParams, clipAmmo, backpackAmmo);
+
+        if (isLocalPlayer)
+        {
+
+            LineOfSights.TargetingLineOfSight.MaxAngle = targetWeaponParams.RangeOfAiming;
+            LineOfSights.TargetingLineOfSight.MaxDistance = targetWeaponParams.FireDistance;
         }
     }
     #endregion

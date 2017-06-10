@@ -39,6 +39,8 @@ public class PlayerController : NetworkBehaviour
     [Header("Current weapon params")]
     public WeaponParams weaponParams;
 
+    public InteractSystem InteractSystem;
+
     //+++++ net params
     [SyncVar(hook = "OnChangeHealth")]
     private float _currentHealth;
@@ -86,6 +88,8 @@ public class PlayerController : NetworkBehaviour
             LineOfSights.TargetingLineOfSight.MaxAngle = weaponParams.RangeOfAiming;
             LineOfSights.TargetingLineOfSight.MaxDistance = weaponParams.FireDistance;
 
+            InteractSystem.gameObject.SetActive(true);
+
             GameLogic.Instance.HUD.SwitchToLive();
             GameLogic.Instance.HUD.SetHP(_currentHealth, rpgParams.MaxHealth);
             Container[] __cnt = FindObjectsOfType(typeof(Container)) as Container[];
@@ -96,6 +100,7 @@ public class PlayerController : NetworkBehaviour
         else
         {
             LineOfSights.gameObject.SetActive(false);
+            InteractSystem.gameObject.SetActive(false);
         }
     }
 

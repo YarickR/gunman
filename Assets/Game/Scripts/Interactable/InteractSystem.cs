@@ -8,6 +8,20 @@ public class InteractSystem : MonoBehaviour
 
     Interactable currentInteractable;
 
+    public Interactable CurrentInteractable
+    {
+        get
+        {
+            return currentInteractable;
+        }
+    }
+
+
+    public void ClearInteractable()
+    {
+        setCurrentInteractable(null);
+    }
+
     void Awake()
     {
         playerController = GetComponent<PlayerController>();

@@ -50,6 +50,9 @@ public class PlayerController : NetworkBehaviour
 
     private bool _isMoving = false;
 
+    private bool _isInteracting = false;
+    private float _interactStartTime = -1;
+
     void Awake()
     {
         characterController = GetComponent<CharacterController>();
@@ -91,6 +94,7 @@ public class PlayerController : NetworkBehaviour
             }
             InteractSystem.enabled = true;
 
+            GameLogic.Instance.HUD.LocalPlayer = this;
             GameLogic.Instance.HUD.SwitchToLive();
             GameLogic.Instance.HUD.SetHP(_currentHealth, rpgParams.MaxHealth);
             Container[] __cnt = FindObjectsOfType(typeof(Container)) as Container[];
@@ -123,6 +127,32 @@ public class PlayerController : NetworkBehaviour
                 CmdSendDamageToServer(20.0f);
             }
 #endif
+        }
+
+        if (isLocalPlayer)
+        {
+            SetUseButtonEnabled(!(_isMoving || weaponController.IsReloading));
+            if (_isInteracting)
+            {
+                if (InteractSystem.CurrentInteractable == null)
+                {
+                    StopUse();
+                }
+                else
+                {
+                    float time = Time.time - _interactStartTime;
+                    float maxTime = InteractSystem.CurrentInteractable.InteractionTime;
+                    UpdateTimer(time, maxTime);
+                    if (time > maxTime)
+                    {
+                        UseItem(InteractSystem.CurrentInteractable);
+                    }
+                }
+            }
+            else
+            {
+                UpdateTimer(weaponController.AimProgress, 1);
+            }
         }
     }
 
@@ -361,9 +391,35 @@ public class PlayerController : NetworkBehaviour
     #endregion
 
     #region Interact
-    public void SetShowUseButtonState(bool enabled)
+    public void SetUseButtonEnabled(bool enabled)
     {
-        GameLogic.Instance.HUD.SetShowUseButton(enabled);
+        GameLogic.Instance.HUD.SetUseButtonInteractable(enabled);
+    }
+
+    public void SetShowUseButtonState(bool visible)
+    {
+        GameLogic.Instance.HUD.SetShowUseButton(visible);
+    }
+
+    public void StartUse()
+    {
+        Debug.LogFormat("START USE");
+        weaponController.IsCanFire = false;
+        _isInteracting = true;
+        _interactStartTime = Time.time;
+    }
+
+    public void StopUse()
+    {
+        _isInteracting = false;
+        weaponController.IsCanFire = true;
+    }
+
+    public void UseItem(Interactable interactable)
+    {
+        CmdActivateInteractable(interactable.netId);
+        InteractSystem.ClearInteractable();
+        StopUse();
     }
     #endregion
 

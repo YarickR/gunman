@@ -67,8 +67,20 @@ public class PlayerController : NetworkBehaviour
         InitRPGParams();
     }
 
+    public override void OnStartClient()
+    {
+        base.OnStartClient();
+
+        if (!isLocalPlayer)
+        {
+            SetWeaponById(rpgParams.StartWeapon.WeaponId, rpgParams.StartWeapon.ClipSize, rpgParams.StartWeapon.MaxAmmo);
+        }
+    }
+
     public override void OnStartLocalPlayer()
     {
+        base.OnStartLocalPlayer();
+
         name = "Player_" + playerControllerId.ToString();
 
         if (isLocalPlayer)
@@ -437,5 +449,14 @@ public class PlayerController : NetworkBehaviour
     private bool IsInputAvalible()
     {
         return isLocalPlayer && !_isDead;
+    }
+
+    public void RegisterAdditionalRenderPart(VisiblePart additionalPart)
+    {
+        if (additionalPart != null &&
+            !selfTargetable.additionalParts.Contains(additionalPart))
+        {
+            selfTargetable.additionalParts.Add(additionalPart);
+        }
     }
 }

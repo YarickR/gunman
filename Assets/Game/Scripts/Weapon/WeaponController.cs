@@ -76,16 +76,17 @@ public class WeaponController : MonoBehaviour
             target.transform.localRotation = Quaternion.identity;
             target.transform.localScale = Vector3.one;
 
+            playerController.RegisterAdditionalRenderPart(target.GetComponent<VisiblePart>());
+
             _cache[_rpgParams] = target;
         }
-
-        target.SetActive(true);
 
         if (_currentActiveGO != null)
         {
             _currentActiveGO.SetActive(false);
         }
 
+        target.SetActive(true);
         _currentActiveGO = target;
     }
 

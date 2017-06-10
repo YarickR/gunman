@@ -6,7 +6,7 @@ public class MultiPlayerInput : PlayerInput {
     public PlayerInput Input1;
     public PlayerInput Input2;
 
-    void Awake()
+    void Start()
     {
         if (Input2 == null)
         {
@@ -19,18 +19,7 @@ public class MultiPlayerInput : PlayerInput {
         var ld1 = Input1.GetLookDirection();
         if (Input2 == null) return ld1;
         var ld2 = Input2.GetLookDirection();
-        if (Application.isMobilePlatform)
-        {
-            return ld2;
-        }
-        if (ld2.sqrMagnitude > 0)
-        {
-            return ld2;
-        }
-        else
-        {
-            return ld1;
-        }
+        return ld2;
     }
 
     public override Vector2 GetMoveDirection()

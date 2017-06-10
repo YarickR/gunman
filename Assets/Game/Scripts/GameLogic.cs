@@ -60,30 +60,19 @@ public class GameLogic : NetworkBehaviour
 
     public void OnPlayerAlive(PlayerController player, bool localPlayer)
     {
+        Debug.LogFormat("player alive {0}", localPlayer);
         if (player.playerControllerId != -1)
         {
-            Debug.LogFormat("OnPlayerAlive {0} {1}", player.playerControllerId, localPlayer);
-
             PlayerSpawned(player);
-
-            if (localPlayer)
-            {
-                HUD.SwitchToLive();
-            }
         }
     }
 
     public void OnPlayerDeath(PlayerController player, bool localPlayer)
-    {   
+    {
+        Debug.LogFormat("player death {0}", localPlayer);
         if (player.playerControllerId != -1)
-        {
-            Debug.LogFormat("OnPlayerDeath {0} {1}", player.playerControllerId, localPlayer);
+        {  
             PlayerKilled(player);
-
-            if (localPlayer)
-            {
-                HUD.SwitchToDeath();
-            }
         }
     }
 
@@ -91,13 +80,18 @@ public class GameLogic : NetworkBehaviour
     void PlayerSpawned(PlayerController player)
     {
         activePlayers[player.playerControllerId] = player;
+        Debug.LogFormat("OnPlayerAlive {0}", player.playerControllerId);
     }
 
     [Server]
     void PlayerKilled(PlayerController player)
     {
-        activePlayers.Remove(player.playerControllerId);
-        checkWinConditions();
+        if (activePlayers.ContainsKey(player.playerControllerId))
+        {
+            Debug.LogFormat("OnPlayerDeath {0}", player.playerControllerId);
+            activePlayers.Remove(player.playerControllerId);
+            checkWinConditions();
+        }
     }
 
     [Server]

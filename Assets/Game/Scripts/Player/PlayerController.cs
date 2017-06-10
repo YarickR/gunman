@@ -327,6 +327,18 @@ public class PlayerController : NetworkBehaviour
             targetController.RpcShotAct(this.netId);
         }
     }
+
+    [Command]
+    public void CmdActivateInteractable(NetworkInstanceId interactableID)
+    {
+        var interactableGO = NetworkServer.FindLocalObject(interactableID);
+        if (interactableGO != null)
+        {
+            Debug.LogFormat("interactableGO {0}", interactableGO);
+            
+            interactableGO.GetComponent<Interactable>().Interact(this);
+        }
+    }
     #endregion
 
     #region Client weapon

@@ -36,7 +36,7 @@ public class InteractSystem : MonoBehaviour
         {
             Debug.LogFormat("Current interactable {0}", currentInteractable);
 
-            currentInteractable.Interact(playerController);
+            playerController.CmdActivateInteractable(interactable.netId);
         }
     }
 }

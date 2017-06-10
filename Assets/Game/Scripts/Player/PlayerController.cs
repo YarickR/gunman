@@ -305,7 +305,11 @@ public class PlayerController : NetworkBehaviour
     [ClientRpc]
     private void RpcSetWeaponById(int weaponId)
     {
-
+        WeaponParams targetWeaponParams = WeaponsList.Instance.GetParamsByID(weaponId);
+        if (targetWeaponParams == null)
+        {
+            return;
+        }
     }
     #endregion
 

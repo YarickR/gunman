@@ -106,8 +106,9 @@ GameObject:
   - component: {fileID: 224307746388231536}
   - component: {fileID: 222615061066823212}
   - component: {fileID: 114829612044405742}
+  - component: {fileID: 114362153394356820}
   m_Layer: 5
-  m_Name: DeathScreen
+  m_Name: EndScreen
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -480,7 +481,7 @@ MonoBehaviour:
   Ammo1: {fileID: 1518247190715176}
   InfoPanel: {fileID: 114327819512734680}
   LeftAlive: {fileID: 114156696553377036}
-  DeathScreen: {fileID: 1295391389466218}
+  EndScreen: {fileID: 114362153394356820}
   LocalPlayer: {fileID: 0}
 --- !u!114 &114032615019559890
 MonoBehaviour:
@@ -834,6 +835,18 @@ MonoBehaviour:
   m_Text: 'Awawaw killed Bebebe with AK-47
 
     MadScientist killed PapaJohn with Glock'
+--- !u!114 &114362153394356820
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1295391389466218}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5babee2e0ffc1de46ab9d49ea46a4400, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Text: {fileID: 114163814530326460}
 --- !u!114 &114479895773671696
 MonoBehaviour:
   m_ObjectHideFlags: 1

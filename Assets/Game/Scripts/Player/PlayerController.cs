@@ -408,6 +408,12 @@ public class PlayerController : NetworkBehaviour
             interactableGO.GetComponent<Interactable>().Interact(this);
         }
     }
+
+    [Command]
+    public void CmdSetWeapon(int weaponId, int clipAmmo, int backpackAmmo)
+    {
+        RpcSetWeaponById(weaponId, clipAmmo, backpackAmmo);
+    }
     #endregion
 
     #region Interact

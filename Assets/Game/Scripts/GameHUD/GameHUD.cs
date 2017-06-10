@@ -10,6 +10,7 @@ public class GameHUD : MonoBehaviour {
     public Text InfoPanel, LeftAlive;
     public EndScreen EndScreen;
     public PlayerController LocalPlayer;
+    public Text AmmoValue;
 
     public Button UseButton;
 
@@ -56,6 +57,14 @@ public class GameHUD : MonoBehaviour {
 
     public void UpdateInventory(PlayerController player = null) {
     	
+    }
+
+    public void SetAmmo(int current, int backpack)
+    {
+        if (AmmoValue != null)
+        {
+            AmmoValue.text = string.Format("Ammo:{0} Backpack:{1}", current, backpack);
+        }
     }
 
     public void SetShowUseButton(bool enabled)

@@ -4,6 +4,6 @@ using UnityEngine;
 
 public class WeaponView : MonoBehaviour
 {
-
-    public WeaponParams rpgParams;
+    public int currentClipAmmo;
+    public int backpackAmmo;
 }

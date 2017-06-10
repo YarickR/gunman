@@ -9,6 +9,32 @@ public class WeaponController : MonoBehaviour
 
     private Dictionary<WeaponParams, GameObject> _cache = new Dictionary<WeaponParams, GameObject>();
 
+    public int GetBackpackAmmo
+    {
+        get
+        {
+            if (_mainWeaponView == null)
+            {
+                return 0;
+            }
+
+            return _mainWeaponView.backpackAmmo;
+        }
+    }
+
+    public int GetCurrentAmmo
+    {
+        get
+        {
+            if (_mainWeaponView == null)
+            {
+                return 0;
+            }
+
+            return _mainWeaponView.currentClipAmmo;
+        }
+    }
+
     public bool IsReloading
     {
         get
@@ -23,7 +49,7 @@ public class WeaponController : MonoBehaviour
     {
         get
         {
-            return _reloadTime != 0.0f ? _reloadTime / _rpgParams.ReloadTime : 0.0f;
+            return _reloadTime != 0.0f ? _reloadTime / _mainWeaponRpgParams.ReloadTime : 0.0f;
         }
     }
 
@@ -35,9 +61,14 @@ public class WeaponController : MonoBehaviour
         }
     }
 
-    private WeaponParams _rpgParams;
-    private int _currentClipAmmo;
-    private int _backpackAmmo;
+    private WeaponParams _baseWeaponRpgParams;
+    private WeaponView _baseWeaponView;
+
+    private WeaponParams _mainWeaponRpgParams;
+    private WeaponView _mainWeaponView;
+
+    //only for change
+    private WeaponParams _lastSet;
 
     private GameObject _currentActiveGO = null;
 
@@ -54,31 +85,46 @@ public class WeaponController : MonoBehaviour
     {
         IsCanFire = true;
 
-        _rpgParams = rpgParams;
-        _currentClipAmmo = currentClipAmmo;
-        _backpackAmmo = backpackAmmo;
+        ShowModel(rpgParams);
 
-        ShowModel();
-    }
-
-    private void ShowModel()
-    {
-        GameObject target = null;
-
-        if (_cache.ContainsKey(_rpgParams))
+        WeaponView targetView;
+        if (rpgParams == playerController.rpgParams.StartWeapon)
         {
-            target = _cache[_rpgParams];
+            _baseWeaponRpgParams = rpgParams;
+            _baseWeaponView = _currentActiveGO.GetComponent<WeaponView>();
+            targetView = _baseWeaponView;
         }
         else
         {
-            target = GameObject.Instantiate(_rpgParams.InHandsModel, weaponPlaceHolder);
+            _mainWeaponRpgParams = rpgParams;
+            _mainWeaponView = _currentActiveGO.GetComponent<WeaponView>();
+            targetView = _mainWeaponView;
+        }
+
+        targetView.backpackAmmo = backpackAmmo;
+        targetView.currentClipAmmo = currentClipAmmo;
+
+        _lastSet = rpgParams;
+    }
+
+    private void ShowModel(WeaponParams rpgParams)
+    {
+        GameObject target = null;
+
+        if (_cache.ContainsKey(rpgParams))
+        {
+            target = _cache[rpgParams];
+        }
+        else
+        {
+            target = GameObject.Instantiate(rpgParams.InHandsModel, weaponPlaceHolder);
             target.transform.localPosition = Vector3.zero;
             target.transform.localRotation = Quaternion.identity;
             target.transform.localScale = Vector3.one;
 
             playerController.RegisterAdditionalRenderPart(target.GetComponent<VisiblePart>());
 
-            _cache[_rpgParams] = target;
+            _cache[rpgParams] = target;
         }
 
         if (_currentActiveGO != null)
@@ -93,7 +139,7 @@ public class WeaponController : MonoBehaviour
     private void Update()
     {
         if (playerController == null ||
-            _rpgParams == null ||
+            GetTargetParams() == null ||
             !playerController.isLocalPlayer)
         {
             return;
@@ -104,10 +150,15 @@ public class WeaponController : MonoBehaviour
         UpdateFire();
 
         UpdateReload();
+
+        TrySetBaseWeapon();
+
+        GameLogic.Instance.HUD.SetAmmo(GetCurrentAmmo, GetBackpackAmmo);
     }
 
     private void UpdateAiming()
     {
+        var targetParams = GetTargetParams();
         var currentTarget = playerController.LineOfSights.CurrentTarget;
 
         if (_lastTarget == currentTarget && currentTarget != null)
@@ -131,9 +182,8 @@ public class WeaponController : MonoBehaviour
             }
 
             _isFirstEmptyTarget = true;
-            _currentAimProcent += aimValue / _rpgParams.StartFireDelay;
+            _currentAimProcent += aimValue / targetParams.StartFireDelay;
             _currentAimProcent = Mathf.Clamp01(_currentAimProcent);
-			//playerController.UpdateTimer(_currentAimProcent, 1.0f);
             return;
         }
 
@@ -143,15 +193,15 @@ public class WeaponController : MonoBehaviour
             if (_isFirstEmptyTarget)
             {
                 _isFirstEmptyTarget = false;
-                _currentAimProcent = _currentAimProcent * _rpgParams.DropTargetPercent;
+                _currentAimProcent = _currentAimProcent * targetParams.DropTargetPercent;
             }
 
-            _currentAimProcent -= Time.deltaTime / _rpgParams.StartFireDelay;
+            _currentAimProcent -= Time.deltaTime / targetParams.StartFireDelay;
             _currentAimProcent = Mathf.Clamp01(_currentAimProcent);
         }
         else if (_lastTarget == null && currentTarget == null)
         {
-            _currentAimProcent -= Time.deltaTime / _rpgParams.StartFireDelay;
+            _currentAimProcent -= Time.deltaTime / targetParams.StartFireDelay;
             _currentAimProcent = Mathf.Clamp01(_currentAimProcent);
         }
         else if (_lastTarget != null && currentTarget != null)
@@ -163,22 +213,28 @@ public class WeaponController : MonoBehaviour
         {
             _lastTarget = currentTarget;
         }
-     //   playerController.UpdateTimer(_currentAimProcent, 1.0f);
     }
 
     private void UpdateFire()
     {
+        var targetParams = GetTargetParams();
+        var targetView = targetParams == _baseWeaponRpgParams ? _baseWeaponView : _mainWeaponView;
+        if (targetView == null)
+        {
+            return;
+        }
+
         if (_currentAimProcent < 1.0f)
         {
             return;
         }
 
-        if (_currentClipAmmo == 0)
+        if (targetView.currentClipAmmo == 0)
         {
             return;
         }
 
-        var fireRate = 1.0f / _rpgParams.FireRate;
+        var fireRate = 1.0f / targetParams.FireRate;
         if (_lastFireTime + fireRate > Time.time)
         {
             return;
@@ -194,12 +250,19 @@ public class WeaponController : MonoBehaviour
 
     private void Shoot()
     {
+        var targetParams = GetTargetParams();
+        var targetView = targetParams == _baseWeaponRpgParams ? _baseWeaponView : _mainWeaponView;
+        if (targetView == null)
+        {
+            return;
+        }
+
         var critRoll = Random.Range(0.0f, 1.0f);
-        var isCrit = _rpgParams.CritChance > critRoll;
+        var isCrit = targetParams.CritChance > critRoll;
 
-        var damage = isCrit ? _rpgParams.Damage * _rpgParams.CritMultiplier : _rpgParams.Damage;
+        var damage = isCrit ? targetParams.Damage * targetParams.CritMultiplier : targetParams.Damage;
 
-        _currentClipAmmo -= 1;
+        targetView.currentClipAmmo -= 1;
         playerController.CmdSendDamageToPlayer(damage, _lastTarget.PlayerController.netId);
 
         _lastFireTime = Time.time;
@@ -214,17 +277,24 @@ public class WeaponController : MonoBehaviour
 
     private void UpdateReload()
     {
-        if (_currentClipAmmo > 0)
+        var targetParams = GetTargetParams();
+        var targetView = targetParams == _baseWeaponRpgParams ? _baseWeaponView : _mainWeaponView;
+        if (targetView == null)
         {
             return;
         }
 
-        if (_backpackAmmo <= 0)
+        if (targetView.currentClipAmmo > 0)
         {
             return;
         }
 
-        if (_reloadTime < _rpgParams.ReloadTime)
+        if (targetView.backpackAmmo  <= 0)
+        {
+            return;
+        }
+
+        if (_reloadTime < targetParams.ReloadTime)
         {
             _reloadTime += Time.deltaTime;
         }
@@ -232,18 +302,38 @@ public class WeaponController : MonoBehaviour
         {
             _reloadTime = 0.0f;
 
-            if (_backpackAmmo >= _rpgParams.ClipSize)
+            if (targetView.backpackAmmo >= targetParams.ClipSize)
             {
-                _currentClipAmmo = _rpgParams.ClipSize;
-                _backpackAmmo -= _rpgParams.ClipSize;
+                targetView.currentClipAmmo = targetParams.ClipSize;
+                targetView.backpackAmmo -= targetParams.ClipSize;
             }
             else
             {
-                _currentClipAmmo = _backpackAmmo;
-                _backpackAmmo = 0;
+                targetView.currentClipAmmo = targetView.backpackAmmo;
+                targetView.backpackAmmo = 0;
             }
 
             //Debug.Log("Finish reload!");
         }
+    }
+
+    private void TrySetBaseWeapon()
+    {
+        if (GetTargetParams() == _baseWeaponRpgParams && _baseWeaponRpgParams != _lastSet)
+        {
+            playerController.CmdSetWeapon(_baseWeaponRpgParams.WeaponId, _baseWeaponRpgParams.ClipSize, _baseWeaponRpgParams.MaxAmmo);
+        }
+    }
+
+    private WeaponParams GetTargetParams()
+    {
+        if (_mainWeaponRpgParams != null &&
+            (_mainWeaponView.currentClipAmmo > 0 ||
+            _mainWeaponView.backpackAmmo > 0))
+        {
+            return _mainWeaponRpgParams;
+        }
+
+        return _baseWeaponRpgParams;
     }
 }

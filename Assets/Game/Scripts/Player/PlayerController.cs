@@ -17,20 +17,10 @@ public class PlayerController : NetworkBehaviour
     private Targetable selfTargetable;
 
     [Header("RPG parameters")]
-    public float MaxHealth;
+    public PlayerParams rpgParams;
 
-    [Range(0.0f, 1.0f)]
-    public float HealthStepDecreasePercent;
-    [Range(0.0f, 1.0f)]
-    public float HealthMoveSpeedDecreasePercentPerStep;
-    [Range(0.0f, 1.0f)]
-    public float HealthRotateSpeedDecreasePercentPerStep;
-    [Range(0.0f, 1.0f)]
-    public float HealthLootDecreasePercentPerStep;
-
-    [Header("RPG Move params")]
-    public float baseMoveSpeed;
-    public float baseRotateSpeed;
+    [Header("Current weapon params")]
+    public WeaponParams weaponParams;
 
     //+++++ net params
     [SyncVar(hook = "OnChangeHealth")]
@@ -60,7 +50,12 @@ public class PlayerController : NetworkBehaviour
             cam.SetFollowTransform(cameraPlaceHolder);
             LineOfSights.gameObject.SetActive(true);
             LineOfSights.IgnoreTarget = selfTargetable;
+            LineOfSights.VisibilityLineOfSight.MaxAngle = rpgParams.RangeOfView;
             name = "Player_" + playerControllerId.ToString();
+
+            //weapon tmp
+            LineOfSights.TargetingLineOfSight.MaxAngle = weaponParams.RangeOfAiming;
+            LineOfSights.TargetingLineOfSight.MaxDistance = weaponParams.FireDistance;
         }
         else
         {
@@ -74,7 +69,7 @@ public class PlayerController : NetworkBehaviour
         {
             ApplyMove();
 
-            #if UNITY_EDITOR
+            #if UNITY_EDITOR || UNITY_STANDALONE
             if (Input.GetKeyDown(KeyCode.Y))
             {
                 CmdSendDamageToServer(20.0f);
@@ -116,20 +111,20 @@ public class PlayerController : NetworkBehaviour
 
     private float CalcMoveSpeed()
     {
-        var percentMissingHealth = 1.0f - (_currentHealth / MaxHealth);
-        var steps = Mathf.FloorToInt(percentMissingHealth / HealthStepDecreasePercent);
-        var actualPercent = 1.0f - steps * HealthMoveSpeedDecreasePercentPerStep;
+        var percentMissingHealth = 1.0f - (_currentHealth / rpgParams.MaxHealth);
+        var steps = Mathf.FloorToInt(percentMissingHealth / rpgParams.HealthStepDecreasePercent);
+        var actualPercent = 1.0f - steps * rpgParams.HealthMoveSpeedDecreasePercentPerStep;
 
-        return baseMoveSpeed * actualPercent;
+        return rpgParams.baseMoveSpeed * actualPercent;
     }
 
     private float CalcRotateSpeed()
     {
-        var percentMissingHealth = 1.0f - (_currentHealth / MaxHealth);
-        var steps = Mathf.FloorToInt(percentMissingHealth / HealthStepDecreasePercent);
-        var actualPercent = 1.0f - steps * HealthRotateSpeedDecreasePercentPerStep;
+        var percentMissingHealth = 1.0f - (_currentHealth / rpgParams.MaxHealth);
+        var steps = Mathf.FloorToInt(percentMissingHealth / rpgParams.HealthStepDecreasePercent);
+        var actualPercent = 1.0f - steps * rpgParams.HealthRotateSpeedDecreasePercentPerStep;
 
-        return baseRotateSpeed * actualPercent;
+        return rpgParams.baseRotateSpeed * actualPercent;
     }
     #endregion
 
@@ -144,7 +139,7 @@ public class PlayerController : NetworkBehaviour
     #region RPG parameters methods
     private void InitRPGParams()
     {
-        _currentHealth = MaxHealth;
+        _currentHealth = rpgParams.MaxHealth;
     }
 
     private void ReceiveDamage(float damageValue)

@@ -6,18 +6,25 @@ public class MultiPlayerInput : PlayerInput {
     public PlayerInput Input1;
     public PlayerInput Input2;
 
+    void Awake()
+    {
+        if (Input2 == null)
+        {
+            Input2 = Object.FindObjectOfType<JoystickPlayerInput>();
+        }
+    }
+
     public override Vector2 GetLookDirection()
     {
         var ld1 = Input1.GetLookDirection();
         var ld2 = Input2.GetLookDirection();
-
-        if (ld1.sqrMagnitude > ld2.sqrMagnitude)
+        if (ld2.sqrMagnitude > 0)
         {
-            return ld1;
+            return ld2;
         }
         else
         {
-            return ld2;
+            return ld1;
         }
     }
 

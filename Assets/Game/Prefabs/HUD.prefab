@@ -40,6 +40,7 @@ GameObject:
   - component: {fileID: 223221190321896272}
   - component: {fileID: 114736228516677962}
   - component: {fileID: 114366364932086834}
+  - component: {fileID: 114847020375561966}
   m_Layer: 5
   m_Name: HUD
   m_TagString: Untagged
@@ -74,8 +75,9 @@ GameObject:
   m_Component:
   - component: {fileID: 224063926822620986}
   - component: {fileID: 222861228546828804}
+  - component: {fileID: 114682100060245938}
   m_Layer: 5
-  m_Name: Panel
+  m_Name: Joystick
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -179,6 +181,19 @@ MonoBehaviour:
   m_FillAmount: 1
   m_FillClockwise: 1
   m_FillOrigin: 0
+--- !u!114 &114682100060245938
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1997327108100678}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2d99427b328e447fabd83a2aea4625b2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Left: {fileID: 114323178226055994}
+  Right: {fileID: 114269481348733194}
 --- !u!114 &114736228516677962
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -200,6 +215,17 @@ MonoBehaviour:
   m_FallbackScreenDPI: 96
   m_DefaultSpriteDPI: 96
   m_DynamicPixelsPerUnit: 1
+--- !u!114 &114847020375561966
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1487853488793836}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3d145ddd1f2ad2747a23b7ba9e292cb6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!222 &222008637113549858
 CanvasRenderer:
   m_ObjectHideFlags: 1

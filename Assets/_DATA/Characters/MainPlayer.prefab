@@ -1264,7 +1264,6 @@ GameObject:
   - component: {fileID: 114108984907781738}
   - component: {fileID: 114944049602832776}
   - component: {fileID: 114029033760827476}
-  - component: {fileID: 114071900396309784}
   - component: {fileID: 114368953832850228}
   - component: {fileID: 114357637605709186}
   m_Layer: 0
@@ -2204,7 +2203,7 @@ Transform:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1607758169599916}
-  m_LocalRotation: {x: 0.53267515, y: 0.07034045, z: 0.83613265, w: -0.11041513}
+  m_LocalRotation: {x: 0.5326752, y: 0.070340455, z: 0.83613276, w: -0.110415146}
   m_LocalPosition: {x: 0.000022271464, y: -0.00006150465, z: 0.026027026}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
@@ -2739,17 +2738,6 @@ MonoBehaviour:
   m_SnapThreshold: 5
   m_InterpolateRotation: 1
   m_InterpolateMovement: 1
---- !u!114 &114071900396309784
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1901928919466570}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2d99427b328e447fabd83a2aea4625b2, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!114 &114083709861723670
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -2780,13 +2768,8 @@ MonoBehaviour:
   input: {fileID: 114368953832850228}
   animator: {fileID: 114944049602832776}
   LineOfSights: {fileID: 114083709861723670}
-  MaxHealth: 100
-  HealthStepDecreasePercent: 0.2
-  HealthMoveSpeedDecreasePercentPerStep: 0.1
-  HealthRotateSpeedDecreasePercentPerStep: 0.05
-  HealthLootDecreasePercentPerStep: 0.05
-  baseMoveSpeed: 2.5
-  baseRotateSpeed: 200
+  rpgParams: {fileID: 11400000, guid: ae67f55987ba41d4e9b4f1fe5ce95be7, type: 2}
+  weaponParams: {fileID: 11400000, guid: e81fae31275c8c7449976e38386f5f81, type: 2}
 --- !u!114 &114284989702213096
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -2803,7 +2786,7 @@ MonoBehaviour:
   _maxDistance: 8
   _cullingMask:
     serializedVersion: 2
-    m_Bits: 4294967295
+    m_Bits: 4294967039
   Material: {fileID: 2100000, guid: 3cb7b1b35ba9abe47ad0970defd1c93f, type: 2}
   _displayRaysInEditor: 0
 --- !u!114 &114357637605709186
@@ -2832,7 +2815,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Input1: {fileID: 114029033760827476}
-  Input2: {fileID: 114071900396309784}
+  Input2: {fileID: 0}
 --- !u!114 &114588960152843792
 MonoBehaviour:
   m_ObjectHideFlags: 1

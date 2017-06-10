@@ -1183,7 +1183,7 @@ MonoBehaviour:
   _maxDistance: 8
   _cullingMask:
     serializedVersion: 2
-    m_Bits: 4294966527
+    m_Bits: 4294964479
   Material: {fileID: 2100000, guid: 3cb7b1b35ba9abe47ad0970defd1c93f, type: 2}
   _displayRaysInEditor: 0
 --- !u!114 &114181061584190042
@@ -1213,7 +1213,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   playerController: {fileID: 114875221773164140}
   weaponPlaceHolder: {fileID: 4816289629347380}
-  weaponParams: {fileID: 0}
 --- !u!114 &114554886388197328
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1277,7 +1276,7 @@ MonoBehaviour:
   _maxDistance: 15
   _cullingMask:
     serializedVersion: 2
-    m_Bits: 4294966527
+    m_Bits: 4294964479
   Material: {fileID: 2100000, guid: 7d45aa89bb92b1e408a3075062b7a306, type: 2}
   _displayRaysInEditor: 0
 --- !u!114 &114791414766413654
@@ -1390,6 +1389,7 @@ MonoBehaviour:
   MapContainers: []
   rpgParams: {fileID: 11400000, guid: ae67f55987ba41d4e9b4f1fe5ce95be7, type: 2}
   weaponParams: {fileID: 11400000, guid: e81fae31275c8c7449976e38386f5f81, type: 2}
+  InteractSystem: {fileID: 0}
 --- !u!136 &136641656820960462
 CapsuleCollider:
   m_ObjectHideFlags: 1

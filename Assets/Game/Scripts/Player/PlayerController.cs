@@ -346,6 +346,13 @@ public class PlayerController : NetworkBehaviour
     }
     #endregion
 
+    #region Interact
+    public void SetShowUseButtonState(bool enabled)
+    {
+        GameLogic.Instance.HUD.SetShowUseButton(enabled);
+    }
+    #endregion
+
     #region Client weapon
 
     #endregion

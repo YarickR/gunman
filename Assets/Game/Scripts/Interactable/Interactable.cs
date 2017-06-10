@@ -22,5 +22,8 @@ public abstract class Interactable : NetworkBehaviour {
         sc.isTrigger = true;
         sc.radius = PickupRadius;
         go.transform.SetParent(transform, false);
+        Vector3 p = transform.position;
+        p.y = 1;
+        go.transform.position = p;
     }
 }

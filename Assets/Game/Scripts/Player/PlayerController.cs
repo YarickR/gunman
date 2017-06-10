@@ -337,7 +337,7 @@ public class PlayerController : NetworkBehaviour
     }
 
     [ClientRpc]
-    private void RpcSetWeaponById(int weaponId, int clipAmmo, int backpackAmmo)
+    public void RpcSetWeaponById(int weaponId, int clipAmmo, int backpackAmmo)
     {
         SetWeaponById(weaponId, clipAmmo, backpackAmmo);
     }

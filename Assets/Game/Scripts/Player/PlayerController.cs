@@ -14,6 +14,7 @@ public class PlayerController : NetworkBehaviour
     private Dictionary<NetworkInstanceId, GameObject> _cachedControllers = new Dictionary<NetworkInstanceId, GameObject>();
 
     public Transform cameraPlaceHolder;
+    public Transform weaponPlaceHolder;
 
     public PlayerCamera cam;
     public PlayerInput input;

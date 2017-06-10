@@ -1366,6 +1366,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   cameraPlaceHolder: {fileID: 4917629491719874}
+  weaponPlaceHolder: {fileID: 4816289629347380}
   cam: {fileID: 0}
   input: {fileID: 114664163265108802}
   animator: {fileID: 114872658889386068}

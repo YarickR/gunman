@@ -58,9 +58,9 @@ public class ProcessLineOfSights : MonoBehaviour {
                 Vector3 midPoint, leftPoint, rightPoint;
                 calcPoints(targetable, out midPoint, out leftPoint, out rightPoint);
 
-                if (HitTestPoint(midPoint, maxVisibleDistance, maxVisibleDistanceSqr, minVisibleCosAngle, targetable.Collider) ||
-                    HitTestPoint(leftPoint, maxVisibleDistance, maxVisibleDistanceSqr, minVisibleCosAngle, targetable.Collider) ||
-                    HitTestPoint(rightPoint, maxVisibleDistance, maxVisibleDistanceSqr, minVisibleCosAngle, targetable.Collider))
+                if (HitTestPoint(midPoint, maxVisibleDistance, maxVisibleDistanceSqr, minVisibleCosAngle, targetable.Collider, true) ||
+                    HitTestPoint(leftPoint, maxVisibleDistance, maxVisibleDistanceSqr, minVisibleCosAngle, targetable.Collider, true) ||
+                    HitTestPoint(rightPoint, maxVisibleDistance, maxVisibleDistanceSqr, minVisibleCosAngle, targetable.Collider, true))
                 {
                     OnTargetVisible(targetable);
 
@@ -104,10 +104,12 @@ public class ProcessLineOfSights : MonoBehaviour {
         var direction = (targetable.transform.position - transform.position).normalized;
         var rotatedDirection = new Vector3(direction.z, 0, -direction.x);
 
-        midPoint = targetable.transform.position;
+        Vector3 heightDelta = new Vector3(0, 1, 0);
+
+        midPoint = targetable.transform.position + heightDelta;
         float k = 0.95f;
-        leftPoint = midPoint + k * rotatedDirection * targetable.Radius;
-        rightPoint = midPoint - k * rotatedDirection * targetable.Radius;
+        leftPoint = midPoint + k * rotatedDirection * targetable.Radius + heightDelta;
+        rightPoint = midPoint - k * rotatedDirection * targetable.Radius + heightDelta;
     }
 
     void updateCurrentTarget(Targetable target)
@@ -129,7 +131,10 @@ public class ProcessLineOfSights : MonoBehaviour {
         target.Visible = false;
     }
 
-    bool HitTestPoint(Vector3 point, float maxDistance, float maxDistanceSquared, float minCosAngle, Collider col) {
+    const int MAX_HITS = 10;
+    RaycastHit[] hits = new RaycastHit[MAX_HITS];
+
+    bool HitTestPoint(Vector3 point, float maxDistance, float maxDistanceSquared, float minCosAngle, Collider col, bool raycastAll = false) {
         var delta = point - transform.position;
         if (delta.sqrMagnitude > maxDistanceSquared)
         {
@@ -147,24 +152,36 @@ public class ProcessLineOfSights : MonoBehaviour {
             return false;
         }
 
-        RaycastHit hit;
-
-        if (Physics.Raycast(transform.position, direction, out hit, maxDistance))
+        
+        if (!raycastAll)
         {
-            if (hit.collider != col)
+            RaycastHit hit;
+
+            if (Physics.Raycast(transform.position, direction, out hit, maxDistance))
             {
-                //var t = col.GetComponent<Targetable>();
-                //if (t != null)
-                //{
-                //  //  Debug.LogFormat("hit other col {0}", t.PlayerController.playerControllerId);
-                //}
+                return hit.collider == col;
             }
-            return hit.collider == col;
         }
         else
         {
-           // Debug.LogFormat("No hits");
+            int hitsCount = Physics.RaycastNonAlloc(transform.position, direction, hits, maxDistance);
+            for (int i = 0; i < hitsCount; ++i)
+            {
+                var hit = hits[i];
+                if (hit.collider.gameObject.layer == LayerMask.NameToLayer("Targets"))
+                {
+                    if (hit.collider == col)
+                    {
+                        return true;
+                    }
+                }
+                else
+                {
+                    return false;
+                }
+            }
         }
+
         return false;
     }
 }

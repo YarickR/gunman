@@ -2797,7 +2797,7 @@ MonoBehaviour:
   _maxDistance: 8
   _cullingMask:
     serializedVersion: 2
-    m_Bits: 4294967295
+    m_Bits: 4294967039
   Material: {fileID: 2100000, guid: 3cb7b1b35ba9abe47ad0970defd1c93f, type: 2}
   _displayRaysInEditor: 0
 --- !u!114 &114357637605709186

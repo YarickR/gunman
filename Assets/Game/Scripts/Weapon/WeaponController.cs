@@ -52,6 +52,8 @@ public class WeaponController : MonoBehaviour
 
     public void InitWithParams(WeaponParams rpgParams, int currentClipAmmo, int backpackAmmo)
     {
+        IsCanFire = true;
+
         _rpgParams = rpgParams;
         _currentClipAmmo = currentClipAmmo;
         _backpackAmmo = backpackAmmo;

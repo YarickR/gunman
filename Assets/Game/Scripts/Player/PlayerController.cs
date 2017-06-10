@@ -12,7 +12,7 @@ public class PlayerController : NetworkBehaviour
     public PlayerAnimator animator;
 
     public ProcessLineOfSights LineOfSights;
-    
+
     private CharacterController characterController;
     private Targetable selfTargetable;
 
@@ -54,6 +54,11 @@ public class PlayerController : NetworkBehaviour
             name = "Player_" + playerControllerId.ToString();
 
             //weapon tmp
+            var weapon = this.gameObject.AddComponent<WeaponController>();
+            weapon.weaponParams = weaponParams;
+            weapon.playerController = this;
+            weapon.Init(weaponParams.ClipSize, weaponParams.MaxAmmo);
+
             LineOfSights.TargetingLineOfSight.MaxAngle = weaponParams.RangeOfAiming;
             LineOfSights.TargetingLineOfSight.MaxDistance = weaponParams.FireDistance;
         }
@@ -155,15 +160,14 @@ public class PlayerController : NetworkBehaviour
     #region network hooks
     private void OnChangeHealth(float value)
     {
-
         bool isDead = value <= 0.0f;
 
         _isDead = isDead;
         animator.SetDeadState(isDead);
 
         if (isLocalPlayer)
-        {
-        	GameLogic.Instance.HUD.SetHP(value, rpgParams.MaxHealth);
+		{
+			GameLogic.Instance.HUD.SetHP(value, rpgParams.MaxHealth);
             if (_isDead)
             {
                 GameLogic.Instance.OnPlayerDeath();

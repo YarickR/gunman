@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -71,6 +72,9 @@ public class PlayerController : NetworkBehaviour
         }
     }
 
+    public void UpdateTimer(float currValue, float maxValue) {
+    	GameLogic.Instance.HUD.SetTimer(currValue, maxValue);
+    }
     private void Update()
     {
         if (IsInputAvalible())

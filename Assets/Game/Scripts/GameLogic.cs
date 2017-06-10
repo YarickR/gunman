@@ -14,7 +14,7 @@ public class GameLogic : NetworkBehaviour
     int playersCount = 0;
 
     Dictionary<NetworkInstanceId, PlayerController> activePlayers = new Dictionary<NetworkInstanceId, PlayerController>();
-
+    public PlayerController LocalPlayer;
     public static GameLogic Instance
     {
         get
@@ -65,6 +65,9 @@ public class GameLogic : NetworkBehaviour
         {
             PlayerSpawned(player);
         }
+        if (localPlayer) {
+        	LocalPlayer = player;
+        };
     }
 
     public void OnPlayerDeath(PlayerController player, bool localPlayer)

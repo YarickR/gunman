@@ -14,11 +14,11 @@ public class PlayerController : NetworkBehaviour
     private Dictionary<NetworkInstanceId, GameObject> _cachedControllers = new Dictionary<NetworkInstanceId, GameObject>();
 
     public Transform cameraPlaceHolder;
-    public Transform weaponPlaceHolder;
 
     public PlayerCamera cam;
     public PlayerInput input;
     public PlayerAnimator animator;
+    public WeaponController weaponController;
     public MuzzleFlash muzzleFlash;
     public ProcessLineOfSights LineOfSights;
     public List<Container> MapContainers;
@@ -79,11 +79,8 @@ public class PlayerController : NetworkBehaviour
             LineOfSights.VisibilityLineOfSight.MaxAngle = rpgParams.RangeOfView;
             LineOfSights.VisibilityLineOfSight.MaxDistance = rpgParams.ViewDistance;
 
-            //weapon tmp
-            var weapon = this.gameObject.AddComponent<WeaponController>();
-            weapon.weaponParams = weaponParams;
-            weapon.playerController = this;
-            weapon.Init(weaponParams.ClipSize, weaponParams.MaxAmmo);
+            //weapon tmp!!!
+            weaponController.InitWithParams(weaponParams, weaponParams.ClipSize, weaponParams.MaxAmmo);
 
             LineOfSights.TargetingLineOfSight.MaxAngle = weaponParams.RangeOfAiming;
             LineOfSights.TargetingLineOfSight.MaxDistance = weaponParams.FireDistance;
@@ -323,6 +320,10 @@ public class PlayerController : NetworkBehaviour
             targetController.RpcShotAct(this.netId);
         }
     }
+    #endregion
+
+    #region Client weapon
+
     #endregion
 
     private bool IsInputAvalible()

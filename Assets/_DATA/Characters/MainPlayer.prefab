@@ -1301,6 +1301,7 @@ GameObject:
   - component: {fileID: 114029033760827476}
   - component: {fileID: 114368953832850228}
   - component: {fileID: 114357637605709186}
+  - component: {fileID: 114676409702169530}
   m_Layer: 0
   m_Name: MainPlayer
   m_TagString: Untagged
@@ -2253,7 +2254,7 @@ Transform:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1607758169599916}
-  m_LocalRotation: {x: 0.53267515, y: 0.07034045, z: 0.83613265, w: -0.11041513}
+  m_LocalRotation: {x: 0.5326752, y: 0.070340455, z: 0.83613276, w: -0.110415146}
   m_LocalPosition: {x: 0.000022271464, y: -0.00006150465, z: 0.026027026}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
@@ -2895,6 +2896,7 @@ MonoBehaviour:
   cam: {fileID: 0}
   input: {fileID: 114368953832850228}
   animator: {fileID: 114944049602832776}
+  weaponController: {fileID: 114676409702169530}
   muzzleFlash: {fileID: 114098023894785028}
   LineOfSights: {fileID: 114083709861723670}
   MapContainers: []
@@ -3010,6 +3012,20 @@ MonoBehaviour:
     m_Bits: 4294966527
   Material: {fileID: 2100000, guid: 7d45aa89bb92b1e408a3075062b7a306, type: 2}
   _displayRaysInEditor: 0
+--- !u!114 &114676409702169530
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1901928919466570}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a3885512bd53d8f4bb6977f7ebdb601e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  playerController: {fileID: 114108984907781738}
+  weaponPlaceHolder: {fileID: 0}
+  weaponParams: {fileID: 0}
 --- !u!114 &114791087730128324
 MonoBehaviour:
   m_ObjectHideFlags: 1

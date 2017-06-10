@@ -5,14 +5,15 @@ using UnityEngine;
 public class WeaponController : MonoBehaviour
 {
     public PlayerController playerController;
+    public Transform weaponPlaceHolder;
 
-    public WeaponParams weaponParams;
+    private Dictionary<WeaponParams, GameObject> _cache = new Dictionary<WeaponParams, GameObject>();
 
     public float ReloadProgeress
     {
         get
         {
-            return _reloadTime != 0.0f ? _reloadTime / weaponParams.ReloadTime : 0.0f;
+            return _reloadTime != 0.0f ? _reloadTime / _rpgParams.ReloadTime : 0.0f;
         }
     }
 
@@ -24,8 +25,11 @@ public class WeaponController : MonoBehaviour
         }
     }
 
+    private WeaponParams _rpgParams;
     private int _currentClipAmmo;
     private int _backpackAmmo;
+
+    private GameObject _currentActiveGO = null;
 
     private Targetable _lastTarget = null;
     private float _currentAimProcent;
@@ -36,16 +40,46 @@ public class WeaponController : MonoBehaviour
 
     private float _reloadTime = 0.0f;
 
-    public void Init(int currentClipAmmo, int backpackAmmo)
+    public void InitWithParams(WeaponParams rpgParams, int currentClipAmmo, int backpackAmmo)
     {
+        _rpgParams = rpgParams;
         _currentClipAmmo = currentClipAmmo;
         _backpackAmmo = backpackAmmo;
-        _currentAimProcent = 0.0f;
+
+        ShowModel();
+    }
+
+    private void ShowModel()
+    {
+        GameObject target = null;
+
+        if (_cache.ContainsKey(_rpgParams))
+        {
+            target = _cache[_rpgParams];
+        }
+        else
+        {
+            target = GameObject.Instantiate(_rpgParams.InHandsModel, weaponPlaceHolder);
+            target.transform.localPosition = Vector3.zero;
+            target.transform.localRotation = Quaternion.identity;
+            target.transform.localScale = Vector3.one;
+
+            _cache[_rpgParams] = target;
+        }
+
+        target.SetActive(true);
+
+        if (_currentActiveGO != null)
+        {
+            _currentActiveGO.SetActive(false);
+        }
+
+        _currentActiveGO = target;
     }
 
     private void Update()
     {
-        if (playerController == null)
+        if (playerController == null || _rpgParams == null)
         {
             return;
         }
@@ -82,7 +116,7 @@ public class WeaponController : MonoBehaviour
             }
 
             _isFirstEmptyTarget = true;
-            _currentAimProcent += aimValue / weaponParams.StartFireDelay;
+            _currentAimProcent += aimValue / _rpgParams.StartFireDelay;
             _currentAimProcent = Mathf.Clamp01(_currentAimProcent);
 			playerController.UpdateTimer(_currentAimProcent, 1.0f);
             return;
@@ -94,15 +128,15 @@ public class WeaponController : MonoBehaviour
             if (_isFirstEmptyTarget)
             {
                 _isFirstEmptyTarget = false;
-                _currentAimProcent = _currentAimProcent * weaponParams.DropTargetPercent;
+                _currentAimProcent = _currentAimProcent * _rpgParams.DropTargetPercent;
             }
 
-            _currentAimProcent -= Time.deltaTime / weaponParams.StartFireDelay;
+            _currentAimProcent -= Time.deltaTime / _rpgParams.StartFireDelay;
             _currentAimProcent = Mathf.Clamp01(_currentAimProcent);
         }
         else if (_lastTarget == null && currentTarget == null)
         {
-            _currentAimProcent -= Time.deltaTime / weaponParams.StartFireDelay;
+            _currentAimProcent -= Time.deltaTime / _rpgParams.StartFireDelay;
             _currentAimProcent = Mathf.Clamp01(_currentAimProcent);
         }
         else if (_lastTarget != null && currentTarget != null)
@@ -129,7 +163,7 @@ public class WeaponController : MonoBehaviour
             return;
         }
 
-        var fireRate = 1.0f / weaponParams.FireRate;
+        var fireRate = 1.0f / _rpgParams.FireRate;
         if (_lastFireTime + fireRate > Time.time)
         {
             return;
@@ -141,20 +175,21 @@ public class WeaponController : MonoBehaviour
     private void Shoot()
     {
         var critRoll = Random.Range(0.0f, 1.0f);
-        var isCrit = weaponParams.CritChance > critRoll;
+        var isCrit = _rpgParams.CritChance > critRoll;
 
-        var damage = isCrit ? weaponParams.Damage * weaponParams.CritMultiplier : weaponParams.Damage;
+        var damage = isCrit ? _rpgParams.Damage * _rpgParams.CritMultiplier : _rpgParams.Damage;
 
         _currentClipAmmo -= 1;
         playerController.CmdSendDamageToPlayer(damage, _lastTarget.PlayerController.netId);
 
         _lastFireTime = Time.time;
+
 		if (playerController.muzzleFlash != null) {
         	playerController.muzzleFlash.Flash();
         } else {
         	Debug.Log("No muzzle flash instantiated");
         }
-        //Debug.Log("Fire!");
+
     }
 
     private void UpdateReload()
@@ -169,7 +204,7 @@ public class WeaponController : MonoBehaviour
             return;
         }
 
-        if (_reloadTime < weaponParams.ReloadTime)
+        if (_reloadTime < _rpgParams.ReloadTime)
         {
             _reloadTime += Time.deltaTime;
         }
@@ -177,10 +212,10 @@ public class WeaponController : MonoBehaviour
         {
             _reloadTime = 0.0f;
 
-            if (_backpackAmmo >= weaponParams.ClipSize)
+            if (_backpackAmmo >= _rpgParams.ClipSize)
             {
-                _currentClipAmmo = weaponParams.ClipSize;
-                _backpackAmmo -= weaponParams.ClipSize;
+                _currentClipAmmo = _rpgParams.ClipSize;
+                _backpackAmmo -= _rpgParams.ClipSize;
             }
             else
             {

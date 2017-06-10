@@ -38,7 +38,7 @@ namespace Prototype.NetworkLobby
         public LobbyCountdownPanel countdownPanel;
         public GameObject addPlayerButton;
 
-        public GameHUD GameHUD;
+        public GameLogic GameLogic;
 
         protected RectTransform currentPanel;
 
@@ -120,7 +120,7 @@ namespace Prototype.NetworkLobby
 
                 topPanel.ToggleVisibility(true);
                 topPanel.isInGame = false;
-                GameHUD.gameObject.SetActive(false);
+                GameLogic.gameObject.SetActive(false);
             }
             else
             {
@@ -131,7 +131,7 @@ namespace Prototype.NetworkLobby
                 //backDelegate = StopGameClbk;
                 topPanel.isInGame = true;
                 topPanel.ToggleVisibility(false);
-                GameHUD.gameObject.SetActive(true);
+                GameLogic.gameObject.SetActive(true);
             }
         }
 

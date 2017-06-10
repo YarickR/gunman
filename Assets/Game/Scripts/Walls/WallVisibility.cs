@@ -20,6 +20,7 @@ public class WallVisibility : MonoBehaviour {
     void Awake()
     {
         _renderer = GetComponent<Renderer>();
+        gameObject.layer = 10;
     }
 
 	// Use this for initialization

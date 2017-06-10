@@ -20,7 +20,7 @@ public class PlayerController : NetworkBehaviour
     public PlayerAnimator animator;
     public MuzzleFlash muzzleFlash;
     public ProcessLineOfSights LineOfSights;
-
+    public List<Container> MapContainers;
     public bool IsMoving
     {
         get
@@ -87,6 +87,10 @@ public class PlayerController : NetworkBehaviour
 
             GameLogic.Instance.HUD.SwitchToLive();
             GameLogic.Instance.HUD.SetHP(_currentHealth, rpgParams.MaxHealth);
+            Container[] __cnt = FindObjectsOfType(typeof(Container)) as Container[];
+            for (int i = 0; i < __cnt.Length; i++) {
+            	MapContainers.Add(__cnt[i]);
+            };
         }
         else
         {
@@ -145,7 +149,7 @@ public class PlayerController : NetworkBehaviour
             angle = cosRight > 0 ? angle : -angle;
 
             animator.SetMoveAngleFromView(angle);
-        }
+        };
     }
 
     private float CalcMoveSpeed()

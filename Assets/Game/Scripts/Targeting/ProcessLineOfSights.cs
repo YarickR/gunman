@@ -64,7 +64,7 @@ public class ProcessLineOfSights : MonoBehaviour {
                 {
                     OnTargetVisible(targetable);
 
-                    if (currentTarget == null)
+                    if (currentTarget == null && !targetable.isVisibleOnly)
                     {
                         if (HitTestPoint(midPoint, maxTargetingDistance, maxTargetingDistanceSqr, minTargetingCosAngle, targetable.Collider) ||
                         HitTestPoint(leftPoint, maxTargetingDistance, maxTargetingDistanceSqr, minTargetingCosAngle, targetable.Collider) ||

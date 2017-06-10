@@ -42,11 +42,13 @@ public class ProcessLineOfSights : MonoBehaviour {
             calcPoints(currentTarget, out midPoint, out leftPoint, out rightPoint);
             if (!HitTestPoint(midPoint, maxTargetingDistance, maxTargetingDistanceSqr, minTargetingCosAngle, currentTarget.Collider) ||
                     HitTestPoint(leftPoint, maxTargetingDistance, maxTargetingDistanceSqr, minTargetingCosAngle, currentTarget.Collider) ||
-                    HitTestPoint(rightPoint, maxTargetingDistance, maxTargetingDistanceSqr, minTargetingCosAngle, currentTarget.Collider))
+                    HitTestPoint(rightPoint, maxTargetingDistance, maxTargetingDistanceSqr, minTargetingCosAngle, currentTarget.Collider) ||
+                    currentTarget.isVisibleOnly)
             {
                 updateCurrentTarget(null);
             }
         }
+
 
         Targetable candidateTarget = null;
         float sqrDistToTarget = float.MaxValue;

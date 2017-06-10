@@ -65,6 +65,7 @@ public class PlayerController : NetworkBehaviour
             LineOfSights.TargetingLineOfSight.MaxDistance = weaponParams.FireDistance;
 
             GameLogic.Instance.HUD.SwitchToLive();
+            GameLogic.Instance.HUD.SetHP(_currentHealth, rpgParams.MaxHealth);
         }
         else
         {
@@ -190,9 +191,11 @@ public class PlayerController : NetworkBehaviour
 
         _isDead = isDead;
         animator.SetDeadState(isDead);
+        selfTargetable.isVisibleOnly = isDead;
 
         if (isLocalPlayer)
         {
+            Debug.LogFormat("ONCHANGE HEALTH(local):" + value);
             GameLogic.Instance.HUD.SetHP(value, rpgParams.MaxHealth);
 
             if (_isDead)

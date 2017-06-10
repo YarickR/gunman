@@ -12,10 +12,10 @@ MonoBehaviour:
   m_Name: SR-1
   m_EditorClassIdentifier: 
   Damage: 70
-  StartFireDelay: 4
+  StartFireDelay: 2.5
   RangeOfAiming: 30
-  FireDistance: 24
-  DropTargetPercent: 0.5
+  FireDistance: 15
+  DropTargetPercent: 0.1
   FireRate: 0.5
   AmmoType: 30
   ClipSize: 1

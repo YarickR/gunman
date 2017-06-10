@@ -11,8 +11,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4f4daaef367ae8841b1071bdf0743837, type: 3}
   m_Name: Melee
   m_EditorClassIdentifier: 
-  Damage: 100
-  StartFireDelay: 0
+  Damage: 20
+  StartFireDelay: 0.4
   RangeOfAiming: 60
   FireDistance: 2
   DropTargetPercent: 0

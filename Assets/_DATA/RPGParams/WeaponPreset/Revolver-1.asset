@@ -14,8 +14,8 @@ MonoBehaviour:
   Damage: 30
   StartFireDelay: 0.1
   RangeOfAiming: 80
-  FireDistance: 3
-  DropTargetPercent: 0
+  FireDistance: 4
+  DropTargetPercent: 0.1
   FireRate: 1.5
   AmmoType: 10
   ClipSize: 6

@@ -33,6 +33,11 @@ public class Targetable : MonoBehaviour
                 _visible = value;
             }
         }
+
+        get
+        {
+            return _visible;
+        }
     }
 
     void Awake()

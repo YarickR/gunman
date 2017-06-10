@@ -12,6 +12,8 @@ public class ProcessLineOfSights : MonoBehaviour {
     private Targetable currentTarget;
     private float currentTargetAcquireTime;
 
+    private PlayerController playerController;
+
     public Targetable CurrentTarget
     {
         get { return currentTarget; }
@@ -25,6 +27,8 @@ public class ProcessLineOfSights : MonoBehaviour {
 	// Update is called once per frame
 	void Update () {
         CheckForTargets();
+
+        WallsVisibility();
 	}
 
     void CheckForTargets()
@@ -198,6 +202,59 @@ public class ProcessLineOfSights : MonoBehaviour {
         //Debug.LogFormat("no hit");
 
         return false;
+    }
+
+    const int MAX_WALL_HITS = 20;
+    RaycastHit[] wallHits = new RaycastHit[MAX_WALL_HITS];
+
+    void WallsVisibility()
+    {
+        if (playerController == null)
+        {
+            playerController = GetComponentInParent<PlayerController>();
+        }
+
+        var camera = playerController.cam;
+
+        foreach (var wall in WallVisibility.All)
+        {
+            wall.SetOpaque();
+        }
+
+        var position = camera.transform.position + 0.3f * Vector3.down;
+        var direction = camera.transform.forward;
+        
+        int hitsCount = Physics.SphereCastNonAlloc(position, 0.1f, direction, wallHits);
+
+        for (int i = 0; i < hitsCount; ++i)
+        {
+            var hit = wallHits[i];
+
+            var wallVisibility = hit.collider.GetComponent<WallVisibility>();
+            if (wallVisibility != null) {
+                wallVisibility.SetTransparent();
+            }
+        }
+
+        float da = VisibilityLineOfSight.MaxAngle / 20;
+        for (float a = -VisibilityLineOfSight.MaxAngle/2; a <= VisibilityLineOfSight.MaxAngle/2; a += da)
+        {
+            RaycastHit hit;
+            var ray = new Ray(transform.position, Quaternion.Euler(0, a, 0) * transform.forward);
+            if (Physics.Raycast(ray, out hit, VisibilityLineOfSight.MaxDistance, LayerMask.GetMask("Walls")))
+            {
+                var localNormal = hit.collider.transform.InverseTransformDirection(hit.normal);
+
+                if (Vector3.Dot(hit.normal, direction) > 0 && Mathf.Abs(localNormal.z) < 0.1f)
+                {
+                    var wallVisibility = hit.collider.GetComponent<WallVisibility>();
+                    if (wallVisibility != null)
+                    {
+                        wallVisibility.SetTransparent();
+                    }
+                }
+            }
+        }
     }
 
     static IComparer<RaycastHit> sortByHitDistanceComparer = new SortByDistanceComparer();

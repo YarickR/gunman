@@ -6,6 +6,13 @@ using UnityEngine.Networking;
 
 public class PlayerController : NetworkBehaviour
 {
+    private static float LOCATION_RANGE = 20.0f;
+    private static float LOCATION_RANGE_SQR = LOCATION_RANGE * LOCATION_RANGE;
+
+    private static PlayerController LocalClientController;
+
+    private Dictionary<NetworkInstanceId, GameObject> _cachedControllers = new Dictionary<NetworkInstanceId, GameObject>();
+
     public Transform cameraPlaceHolder;
 
     public PlayerCamera cam;
@@ -56,15 +63,18 @@ public class PlayerController : NetworkBehaviour
 
     public override void OnStartLocalPlayer()
     {
+        name = "Player_" + playerControllerId.ToString();
+
         if (isLocalPlayer)
         {
+            LocalClientController = this;
+
             cam = PlayerCamera.instance;
             cam.SetFollowTransform(cameraPlaceHolder);
             LineOfSights.gameObject.SetActive(true);
             LineOfSights.IgnoreTarget = selfTargetable;
             LineOfSights.VisibilityLineOfSight.MaxAngle = rpgParams.RangeOfView;
             LineOfSights.VisibilityLineOfSight.MaxDistance = rpgParams.ViewDistance;
-            name = "Player_" + playerControllerId.ToString();
 
             //weapon tmp
             var weapon = this.gameObject.AddComponent<WeaponController>();
@@ -161,16 +171,6 @@ public class PlayerController : NetworkBehaviour
     }
     #endregion
 
-    [ClientRpc]
-    public void RpcEnd(bool isVictory, int place, int maxPlayersCount)
-    {   
-        if (isLocalPlayer)
-        {
-            Debug.LogFormat("RpcEnd {0}/{1}", isVictory, place, maxPlayersCount);
-            GameLogic.Instance.HUD.SwitchToEnd(isVictory, place, maxPlayersCount);
-        }
-    }
-
     Vector3 computeDirection(Vector2 rawInput)
     {
         Vector3 upVector = Vector3.ProjectOnPlane(cam.transform.forward, Vector3.up).normalized;
@@ -228,6 +228,72 @@ public class PlayerController : NetworkBehaviour
     #region Server actions
     #endregion
 
+    #region Client rpc
+    [ClientRpc]
+    public void RpcEnd(bool isVictory, int place, int maxPlayersCount)
+    {
+        if (isLocalPlayer)
+        {
+            Debug.LogFormat("RpcEnd {0}/{1}", isVictory, place, maxPlayersCount);
+            GameLogic.Instance.HUD.SwitchToEnd(isVictory, place, maxPlayersCount);
+        }
+    }
+
+    [ClientRpc]
+    private void RpcShotAct(NetworkInstanceId DamagerNetId)
+    {
+        GameObject playerGO = null;
+        if (_cachedControllers.ContainsKey(DamagerNetId))
+        {
+            playerGO = _cachedControllers[DamagerNetId];
+        }
+        else
+        {
+            NetworkIdentity[] identities = NetworkIdentity.FindObjectsOfType<NetworkIdentity>();
+            for (int i = 0, l = identities.Length; i < l; ++i)
+            {
+                if (!_cachedControllers.ContainsKey(identities[i].netId))
+                {
+                    _cachedControllers[identities[i].netId] = identities[i].gameObject;
+                }
+
+                if (identities[i].netId == DamagerNetId)
+                {
+                    playerGO = identities[i].gameObject;
+                }
+            }
+        }
+
+        if (playerGO == null)
+        {
+            return;
+        }
+
+        if (isLocalPlayer)
+        {
+            //show hit on self
+        }
+
+        var targetController = playerGO.GetComponent<PlayerController>();
+        var isVisible = targetController.selfTargetable.Visible;
+        if (isVisible)
+        {
+            return;
+        }
+
+        if (LocalClientController == null)
+        {
+            return;
+        }
+
+        var localClientPosition = LocalClientController.transform.position;
+        if ((localClientPosition - targetController.transform.position).sqrMagnitude < LOCATION_RANGE_SQR)
+        {
+            WorldFlashes.Instance.ShowFire(targetController.transform.position);
+        }
+    }
+    #endregion
+
     #region Client commands
     [Command]
     public void CmdSendDamageToServer(float damageValue)
@@ -238,10 +304,17 @@ public class PlayerController : NetworkBehaviour
     [Command]
     public void CmdSendDamageToPlayer(float damageValue, NetworkInstanceId netId)
     {
+        if (_currentHealth <= 0.0f)
+        {
+            return;
+        }
+
         var playerGO = NetworkServer.FindLocalObject(netId);
         if (playerGO != null)
         {
-            playerGO.GetComponent<PlayerController>().ReceiveDamage(damageValue);
+            var targetController = playerGO.GetComponent<PlayerController>();
+            targetController.ReceiveDamage(damageValue);
+            targetController.RpcShotAct(this.netId);
         }
     }
     #endregion

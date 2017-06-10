@@ -4,24 +4,33 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class MuzzleFlash : MonoBehaviour {
+    public static string SHOT_PREFAB_PATH = "MuzzleFlashShot";
+
+    public bool needReturnToCache = false;
+
+    public float showTime = 0.1f;
 
 	private float _flashStart;
-	// Use this for initialization
-	void Start () {
-		
-	}
 
-
-	public void Flash() {
+	public void Flash()
+    {
 		_flashStart = Time.time;
 		gameObject.SetActive(true);
 	}
-	// Update is called once per frame
-	void Update () {
-		if (_flashStart > 0) {
-			if ((Time.time - _flashStart) > 0.1f) { 
+
+	void Update ()
+    {
+		if (_flashStart > 0)
+        {
+            if ((Time.time - _flashStart) > showTime)
+            { 
 				gameObject.SetActive(false);
 				_flashStart = 0;
+
+                if (needReturnToCache)
+                {
+
+                }
 			} 
 		}
 	}

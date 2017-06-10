@@ -6,6 +6,8 @@ using UnityEngine.UI;
 public class GameHUD : MonoBehaviour {
     public JoystickPlayerInput Joystick;
     public Slider HP;
+    public GameObject Weap1, Cons1, Ammo1;
+    public Text InfoPanel, LeftAlive;
     public GameObject DeathScreen;
 
     public void SwitchToDeath()
@@ -21,5 +23,8 @@ public class GameHUD : MonoBehaviour {
     }
     public void SetHP(float newHP, float maxHP) {
     	HP.value = (Mathf.Max((newHP * 100)/maxHP, 100));
+    }
+    public void AddInfoText(string newLine) {
+    	
     }
 }

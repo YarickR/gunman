@@ -9,19 +9,19 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 4f4daaef367ae8841b1071bdf0743837, type: 3}
-  m_Name: AR-1
+  m_Name: Melee
   m_EditorClassIdentifier: 
-  Damage: 10
-  StartFireDelay: 2
-  RangeOfAiming: 45
-  FireDistance: 7.5
-  DropTargetPercent: 0.5
-  FireRate: 5
-  ClipSize: 20
-  MaxAmmo: 20
-  ReloadTime: 3
-  CritChance: 0.25
-  CritMultiplier: 1.25
-  InHandsModel: {fileID: 1062658062024302, guid: a9ac75fc3580b784ab591047b0c83625,
+  Damage: 100
+  StartFireDelay: 0
+  RangeOfAiming: 60
+  FireDistance: 2
+  DropTargetPercent: 0
+  FireRate: 0
+  ClipSize: 1
+  MaxAmmo: 999999
+  ReloadTime: 0
+  CritChance: 0
+  CritMultiplier: 1
+  InHandsModel: {fileID: 1913468561089224, guid: 4d38e7bad15a77f4586398ae7e4e851b,
     type: 2}
-  WeaponId: 1
+  WeaponId: 2

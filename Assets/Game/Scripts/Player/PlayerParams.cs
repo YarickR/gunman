@@ -35,6 +35,8 @@ public static class CreateScriptableObject
 
 public class PlayerParams : ScriptableObject
 {
+    public WeaponParams StartWeapon;
+
     [Range(0.0f, 1.0f)]
     public float MoveAimSlowFactor;
 

@@ -79,7 +79,9 @@ public class WeaponController : MonoBehaviour
 
     private void Update()
     {
-        if (playerController == null || _rpgParams == null)
+        if (playerController == null ||
+            _rpgParams == null ||
+            !playerController.isLocalPlayer)
         {
             return;
         }

@@ -24,3 +24,4 @@ MonoBehaviour:
   CritMultiplier: 1.2
   InHandsModel: {fileID: 1253478678097210, guid: 26163a838f4d06b478761cad6f856ed8,
     type: 2}
+  WeaponId: 3

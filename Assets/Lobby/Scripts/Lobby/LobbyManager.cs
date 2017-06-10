@@ -64,6 +64,8 @@ namespace Prototype.NetworkLobby
 
         void Start()
         {
+            var wList = WeaponsList.Instance;
+
             s_Singleton = this;
             _lobbyHooks = GetComponent<Prototype.NetworkLobby.LobbyHook>();
             currentPanel = mainMenuPanel;

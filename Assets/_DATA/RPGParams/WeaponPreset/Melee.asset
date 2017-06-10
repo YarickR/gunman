@@ -16,7 +16,7 @@ MonoBehaviour:
   RangeOfAiming: 60
   FireDistance: 2
   DropTargetPercent: 0
-  FireRate: 0
+  FireRate: 1
   ClipSize: 1
   MaxAmmo: 999999
   ReloadTime: 0

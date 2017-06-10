@@ -60,6 +60,7 @@ public class PlayerController : NetworkBehaviour
             cam.SetFollowTransform(cameraPlaceHolder);
             LineOfSights.gameObject.SetActive(true);
             LineOfSights.IgnoreTarget = selfTargetable;
+            name = "Player_" + playerControllerId.ToString();
         }
         else
         {

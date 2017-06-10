@@ -8,6 +8,8 @@ public class Targetable : MonoBehaviour {
     public Collider Collider;
     public float Radius;
 
+    public PlayerController PlayerController;
+
     public static IEnumerable<Targetable> AllTargets
     {
         get { return s_allTargets; }
@@ -20,6 +22,7 @@ public class Targetable : MonoBehaviour {
         set {
             if (_visible != value)
             {
+            //    Debug.LogFormat("CHANGE VISIBILITY {0} {1}", PlayerController.playerControllerId, value);
                 foreach (var r in renderers)
                 {
                     r.enabled = value;
@@ -35,6 +38,11 @@ public class Targetable : MonoBehaviour {
         if (Collider == null)
         {
             Collider = GetComponent<Collider>();
+        }
+        
+        if (PlayerController == null)
+        {
+            PlayerController = GetComponent<PlayerController>();
         }
 
         if (Collider is CharacterController)
@@ -53,12 +61,12 @@ public class Targetable : MonoBehaviour {
     void OnEnable()
     {
         s_allTargets.Add(this);
-        Debug.LogFormat("TARGETS {0}", s_allTargets.Count);
+      //  Debug.LogFormat("TARGETS {0}", s_allTargets.Count);
     }
 
     void OnDisable()
     {
         s_allTargets.Remove(this);
-        Debug.LogFormat("TARGETS {0}", s_allTargets.Count);
+//        Debug.LogFormat("TARGETS {0}", s_allTargets.Count);
     }
 }

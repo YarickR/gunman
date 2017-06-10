@@ -21,7 +21,7 @@ GameObject:
   - component: {fileID: 4499319539335510}
   - component: {fileID: 33410640950338804}
   - component: {fileID: 23387929914106500}
-  - component: {fileID: 114644498800102764}
+  - component: {fileID: 114148648767869410}
   - component: {fileID: 114727031466028928}
   m_Layer: 0
   m_Name: Weapon_2
@@ -82,7 +82,7 @@ MeshFilter:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1494431091145542}
   m_Mesh: {fileID: 4300000, guid: c18555ea3dd91ae4997f7da1af04e436, type: 3}
---- !u!114 &114644498800102764
+--- !u!114 &114148648767869410
 MonoBehaviour:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
@@ -90,10 +90,14 @@ MonoBehaviour:
   m_GameObject: {fileID: 1494431091145542}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 0e150f17f34953549a63265d9f3c05ae, type: 3}
+  m_Script: {fileID: 11500000, guid: 60db703a52302d0488c7bec83e6ca151, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  rpgParams: {fileID: 11400000, guid: e81fae31275c8c7449976e38386f5f81, type: 2}
+  PickupRadius: 0.1
+  InteractionTime: 2
+  Params: {fileID: 11400000, guid: e81fae31275c8c7449976e38386f5f81, type: 2}
+  ClipAmmo: 10
+  BackpackAmmo: 15
 --- !u!114 &114727031466028928
 MonoBehaviour:
   m_ObjectHideFlags: 1

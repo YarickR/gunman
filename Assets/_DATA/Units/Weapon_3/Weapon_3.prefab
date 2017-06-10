@@ -20,7 +20,9 @@ GameObject:
   m_Component:
   - component: {fileID: 4611451801419896}
   - component: {fileID: 33330589343747084}
+  - component: {fileID: 114953468975182374}
   - component: {fileID: 23833889600925542}
+  - component: {fileID: 114909096651084846}
   m_Layer: 0
   m_Name: Weapon_3
   m_TagString: Untagged
@@ -80,3 +82,51 @@ MeshFilter:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1146925009720406}
   m_Mesh: {fileID: 4300000, guid: 49d298a904ac20843b99b801a30efa9e, type: 3}
+--- !u!114 &114909096651084846
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1146925009720406}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 372142912, guid: 870353891bb340e2b2a9c8707e7419ba, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_SceneId:
+    m_Value: 0
+  m_AssetId:
+    i0: 138
+    i1: 242
+    i2: 221
+    i3: 172
+    i4: 236
+    i5: 242
+    i6: 212
+    i7: 52
+    i8: 43
+    i9: 149
+    i10: 236
+    i11: 221
+    i12: 129
+    i13: 247
+    i14: 235
+    i15: 107
+  m_ServerOnly: 0
+  m_LocalPlayerAuthority: 0
+--- !u!114 &114953468975182374
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1146925009720406}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 60db703a52302d0488c7bec83e6ca151, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  PickupRadius: 0.1
+  InteractionTime: 2
+  Params: {fileID: 11400000, guid: 42c7384fda1ea46739c5be428daa6246, type: 2}
+  ClipAmmo: 1
+  BackpackAmmo: 1

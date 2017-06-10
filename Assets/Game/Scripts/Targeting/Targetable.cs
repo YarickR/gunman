@@ -25,7 +25,7 @@ public class Targetable : MonoBehaviour
         set {
             if (_visible != value)
             {
-                Debug.LogFormat("CHANGE VISIBILITY {0} {1}", name, value);
+               // Debug.LogFormat("CHANGE VISIBILITY {0} {1}", name, value);
                 foreach (var r in renderers)
                 {
                     r.enabled = value;

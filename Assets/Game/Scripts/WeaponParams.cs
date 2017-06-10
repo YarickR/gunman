@@ -41,6 +41,9 @@ public class WeaponParams : ScriptableObject
     [Range(1.0f, 10.0f)]
     public float CritMultiplier = 1.0f;
 
+    public GameObject InHandsModel;
+    public int WeaponId;
+
 #if UNITY_EDITOR
     [MenuItem("RPGParams/Params/Create weapon params", false, 100)]
     public static void CreatePlayerParams()

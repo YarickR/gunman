@@ -22,3 +22,6 @@ MonoBehaviour:
   ReloadTime: 3
   CritChance: 0.25
   CritMultiplier: 1.25
+  InHandsModel: {fileID: 1062658062024302, guid: a9ac75fc3580b784ab591047b0c83625,
+    type: 2}
+  WeaponId: 1

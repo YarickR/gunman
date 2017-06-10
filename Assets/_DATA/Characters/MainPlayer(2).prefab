@@ -506,6 +506,7 @@ GameObject:
   - component: {fileID: 114664163265108802}
   - component: {fileID: 114796404108621792}
   - component: {fileID: 114554886388197328}
+  - component: {fileID: 114546752535068784}
   m_Layer: 0
   m_Name: MainPlayer(2)
   m_TagString: Untagged
@@ -1199,6 +1200,20 @@ MonoBehaviour:
   VisibilityLineOfSight: {fileID: 114757307021700092}
   TargetingLineOfSight: {fileID: 114100874141396420}
   IgnoreTarget: {fileID: 0}
+--- !u!114 &114546752535068784
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1920313087836292}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a3885512bd53d8f4bb6977f7ebdb601e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  playerController: {fileID: 114875221773164140}
+  weaponPlaceHolder: {fileID: 4816289629347380}
+  weaponParams: {fileID: 0}
 --- !u!114 &114554886388197328
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1369,8 +1384,10 @@ MonoBehaviour:
   cam: {fileID: 0}
   input: {fileID: 114664163265108802}
   animator: {fileID: 114872658889386068}
+  weaponController: {fileID: 114546752535068784}
   muzzleFlash: {fileID: 114870624748248870}
   LineOfSights: {fileID: 114181061584190042}
+  MapContainers: []
   rpgParams: {fileID: 11400000, guid: ae67f55987ba41d4e9b4f1fe5ce95be7, type: 2}
   weaponParams: {fileID: 11400000, guid: e81fae31275c8c7449976e38386f5f81, type: 2}
 --- !u!136 &136641656820960462

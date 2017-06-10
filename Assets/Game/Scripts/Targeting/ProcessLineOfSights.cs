@@ -126,9 +126,9 @@ public class ProcessLineOfSights : MonoBehaviour {
     {
         if (currentTarget != null)
         {
-            Debug.LogFormat("LOST CURRENT TARGET {0} | {1}", currentTarget != null ? currentTarget.name : null, TargetDuration);
+       //     Debug.LogFormat("LOST CURRENT TARGET {0} | {1}", currentTarget != null ? currentTarget.name : null, TargetDuration);
         }
-        Debug.LogFormat("CURRENT TARGET {0}", target != null ? target.name : null);
+     //   Debug.LogFormat("CURRENT TARGET {0}", target != null ? target.name : null);
         currentTarget = target;
         currentTargetAcquireTime = Time.time;
     }

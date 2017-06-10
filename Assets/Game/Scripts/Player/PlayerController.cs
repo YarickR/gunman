@@ -18,6 +18,7 @@ public class PlayerController : NetworkBehaviour
     public PlayerCamera cam;
     public PlayerInput input;
     public PlayerAnimator animator;
+    public WeaponController weaponController;
     public MuzzleFlash muzzleFlash;
     public ProcessLineOfSights LineOfSights;
     public List<Container> MapContainers;
@@ -37,6 +38,8 @@ public class PlayerController : NetworkBehaviour
 
     [Header("Current weapon params")]
     public WeaponParams weaponParams;
+
+    public InteractSystem InteractSystem;
 
     //+++++ net params
     [SyncVar(hook = "OnChangeHealth")]
@@ -76,14 +79,17 @@ public class PlayerController : NetworkBehaviour
             LineOfSights.VisibilityLineOfSight.MaxAngle = rpgParams.RangeOfView;
             LineOfSights.VisibilityLineOfSight.MaxDistance = rpgParams.ViewDistance;
 
-            //weapon tmp
-            var weapon = this.gameObject.AddComponent<WeaponController>();
-            weapon.weaponParams = weaponParams;
-            weapon.playerController = this;
-            weapon.Init(weaponParams.ClipSize, weaponParams.MaxAmmo);
+            //weapon tmp!!!
+            weaponController.InitWithParams(weaponParams, weaponParams.ClipSize, weaponParams.MaxAmmo);
 
             LineOfSights.TargetingLineOfSight.MaxAngle = weaponParams.RangeOfAiming;
             LineOfSights.TargetingLineOfSight.MaxDistance = weaponParams.FireDistance;
+
+            if (InteractSystem == null)
+            {
+                InteractSystem = gameObject.AddComponent<InteractSystem>();
+            }
+            InteractSystem.enabled = true;
 
             GameLogic.Instance.HUD.SwitchToLive();
             GameLogic.Instance.HUD.SetHP(_currentHealth, rpgParams.MaxHealth);
@@ -95,6 +101,10 @@ public class PlayerController : NetworkBehaviour
         else
         {
             LineOfSights.gameObject.SetActive(false);
+            if (InteractSystem != null)
+            {
+                InteractSystem.enabled = false;
+            }
         }
     }
 
@@ -317,6 +327,22 @@ public class PlayerController : NetworkBehaviour
             targetController.RpcShotAct(this.netId);
         }
     }
+
+    [Command]
+    public void CmdActivateInteractable(NetworkInstanceId interactableID)
+    {
+        var interactableGO = NetworkServer.FindLocalObject(interactableID);
+        if (interactableGO != null)
+        {
+            Debug.LogFormat("interactableGO {0}", interactableGO);
+            
+            interactableGO.GetComponent<Interactable>().Interact(this);
+        }
+    }
+    #endregion
+
+    #region Client weapon
+
     #endregion
 
     private bool IsInputAvalible()

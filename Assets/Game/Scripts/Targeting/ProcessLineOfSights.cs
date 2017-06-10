@@ -106,12 +106,15 @@ public class ProcessLineOfSights : MonoBehaviour {
         var direction = (targetable.transform.position - transform.position).normalized;
         var rotatedDirection = new Vector3(direction.z, 0, -direction.x);
 
-        Vector3 heightDelta = new Vector3(0, 1, 0);
+        Vector3 heightDelta = new Vector3(0, transform.position.y, 0);
 
-        midPoint = targetable.transform.position + heightDelta;
+        midPoint = targetable.transform.position;
+        midPoint.y = transform.position.y;
         float k = 0.95f;
         leftPoint = midPoint + k * rotatedDirection * targetable.Radius + heightDelta;
+        leftPoint.y = transform.position.y;
         rightPoint = midPoint - k * rotatedDirection * targetable.Radius + heightDelta;
+        rightPoint.y = transform.position.y;
     }
 
     void updateCurrentTarget(Targetable target)
@@ -167,9 +170,14 @@ public class ProcessLineOfSights : MonoBehaviour {
         else
         {
             int hitsCount = Physics.RaycastNonAlloc(transform.position, direction, hits, maxDistance);
+            //Debug.DrawRay(transform.position, direction, Color.red);
+            //Debug.LogFormat("HITS COUNT {0}", hitsCount);
             for (int i = 0; i < hitsCount; ++i)
             {
                 var hit = hits[i];
+
+                
+
                 if (hit.collider.gameObject.layer == LayerMask.NameToLayer("Targets"))
                 {
                     if (hit.collider == col)
@@ -179,10 +187,13 @@ public class ProcessLineOfSights : MonoBehaviour {
                 }
                 else
                 {
+                    //Debug.LogFormat("wall hit {0}", hit.collider.name);
                     return false;
                 }
             }
         }
+
+        //Debug.LogFormat("no hit");
 
         return false;
     }

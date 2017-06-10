@@ -53,6 +53,7 @@ public class PlayerController : NetworkBehaviour
             LineOfSights.gameObject.SetActive(true);
             LineOfSights.IgnoreTarget = selfTargetable;
             LineOfSights.VisibilityLineOfSight.MaxAngle = rpgParams.RangeOfView;
+            LineOfSights.VisibilityLineOfSight.MaxDistance = rpgParams.ViewDistance;
             name = "Player_" + playerControllerId.ToString();
 
             //weapon tmp

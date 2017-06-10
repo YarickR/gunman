@@ -61,6 +61,8 @@ public class PlayerController : NetworkBehaviour
 
             LineOfSights.TargetingLineOfSight.MaxAngle = weaponParams.RangeOfAiming;
             LineOfSights.TargetingLineOfSight.MaxDistance = weaponParams.FireDistance;
+
+            notifyLogicAboutDeath(false);
         }
         else
         {
@@ -145,38 +147,45 @@ public class PlayerController : NetworkBehaviour
     private void InitRPGParams()
     {
         _currentHealth = rpgParams.MaxHealth;
-        if (isLocalPlayer)
-        {
-            GameLogic.Instance.OnPlayerAlive();
-        }
+        
+        GameLogic.Instance.OnPlayerAlive(this, isLocalPlayer);
     }
 
     private void ReceiveDamage(float damageValue)
     {
         _currentHealth -= damageValue;
+
+       // notifyLogicAboutDeath();
+    }
+
+    private void notifyLogicAboutDeath(bool isDead)
+    {
+        if (isDead)
+        {
+            GameLogic.Instance.OnPlayerDeath(this, isLocalPlayer);
+        }
+        else
+        {
+            GameLogic.Instance.OnPlayerAlive(this, isLocalPlayer);
+        }
     }
     #endregion
 
     #region network hooks
     private void OnChangeHealth(float value)
     {
+        Debug.LogFormat("ONCHANGE HEALTH");
         bool isDead = value <= 0.0f;
 
         _isDead = isDead;
         animator.SetDeadState(isDead);
 
         if (isLocalPlayer)
-		{
-			GameLogic.Instance.HUD.SetHP(value, rpgParams.MaxHealth);
-            if (_isDead)
-            {
-                GameLogic.Instance.OnPlayerDeath();
-            }
-            else
-            {
-                GameLogic.Instance.OnPlayerAlive();
-            }
+        {
+            GameLogic.Instance.HUD.SetHP(value, rpgParams.MaxHealth);
         }
+
+        notifyLogicAboutDeath(_isDead);
     }
     #endregion
 

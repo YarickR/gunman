@@ -9,6 +9,8 @@ public class Targetable : MonoBehaviour
     public Collider Collider;
     public float Radius;
 
+    public List<VisiblePart> additionalParts = new List<VisiblePart>();
+
     public bool isVisibleOnly = false;
 
     public PlayerController PlayerController;
@@ -30,6 +32,12 @@ public class Targetable : MonoBehaviour
                 {
                     r.enabled = value;
                 }
+
+                foreach (var e in additionalParts)
+                {
+                    e.SetVisible(value);
+                }
+
                 _visible = value;
             }
         }

@@ -1422,7 +1422,7 @@ MonoBehaviour:
   m_LogLevel: 2
   m_PlayerPrefab: {fileID: 0}
   m_AutoCreatePlayer: 1
-  m_PlayerSpawnMethod: 0
+  m_PlayerSpawnMethod: 1
   m_OfflineScene: Main
   m_OnlineScene: 
   m_SpawnPrefabs: []
@@ -5542,6 +5542,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   HUD: {fileID: 639629579}
   EndGameDuration: 3
+  LocalPlayer: {fileID: 0}
 --- !u!114 &1886970762
 MonoBehaviour:
   m_ObjectHideFlags: 0

@@ -17,11 +17,14 @@ MonoBehaviour:
   FireDistance: 7.5
   DropTargetPercent: 0.5
   FireRate: 5
+  AmmoType: 20
   ClipSize: 20
   MaxAmmo: 20
   ReloadTime: 3
   CritChance: 0.25
   CritMultiplier: 1.25
   InHandsModel: {fileID: 1062658062024302, guid: a9ac75fc3580b784ab591047b0c83625,
+    type: 2}
+  PicablePrefab: {fileID: 1494431091145542, guid: 222bae2cd5522ed48bdb36b962ffce49,
     type: 2}
   WeaponId: 1

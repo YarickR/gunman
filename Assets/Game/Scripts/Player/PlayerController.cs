@@ -67,8 +67,20 @@ public class PlayerController : NetworkBehaviour
         InitRPGParams();
     }
 
+    public override void OnStartClient()
+    {
+        base.OnStartClient();
+
+        if (!isLocalPlayer)
+        {
+            SetWeaponById(rpgParams.StartWeapon.WeaponId, rpgParams.StartWeapon.ClipSize, rpgParams.StartWeapon.MaxAmmo);
+        }
+    }
+
     public override void OnStartLocalPlayer()
     {
+        base.OnStartLocalPlayer();
+
         name = "Player_" + playerControllerId.ToString();
 
         if (isLocalPlayer)
@@ -83,9 +95,10 @@ public class PlayerController : NetworkBehaviour
             LineOfSights.VisibilityLineOfSight.MaxDistance = rpgParams.ViewDistance;
 
             //--- remove after net init
-            weaponController.InitWithParams(rpgParams.StartWeapon, rpgParams.StartWeapon.ClipSize, rpgParams.StartWeapon.MaxAmmo);
-            LineOfSights.TargetingLineOfSight.MaxAngle = rpgParams.StartWeapon.RangeOfAiming;
-            LineOfSights.TargetingLineOfSight.MaxDistance = rpgParams.StartWeapon.FireDistance;
+            //weaponController.InitWithParams(rpgParams.StartWeapon, rpgParams.StartWeapon.ClipSize, rpgParams.StartWeapon.MaxAmmo);
+            //LineOfSights.TargetingLineOfSight.MaxAngle = rpgParams.StartWeapon.RangeOfAiming;
+            //LineOfSights.TargetingLineOfSight.MaxDistance = rpgParams.StartWeapon.FireDistance;
+            SetWeaponById(rpgParams.StartWeapon.WeaponId, rpgParams.StartWeapon.ClipSize, rpgParams.StartWeapon.MaxAmmo);
             //---
 
             if (InteractSystem == null)
@@ -110,6 +123,8 @@ public class PlayerController : NetworkBehaviour
                 InteractSystem.enabled = false;
             }
         }
+
+        SetWeaponById(rpgParams.StartWeapon.WeaponId, rpgParams.StartWeapon.ClipSize, rpgParams.StartWeapon.MaxAmmo);
     }
 
     public void UpdateTimer(float currValue, float maxValue) {
@@ -334,7 +349,12 @@ public class PlayerController : NetworkBehaviour
     }
 
     [ClientRpc]
-    private void RpcSetWeaponById(int weaponId, int clipAmmo, int backpackAmmo)
+    public void RpcSetWeaponById(int weaponId, int clipAmmo, int backpackAmmo)
+    {
+        SetWeaponById(weaponId, clipAmmo, backpackAmmo);
+    }
+
+    private void SetWeaponById(int weaponId, int clipAmmo, int backpackAmmo)
     {
         WeaponParams targetWeaponParams = WeaponsList.Instance.GetParamsByID(weaponId);
         if (targetWeaponParams == null)
@@ -346,7 +366,6 @@ public class PlayerController : NetworkBehaviour
 
         if (isLocalPlayer)
         {
-
             LineOfSights.TargetingLineOfSight.MaxAngle = targetWeaponParams.RangeOfAiming;
             LineOfSights.TargetingLineOfSight.MaxDistance = targetWeaponParams.FireDistance;
         }
@@ -430,5 +449,14 @@ public class PlayerController : NetworkBehaviour
     private bool IsInputAvalible()
     {
         return isLocalPlayer && !_isDead;
+    }
+
+    public void RegisterAdditionalRenderPart(VisiblePart additionalPart)
+    {
+        if (additionalPart != null &&
+            !selfTargetable.additionalParts.Contains(additionalPart))
+        {
+            selfTargetable.additionalParts.Add(additionalPart);
+        }
     }
 }

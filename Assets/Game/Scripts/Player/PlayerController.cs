@@ -301,6 +301,12 @@ public class PlayerController : NetworkBehaviour
             WorldFlashes.Instance.ShowFire(targetController.transform.position);
         }
     }
+
+    [ClientRpc]
+    private void RpcSetWeaponById(int weaponId)
+    {
+
+    }
     #endregion
 
     #region Client commands

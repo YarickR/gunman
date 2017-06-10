@@ -39,6 +39,7 @@ public class PlayerController : NetworkBehaviour
     {
         base.OnStartServer();
 
+        notifyLogicAboutSpawn();
         InitRPGParams();
     }
 
@@ -62,7 +63,7 @@ public class PlayerController : NetworkBehaviour
             LineOfSights.TargetingLineOfSight.MaxAngle = weaponParams.RangeOfAiming;
             LineOfSights.TargetingLineOfSight.MaxDistance = weaponParams.FireDistance;
 
-            notifyLogicAboutDeath(false);
+            GameLogic.Instance.HUD.SwitchToLive();
         }
         else
         {
@@ -76,13 +77,18 @@ public class PlayerController : NetworkBehaviour
         {
             ApplyMove();
 
-            #if UNITY_EDITOR || UNITY_STANDALONE
+#if UNITY_EDITOR || UNITY_STANDALONE
             if (Input.GetKeyDown(KeyCode.Y))
             {
                 CmdSendDamageToServer(20.0f);
             }
-            #endif
+#endif
         }
+    }
+
+    private void OnDestroy()
+    {
+        notifyLogicAboutDeath(_isDead);
     }
 
     #region Movement
@@ -147,15 +153,18 @@ public class PlayerController : NetworkBehaviour
     private void InitRPGParams()
     {
         _currentHealth = rpgParams.MaxHealth;
-        
-        GameLogic.Instance.OnPlayerAlive(this, isLocalPlayer);
     }
 
     private void ReceiveDamage(float damageValue)
     {
         _currentHealth -= damageValue;
 
-       // notifyLogicAboutDeath();
+        // notifyLogicAboutDeath();
+    }
+
+    private void notifyLogicAboutSpawn()
+    {
+        GameLogic.Instance.OnPlayerAlive(this, isLocalPlayer);
     }
 
     private void notifyLogicAboutDeath(bool isDead)
@@ -163,10 +172,6 @@ public class PlayerController : NetworkBehaviour
         if (isDead)
         {
             GameLogic.Instance.OnPlayerDeath(this, isLocalPlayer);
-        }
-        else
-        {
-            GameLogic.Instance.OnPlayerAlive(this, isLocalPlayer);
         }
     }
     #endregion
@@ -183,6 +188,11 @@ public class PlayerController : NetworkBehaviour
         if (isLocalPlayer)
         {
             GameLogic.Instance.HUD.SetHP(value, rpgParams.MaxHealth);
+
+            if (_isDead)
+            {
+                GameLogic.Instance.HUD.SwitchToDeath();
+            }
         }
 
         notifyLogicAboutDeath(_isDead);

@@ -85,12 +85,10 @@ namespace Prototype.NetworkLobby
         public override void OnLobbyServerSceneChanged(string sceneName)
         {
             base.OnLobbyServerSceneChanged(sceneName);
-            Debug.LogFormat("OnLobbyServerSceneChanged");
         }
 
         public override void OnLobbyClientSceneChanged(NetworkConnection conn)
         {
-            Debug.LogFormat("OnLobbyClientSceneChanged");
             if (SceneManager.GetSceneAt(0).name == lobbyScene)
             {
                 

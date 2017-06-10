@@ -40,9 +40,9 @@ public class ProcessLineOfSights : MonoBehaviour {
         {
             Vector3 midPoint, leftPoint, rightPoint;
             calcPoints(currentTarget, out midPoint, out leftPoint, out rightPoint);
-            if (!HitTestPoint(midPoint, maxVisibleDistance, maxVisibleDistanceSqr, minVisibleCosAngle, currentTarget.Collider) ||
-                    HitTestPoint(leftPoint, maxVisibleDistance, maxVisibleDistanceSqr, minVisibleCosAngle, currentTarget.Collider) ||
-                    HitTestPoint(rightPoint, maxVisibleDistance, maxVisibleDistanceSqr, minVisibleCosAngle, currentTarget.Collider))
+            if (!HitTestPoint(midPoint, maxTargetingDistance, maxTargetingDistanceSqr, minTargetingCosAngle, currentTarget.Collider) ||
+                    HitTestPoint(leftPoint, maxTargetingDistance, maxTargetingDistanceSqr, minTargetingCosAngle, currentTarget.Collider) ||
+                    HitTestPoint(rightPoint, maxTargetingDistance, maxTargetingDistanceSqr, minTargetingCosAngle, currentTarget.Collider))
             {
                 updateCurrentTarget(null);
             }

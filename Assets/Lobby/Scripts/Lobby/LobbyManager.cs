@@ -65,6 +65,7 @@ namespace Prototype.NetworkLobby
         void Start()
         {
             s_Singleton = this;
+            GameLogic.gameObject.SetActive(true);
             _lobbyHooks = GetComponent<Prototype.NetworkLobby.LobbyHook>();
             currentPanel = mainMenuPanel;
 
@@ -82,8 +83,15 @@ namespace Prototype.NetworkLobby
             }
         }
 
+        public override void OnLobbyServerSceneChanged(string sceneName)
+        {
+            base.OnLobbyServerSceneChanged(sceneName);
+            Debug.LogFormat("OnLobbyServerSceneChanged");
+        }
+
         public override void OnLobbyClientSceneChanged(NetworkConnection conn)
         {
+            Debug.LogFormat("OnLobbyClientSceneChanged");
             if (SceneManager.GetSceneAt(0).name == lobbyScene)
             {
                 
@@ -120,7 +128,6 @@ namespace Prototype.NetworkLobby
 
                 topPanel.ToggleVisibility(true);
                 topPanel.isInGame = false;
-                GameLogic.gameObject.SetActive(false);
             }
             else
             {
@@ -131,7 +138,6 @@ namespace Prototype.NetworkLobby
                 //backDelegate = StopGameClbk;
                 topPanel.isInGame = true;
                 topPanel.ToggleVisibility(false);
-                GameLogic.gameObject.SetActive(true);
             }
         }
 

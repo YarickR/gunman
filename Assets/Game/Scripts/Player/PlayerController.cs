@@ -301,6 +301,16 @@ public class PlayerController : NetworkBehaviour
             WorldFlashes.Instance.ShowFire(targetController.transform.position);
         }
     }
+
+    [ClientRpc]
+    private void RpcSetWeaponById(int weaponId)
+    {
+        WeaponParams targetWeaponParams = WeaponsList.Instance.GetParamsByID(weaponId);
+        if (targetWeaponParams == null)
+        {
+            return;
+        }
+    }
     #endregion
 
     #region Client commands
@@ -337,6 +347,13 @@ public class PlayerController : NetworkBehaviour
             
             interactableGO.GetComponent<Interactable>().Interact(this);
         }
+    }
+    #endregion
+
+    #region Interact
+    public void SetShowUseButtonState(bool enabled)
+    {
+        GameLogic.Instance.HUD.SetShowUseButton(enabled);
     }
     #endregion
 

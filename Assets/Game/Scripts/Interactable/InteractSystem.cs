@@ -36,7 +36,10 @@ public class InteractSystem : MonoBehaviour
         {
             Debug.LogFormat("Current interactable {0}", currentInteractable);
 
-            playerController.CmdActivateInteractable(interactable.netId);
+            
+
+           // playerController.CmdActivateInteractable(interactable.netId);
         }
+        playerController.SetShowUseButtonState(currentInteractable != null);
     }
 }

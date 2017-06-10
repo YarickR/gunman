@@ -1381,7 +1381,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   cameraPlaceHolder: {fileID: 4917629491719874}
   cam: {fileID: 0}
-  input: {fileID: 114664163265108802}
+  input: {fileID: 114796404108621792}
   animator: {fileID: 114872658889386068}
   weaponController: {fileID: 114546752535068784}
   muzzleFlash: {fileID: 114870624748248870}

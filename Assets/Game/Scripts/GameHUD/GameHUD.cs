@@ -11,6 +11,8 @@ public class GameHUD : MonoBehaviour {
     public EndScreen EndScreen;
     public PlayerController LocalPlayer;
 
+    public Button UseButton;
+
     public void SwitchToEnd(bool isVictory, int playerPlace, int maxPlayers) {
         Joystick.gameObject.SetActive(false);
         EndScreen.SetEndStatus(isVictory, playerPlace, maxPlayers);
@@ -18,7 +20,10 @@ public class GameHUD : MonoBehaviour {
     }
 	public void Start() {
 		LocalPlayer = null;
+
+        UseButton.onClick.AddListener(OnUseButtonClicked);
 	}
+
     public void SwitchToLive() {
         Joystick.gameObject.SetActive(true);
         EndScreen.gameObject.SetActive(false);
@@ -47,8 +52,21 @@ public class GameHUD : MonoBehaviour {
     		
     	}
     }
+
     public void UpdateInventory(PlayerController player = null) {
     	
     }
 
+    public void SetShowUseButton(bool enabled)
+    {
+        UseButton.gameObject.SetActive(enabled);
+    }
+
+    private void OnUseButtonClicked()
+    {
+        if (LocalPlayer != null)
+        {
+            //LocalPlayer.StartUse();
+        }
+    }
 }

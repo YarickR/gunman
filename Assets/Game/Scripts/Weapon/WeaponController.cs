@@ -9,6 +9,16 @@ public class WeaponController : MonoBehaviour
 
     private Dictionary<WeaponParams, GameObject> _cache = new Dictionary<WeaponParams, GameObject>();
 
+    public bool IsReloading
+    {
+        get
+        {
+            return _reloadTime > 0.0f;
+        }
+    }
+
+    public bool IsCanFire { get; set; }
+
     public float ReloadProgeress
     {
         get
@@ -167,6 +177,11 @@ public class WeaponController : MonoBehaviour
 
         var fireRate = 1.0f / _rpgParams.FireRate;
         if (_lastFireTime + fireRate > Time.time)
+        {
+            return;
+        }
+
+        if (!IsCanFire)
         {
             return;
         }

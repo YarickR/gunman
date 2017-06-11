@@ -18,7 +18,6 @@ public class PlayerController : NetworkBehaviour
     public PlayerAnimator animator;
     public WeaponController weaponController;
     public ProcessLineOfSights LineOfSights;
-    public List<Container> MapContainers;
     public bool IsMoving
     {
         get
@@ -63,7 +62,13 @@ public class PlayerController : NetworkBehaviour
     public override void OnStartServer()
     {
         base.OnStartServer();
-
+        GCTX.Log(String.Format("OnStartServer({0}, {1})", playerControllerId, netId));
+		NetworkLobbyManager __mgr = NetworkLobbyManager.singleton as NetworkLobbyManager;
+        for (int i = 0; i < __mgr.lobbySlots.Length; i++) {
+        	if (__mgr.lobbySlots[i] != null) {
+				GCTX.Log(String.Format("Checking slot {0}, playerController id = {1}, netId = {2}, name {3}", i, __mgr.lobbySlots[i].playerControllerId, __mgr.lobbySlots[i].netId, __mgr.lobbySlots[i].gameObject.GetComponent<PlayerInfo>().PlayerName.text ));
+        	}
+        }
         notifyLogicAboutSpawn();
         InitRPGParams();
     }
@@ -81,8 +86,15 @@ public class PlayerController : NetworkBehaviour
     public override void OnStartLocalPlayer()
     {
         base.OnStartLocalPlayer();
-
-        name = "Player_" + playerControllerId.ToString();
+        NetworkLobbyManager __mgr = NetworkLobbyManager.singleton as NetworkLobbyManager;
+        for (int i = 0; i < __mgr.lobbySlots.Length; i++) {
+        	if (__mgr.lobbySlots[i].playerControllerId == playerControllerId) {
+				name = __mgr.lobbySlots[i].name;
+				gameObject.name = __mgr.lobbySlots[i].name;
+				break;
+        	}
+        }
+        //name = "Player_" + playerControllerId.ToString();
 
         if (isLocalPlayer)
         {
@@ -111,10 +123,6 @@ public class PlayerController : NetworkBehaviour
             GameLogic.Instance.HUD.LocalPlayer = this;
             GameLogic.Instance.HUD.SwitchToLive();
             GameLogic.Instance.HUD.SetHP(_currentHealth, rpgParams.MaxHealth);
-            Container[] __cnt = FindObjectsOfType(typeof(Container)) as Container[];
-            for (int i = 0; i < __cnt.Length; i++) {
-            	MapContainers.Add(__cnt[i]);
-            };
         }
         else
         {
@@ -308,6 +316,11 @@ public class PlayerController : NetworkBehaviour
     #endregion
 
     #region Client rpc
+	[ClientRpc]
+	public void RpcSetName(string newName) {
+		gameObject.name = newName;
+		name = newName;
+	}
     [ClientRpc]
     public void RpcEnd(bool isVictory, int place, int maxPlayersCount)
     {
@@ -319,21 +332,30 @@ public class PlayerController : NetworkBehaviour
     }
 
     [ClientRpc]
-    private void RpcShotAct(NetworkInstanceId DamagerNetId)
+    private void RpcShotAct(NetworkInstanceId DamagerNetId, float damage)
     {
-        GameObject playerGO = null;
-        if (ClientScene.objects.ContainsKey(DamagerNetId))
-        {
-            playerGO = ClientScene.objects[DamagerNetId].gameObject;
-        }
 
+    	Debug.LogFormat("RpcShotAct: target: {0}, shooter {1}", netId, DamagerNetId);
+        GameObject playerGO = ClientScene.FindLocalObject(DamagerNetId);
+		PlayerController __attPC = null;	
+        /*
+        if (_cachedControllers.ContainsKey(DamagerNetId))
+        {
+            playerGO = _cachedControllers[DamagerNetId];
+        }
+        else
+        */
         if (playerGO == null)
         {
+        	Debug.LogFormat("Can't find attacker with id {0}", DamagerNetId);
             return;
         }
-
-        if (isLocalPlayer || LocalClientController.netId == DamagerNetId)
-        {
+		GCTX.Log(String.Format("{0} ({4}) deals {3} damage to {1}, {2} HP left", playerGO.GetComponent<PlayerController>().name,  name, _currentHealth, damage, __attPC.name));
+		GameLogic.Instance.HUD.AddInfoLine(playerGO.name + " deals damage to " + name);
+        if (_currentHealth <= 0f) {
+			GameLogic.Instance.HUD.AddInfoLine(playerGO.name + " killed " + name);
+        }
+        if (isLocalPlayer || (LocalClientController.netId == DamagerNetId)) {
             //show hit on self
             spawnHit();
         }
@@ -428,7 +450,7 @@ public class PlayerController : NetworkBehaviour
         {
             var targetController = playerGO.GetComponent<PlayerController>();
             targetController.ReceiveDamage(damageValue);
-            targetController.RpcShotAct(this.netId);
+			targetController.RpcShotAct(this.netId, damageValue);
         }
     }
 

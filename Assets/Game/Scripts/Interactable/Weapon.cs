@@ -6,7 +6,7 @@
 
     public override void Interact(PlayerController player)
     {
-        player.RpcSetWeaponById(Params.WeaponId, ClipAmmo, BackpackAmmo);
+        player.RpcSetWeaponById(Params.WeaponId, ClipAmmo, BackpackAmmo, false);
 
         Destroy(this.gameObject);
     }

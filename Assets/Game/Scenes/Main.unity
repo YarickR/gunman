@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.373132, g: 0.3807496, b: 0.3587258, a: 1}
+  m_IndirectSpecularColor: {r: 0.37311953, g: 0.38074014, b: 0.3587274, a: 1}
 --- !u!157 &3
 LightmapSettings:
   m_ObjectHideFlags: 0
@@ -1426,10 +1426,12 @@ MonoBehaviour:
   m_OfflineScene: Main
   m_OnlineScene: 
   m_SpawnPrefabs:
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
+  - {fileID: 1923918812631946, guid: 58917800408df4b489ec33cc2efdc6f7, type: 2}
+  - {fileID: 1947372869972802, guid: 222bae2cd5522ed48bdb36b962ffce49, type: 2}
+  - {fileID: 1266159792514854, guid: 8af2ddacecf2d4342b95ecdd81f7eb6b, type: 2}
   - {fileID: 1385614789051250, guid: 37fbf57f91adf9e41b1a8088440ead29, type: 2}
+  - {fileID: 1198082686367992, guid: 8a4676a6d1b7e1341bceb7808815f753, type: 2}
+  - {fileID: 1152188389914662, guid: 74a46df5f3c8e4245b0e625864636bfd, type: 2}
   m_CustomConfig: 0
   m_MaxConnections: 4
   m_ConnectionConfig:

@@ -15,6 +15,12 @@ public class GameLogic : NetworkBehaviour
     int playersCount = 0;
 
     Dictionary<NetworkInstanceId, PlayerController> activePlayers = new Dictionary<NetworkInstanceId, PlayerController>();
+
+    public Dictionary<NetworkInstanceId, PlayerController> ActivePlayers
+    {
+        get { return activePlayers; }
+    }
+
     public PlayerController LocalPlayer;
     public static GameLogic Instance
     {

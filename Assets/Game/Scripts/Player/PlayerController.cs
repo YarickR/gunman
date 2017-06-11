@@ -248,7 +248,7 @@ public class PlayerController : NetworkBehaviour
         _currentHealth = rpgParams.MaxHealth;
     }
 
-    private void ReceiveDamage(float damageValue)
+    void ReceiveDamage(float damageValue)
     {
         _currentHealth -= damageValue;
 
@@ -256,6 +256,12 @@ public class PlayerController : NetworkBehaviour
 
         notifyLogicAboutDeath(_currentHealth <= 0);
         // notifyLogicAboutDeath();
+    }
+
+    public void FireDamage(float damageValue, NetworkInstanceId fireID)
+    {
+        ReceiveDamage(damageValue);
+        RpcShotAct(fireID, damageValue);
     }
 
     private void notifyLogicAboutSpawn()
@@ -350,20 +356,24 @@ public class PlayerController : NetworkBehaviour
         }
 
         var targetController = playerGO.GetComponent<PlayerController>();
-        var isVisible = targetController.selfTargetable.Visible;
-        if (isVisible) {
-            return;
-        }
-
-        if (LocalClientController == null)
+        if (targetController != null)
         {
-            return;
-        }
+            var isVisible = targetController.selfTargetable.Visible;
+            if (isVisible)
+            {
+                return;
+            }
 
-        var localClientPosition = LocalClientController.transform.position;
-        if ((localClientPosition - targetController.transform.position).sqrMagnitude < LOCATION_RANGE_SQR)
-        {
-            WorldFlashes.Instance.ShowFire(targetController.transform.position);
+            if (LocalClientController == null)
+            {
+                return;
+            }
+
+            var localClientPosition = LocalClientController.transform.position;
+            if ((localClientPosition - targetController.transform.position).sqrMagnitude < LOCATION_RANGE_SQR)
+            {
+                WorldFlashes.Instance.ShowFire(targetController.transform.position);
+            }
         }
     }
 

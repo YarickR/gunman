@@ -17,6 +17,7 @@ MonoBehaviour:
   FireDistance: 4
   DropTargetPercent: 0.1
   FireRate: 1.5
+  FireAnimationType: 10
   AmmoType: 10
   ClipSize: 6
   MaxAmmo: 6

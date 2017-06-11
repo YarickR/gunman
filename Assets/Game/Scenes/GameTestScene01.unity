@@ -451,10 +451,6 @@ Prefab:
       propertyPath: m_RootOrder
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 1385614789051250, guid: 37fbf57f91adf9e41b1a8088440ead29, type: 2}
-      propertyPath: m_IsActive
-      value: 1
-      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 37fbf57f91adf9e41b1a8088440ead29, type: 2}
   m_IsPrefabParent: 0
@@ -1839,7 +1835,7 @@ BoxCollider:
   m_Enabled: 1
   serializedVersion: 2
   m_Size: {x: 400, y: 1, z: 400}
-  m_Center: {x: 0, y: 0, z: 0}
+  m_Center: {x: 0, y: -1, z: 0}
 --- !u!1001 &379749421
 Prefab:
   m_ObjectHideFlags: 0

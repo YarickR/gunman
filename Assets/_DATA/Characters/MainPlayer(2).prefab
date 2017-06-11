@@ -1288,7 +1288,6 @@ MonoBehaviour:
   input: {fileID: 114796404108621792}
   animator: {fileID: 114872658889386068}
   weaponController: {fileID: 114546752535068784}
-  muzzleFlash: {fileID: 0}
   LineOfSights: {fileID: 114181061584190042}
   MapContainers: []
   rpgParams: {fileID: 11400000, guid: ae67f55987ba41d4e9b4f1fe5ce95be7, type: 2}
@@ -1383,8 +1382,8 @@ CharacterController:
   serializedVersion: 2
   m_Height: 3.25
   m_Radius: 0.8
-  m_SlopeLimit: 45
-  m_StepOffset: 0.3
+  m_SlopeLimit: 10
+  m_StepOffset: 0
   m_SkinWidth: 0.08
   m_MinMoveDistance: 0.001
   m_Center: {x: 0, y: 1.6, z: 0}

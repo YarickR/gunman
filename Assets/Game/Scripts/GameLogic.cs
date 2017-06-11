@@ -128,6 +128,7 @@ public class GameLogic : NetworkBehaviour
         var fs = GameObject.FindObjectOfType<FireSystem>();
         if (fs != null)
         {
+            fs.enabled = false;
             GameObject.Destroy(fs);
         }
 

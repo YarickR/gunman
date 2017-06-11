@@ -115,16 +115,23 @@ public class FireSystem : NetworkBehaviour {
         }
     }
 
+    List<PlayerController> cachedPlayers = new List<PlayerController>();
     IEnumerator DamageAll()
     {
-        while (true)
+        while (enabled)
         {
             yield return new WaitForSeconds(DamagePeriod);
-            foreach (var p in GameLogic.Instance.ActivePlayers.Values)
+            if (enabled)
             {
-                if (!safePlayers.Contains(p))
+                cachedPlayers.Clear();
+
+                cachedPlayers.AddRange(GameLogic.Instance.ActivePlayers.Values);
+                foreach (var p in cachedPlayers)
                 {
-                    p.FireDamage(Damage, this.netId);
+                    if (!safePlayers.Contains(p))
+                    {
+                        p.FireDamage(Damage, this.netId);
+                    }
                 }
             }
         }

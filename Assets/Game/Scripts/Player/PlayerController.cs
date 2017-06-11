@@ -53,6 +53,8 @@ public class PlayerController : NetworkBehaviour
     private bool _isInteracting = false;
     private float _interactStartTime = -1;
 
+    private bool _isDropedWeapon = false;
+
     void Awake()
     {
         characterController = GetComponent<CharacterController>();
@@ -283,6 +285,14 @@ public class PlayerController : NetworkBehaviour
     	GCTX.Log("OnChangeName: " + newName);
     	name = newName;
     }
+    
+    private IEnumerator DelayedHide()
+    {
+        yield return new WaitForSeconds(3.0f);
+
+        this.gameObject.SetActive(false);
+    }
+    
     private void OnChangeHealth(float value)
     {
         Debug.LogFormat("ONCHANGE HEALTH:" + value);
@@ -292,6 +302,11 @@ public class PlayerController : NetworkBehaviour
 
         _isDead = isDead;
         animator.SetDeadState(isDead);
+        if (isDead)
+        {
+            StartCoroutine(DelayedHide());
+        }
+
         selfTargetable.isVisibleOnly = isDead;
 
         if (colliders != null)
@@ -304,6 +319,12 @@ public class PlayerController : NetworkBehaviour
 
         if (isLocalPlayer)
         {
+            if (_isDead && !_isDropedWeapon)
+            {
+                _isDropedWeapon = true;
+                TrySpawnMainWeapon();
+            }
+
             Debug.LogFormat("ONCHANGE HEALTH(local):" + value);
             GameLogic.Instance.HUD.SetHP(value, rpgParams.MaxHealth);
         }
@@ -478,6 +499,17 @@ public class PlayerController : NetworkBehaviour
     {
         RpcSetInteractingState(isActive);
     }
+
+    [Command]
+    public void CmdSpawnSelfWeapon(int weaponId, int clipCount, int backpackCount)
+    {
+        var weaponParams = WeaponsList.Instance.GetParamsByID(weaponId);
+        var targetObj = GameObject.Instantiate(weaponParams.PicablePrefab, transform.position, weaponParams.PicablePrefab.transform.rotation);
+        Weapon targetWeapon = targetObj.GetComponent<Weapon>();
+        targetWeapon.ClipAmmo = clipCount;
+        targetWeapon.BackpackAmmo = backpackCount;
+        NetworkServer.Spawn(targetObj);
+    }
     #endregion
 
     #region Interact
@@ -541,5 +573,19 @@ public class PlayerController : NetworkBehaviour
             selfTargetable.additionalParts.Add(additionalPart);
             additionalPart.SetVisible(selfTargetable.Visible);
         }
+    }
+
+    public void TrySpawnMainWeapon()
+    {
+        int weaponId = 0;
+        int clipAmmo = 0;
+        int backpackAmmo = 0;
+
+        if (!weaponController.GetMainWeaponParams(ref weaponId, ref clipAmmo, ref backpackAmmo))
+        {
+            return;
+        }
+
+        CmdSpawnSelfWeapon(weaponId, clipAmmo, backpackAmmo);
     }
 }

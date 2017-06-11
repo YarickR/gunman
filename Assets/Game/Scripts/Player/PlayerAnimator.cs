@@ -16,6 +16,7 @@ public class PlayerAnimator : MonoBehaviour
     private static int IS_RELOADING = Animator.StringToHash("IsReloading");
     private static int TRIGGER_MELEE = Animator.StringToHash("Attack");
     private static int TRIGGER_FIRE = Animator.StringToHash("Fire");
+    private static int IS_INTERACTING = Animator.StringToHash("IsInteracting");
 
     private static int RELOAD_LAYER_INDEX = 1;
 
@@ -51,5 +52,10 @@ public class PlayerAnimator : MonoBehaviour
         {
             animator.SetTrigger(TRIGGER_FIRE);
         }
+    }
+
+    public void SetInteractingState(bool value)
+    {
+        animator.SetBool(IS_INTERACTING, value);
     }
 }

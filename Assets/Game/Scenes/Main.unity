@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.37311953, g: 0.38074014, b: 0.3587274, a: 1}
+  m_IndirectSpecularColor: {r: 0.37311992, g: 0.38074034, b: 0.35872713, a: 1}
 --- !u!157 &3
 LightmapSettings:
   m_ObjectHideFlags: 0
@@ -141,7 +141,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0}
   m_AnchorMax: {x: 0.5, y: 0}
-  m_AnchoredPosition: {x: -960, y: 105}
+  m_AnchoredPosition: {x: -959.99994, y: 105}
   m_SizeDelta: {x: 1920, y: 105}
   m_Pivot: {x: 0, y: 1}
 --- !u!114 &4670233
@@ -1425,7 +1425,11 @@ MonoBehaviour:
   m_PlayerSpawnMethod: 1
   m_OfflineScene: Main
   m_OnlineScene: 
-  m_SpawnPrefabs: []
+  m_SpawnPrefabs:
+  - {fileID: 1678831552120170, guid: 58917800408df4b489ec33cc2efdc6f7, type: 2}
+  - {fileID: 1494431091145542, guid: 222bae2cd5522ed48bdb36b962ffce49, type: 2}
+  - {fileID: 1146925009720406, guid: 8af2ddacecf2d4342b95ecdd81f7eb6b, type: 2}
+  - {fileID: 1385614789051250, guid: 37fbf57f91adf9e41b1a8088440ead29, type: 2}
   m_CustomConfig: 0
   m_MaxConnections: 4
   m_ConnectionConfig:

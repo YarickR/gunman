@@ -7,6 +7,8 @@ public abstract class Interactable : NetworkBehaviour {
     public float PickupRadius = 1;
     public float InteractionTime = 1;
 
+    public Transform SelectionAnchor;
+
     public abstract void Interact(PlayerController player);
 
     void Awake()

@@ -103,7 +103,11 @@ public class PlayerController : NetworkBehaviour
 
             if (InteractSystem == null)
             {
-                InteractSystem = gameObject.AddComponent<InteractSystem>();
+                InteractSystem = GetComponent<InteractSystem>();
+                if (InteractSystem == null)
+                {
+                    InteractSystem = gameObject.AddComponent<InteractSystem>();
+                }
             }
             InteractSystem.enabled = true;
 

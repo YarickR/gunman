@@ -4,6 +4,8 @@ using UnityEngine;
 
 public class InteractSystem : MonoBehaviour
 {
+    public GameObject Selection;
+
     PlayerController playerController;
 
     Interactable currentInteractable;
@@ -50,10 +52,29 @@ public class InteractSystem : MonoBehaviour
         {
             Debug.LogFormat("Current interactable {0}", currentInteractable);
 
-            
+            if (Selection != null)
+            {
+                Selection.gameObject.SetActive(true);
+                Selection.transform.SetParent(null);
+
+                var anchor = interactable.SelectionAnchor != null ? interactable.SelectionAnchor : interactable.transform ;
+                Selection.transform.SetParent(anchor);
+                Selection.transform.localPosition = Vector3.zero;
+                Selection.transform.SetParent(null, true);
+            }
 
            // playerController.CmdActivateInteractable(interactable.netId);
         }
+        else
+        {
+            if (Selection != null)
+            {
+                Selection.gameObject.SetActive(false);    
+            }
+        }
+        
+        
+
         playerController.SetShowUseButtonState(currentInteractable != null);
     }
 }

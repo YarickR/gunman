@@ -332,7 +332,7 @@ public class PlayerController : NetworkBehaviour
     {
 
     	Debug.LogFormat("RpcShotAct: target: {0}, shooter {1}", netId, DamagerNetId);
-        GameObject playerGO = ClientScene.FindLocalObject(DamagerNetId);
+        GameObject attackerGO = ClientScene.FindLocalObject(DamagerNetId);
         /*
         if (_cachedControllers.ContainsKey(DamagerNetId))
         {
@@ -340,25 +340,26 @@ public class PlayerController : NetworkBehaviour
         }
         else
         */
-        if (playerGO == null)
+        if (attackerGO == null)
         {
         	Debug.LogFormat("Can't find attacker with id {0}", DamagerNetId);
             return;
         }
-		GCTX.Log(String.Format("{0}  deals {3} damage to {1}, {2} HP left", playerGO.GetComponent<PlayerController>().name,  name, _currentHealth, damage));
-		GameLogic.Instance.HUD.AddInfoLine(playerGO.name + " deals damage to " + name);
+		
+		GameLogic.Instance.HUD.AddInfoLine(attackerGO.name + " deals damage to " + name);
         if (_currentHealth <= 0f) {
-			GameLogic.Instance.HUD.AddInfoLine(playerGO.name + " killed " + name);
+			GameLogic.Instance.HUD.AddInfoLine(attackerGO.name + " killed " + name);
         }
         if (isLocalPlayer || (LocalClientController.netId == DamagerNetId)) {
             //show hit on self
             spawnHit();
         }
 
-        var targetController = playerGO.GetComponent<PlayerController>();
-        if (targetController != null)
+        var attackerController = attackerGO.GetComponent<PlayerController>();
+        if (attackerController != null)
         {
-            var isVisible = targetController.selfTargetable.Visible;
+            GCTX.Log(String.Format("{0}  deals {3} damage to {1}, {2} HP left", attackerController.name, name, _currentHealth, damage));
+            var isVisible = attackerController.selfTargetable.Visible;
             if (isVisible)
             {
                 return;
@@ -370,9 +371,9 @@ public class PlayerController : NetworkBehaviour
             }
 
             var localClientPosition = LocalClientController.transform.position;
-            if ((localClientPosition - targetController.transform.position).sqrMagnitude < LOCATION_RANGE_SQR)
+            if ((localClientPosition - attackerController.transform.position).sqrMagnitude < LOCATION_RANGE_SQR)
             {
-                WorldFlashes.Instance.ShowFire(targetController.transform.position);
+                WorldFlashes.Instance.ShowFire(attackerController.transform.position);
             }
         }
     }

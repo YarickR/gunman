@@ -11,19 +11,20 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4f4daaef367ae8841b1071bdf0743837, type: 3}
   m_Name: Melee
   m_EditorClassIdentifier: 
-  Damage: 100
-  StartFireDelay: 0
+  Damage: 20
+  StartFireDelay: 0.4
   RangeOfAiming: 60
   FireDistance: 2
   DropTargetPercent: 0
   FireRate: 1
+  FireAnimationType: 0
   AmmoType: 0
   ClipSize: 1
   MaxAmmo: 999999
   ReloadTime: 0
   CritChance: 0
   CritMultiplier: 1
-  InHandsModel: {fileID: 1913468561089224, guid: 4d38e7bad15a77f4586398ae7e4e851b,
+  InHandsModel: {fileID: 1012699796744922, guid: 4d38e7bad15a77f4586398ae7e4e851b,
     type: 2}
   PicablePrefab: {fileID: 1257498985784566, guid: fed6a7aa623325f439eabda4bf2d4c87,
     type: 2}

@@ -3,7 +3,6 @@ using UnityEngine.Networking;
 
 public class Door : Interactable
 {
-    [SyncVar(hook = "OnChangeIsOpen")]
     public bool IsOpen;
 
     Quaternion initialRotation;
@@ -14,6 +13,13 @@ public class Door : Interactable
     }
 
     #region Network Hooks
+    [ClientRpc]
+    void RpcOpenDoor(bool v)
+    {
+        IsOpen = v;
+        updateOpen();
+    }
+
     void OnChangeIsOpen(bool v)
     {
         IsOpen = v;
@@ -30,5 +36,6 @@ public class Door : Interactable
     {
         IsOpen = !IsOpen;
         updateOpen();
+        RpcOpenDoor(IsOpen);
     }
 }

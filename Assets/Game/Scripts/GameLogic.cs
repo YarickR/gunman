@@ -1,6 +1,7 @@
 ﻿using Prototype.NetworkLobby;
 using System.Collections;
 using System.Collections.Generic;
+using System;
 using UnityEngine;
 using UnityEngine.Networking;
 using UnityEngine.SceneManagement;
@@ -86,7 +87,7 @@ public class GameLogic : NetworkBehaviour
         {
             playersCount += 1;
             activePlayers[player.netId] = player;
-
+            GCTX.Log(String.Format("Spawning player {0} named {1}",  player.netId, player.name));
             Debug.LogFormat("SPAWN PLAYER {0}/{1}", activePlayers.Count, playersCount);
         }
     }

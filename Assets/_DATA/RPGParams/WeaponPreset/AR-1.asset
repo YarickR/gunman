@@ -15,8 +15,9 @@ MonoBehaviour:
   StartFireDelay: 2
   RangeOfAiming: 45
   FireDistance: 7.5
-  DropTargetPercent: 0.5
+  DropTargetPercent: 0.1
   FireRate: 5
+  FireAnimationType: 10
   AmmoType: 20
   ClipSize: 20
   MaxAmmo: 20

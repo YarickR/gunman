@@ -35,6 +35,8 @@ public class WeaponParams : ScriptableObject
     [Range(0.0f, 10.0f)]
     public float FireRate;
 
+    public ShotAnimationType FireAnimationType;
+
     [Header("Ammo params")]
     public AmmoType AmmoType;
     public int ClipSize;

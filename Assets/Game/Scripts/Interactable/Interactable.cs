@@ -26,4 +26,9 @@ public abstract class Interactable : NetworkBehaviour {
         p.y = 1;
         go.transform.position = p;
     }
+
+    public virtual bool CanInteract(PlayerController pc)
+    {
+        return true;
+    }
 }

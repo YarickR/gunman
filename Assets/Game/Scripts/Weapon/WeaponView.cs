@@ -4,6 +4,12 @@ using UnityEngine;
 
 public class WeaponView : MonoBehaviour
 {
+    public MuzzleFlash muzzle;
+    public int currentClipAmmo;
+    public int backpackAmmo;
 
-    public WeaponParams rpgParams;
+    public void FireVisual()
+    {
+        muzzle.Flash();
+    }
 }

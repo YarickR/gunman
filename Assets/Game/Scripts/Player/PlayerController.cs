@@ -11,15 +11,12 @@ public class PlayerController : NetworkBehaviour
 
     private static PlayerController LocalClientController;
 
-    private Dictionary<NetworkInstanceId, GameObject> _cachedControllers = new Dictionary<NetworkInstanceId, GameObject>();
-
     public Transform cameraPlaceHolder;
 
     public PlayerCamera cam;
     public PlayerInput input;
     public PlayerAnimator animator;
     public WeaponController weaponController;
-    public MuzzleFlash muzzleFlash;
     public ProcessLineOfSights LineOfSights;
     public bool IsMoving
     {
@@ -31,6 +28,8 @@ public class PlayerController : NetworkBehaviour
 
     private CharacterController characterController;
     private Targetable selfTargetable;
+
+    private Collider[] colliders;
 
     [Header("RPG parameters")]
     public PlayerParams rpgParams;
@@ -46,7 +45,7 @@ public class PlayerController : NetworkBehaviour
     //----- net params
 
     private bool _isDead = false;
-
+    private bool _isReloading = false;
     private bool _isMoving = false;
 
     private bool _isInteracting = false;
@@ -56,6 +55,8 @@ public class PlayerController : NetworkBehaviour
     {
         characterController = GetComponent<CharacterController>();
         selfTargetable = GetComponent<Targetable>();
+
+        colliders = GetComponents<Collider>();
     }
 
     public override void OnStartServer()
@@ -106,7 +107,7 @@ public class PlayerController : NetworkBehaviour
             LineOfSights.VisibilityLineOfSight.MaxAngle = rpgParams.RangeOfView;
             LineOfSights.VisibilityLineOfSight.MaxDistance = rpgParams.ViewDistance;
 
-            //--- remove after net init
+            //--- remove after net init (-:
             //weaponController.InitWithParams(rpgParams.StartWeapon, rpgParams.StartWeapon.ClipSize, rpgParams.StartWeapon.MaxAmmo);
             //LineOfSights.TargetingLineOfSight.MaxAngle = rpgParams.StartWeapon.RangeOfAiming;
             //LineOfSights.TargetingLineOfSight.MaxDistance = rpgParams.StartWeapon.FireDistance;
@@ -154,7 +155,14 @@ public class PlayerController : NetworkBehaviour
 
         if (isLocalPlayer)
         {
-            SetUseButtonEnabled(!(_isMoving || weaponController.IsReloading));
+            bool currentReloadingState = weaponController.IsReloading;
+            if (currentReloadingState != _isReloading)
+            {
+                CmdSetReloadingState(currentReloadingState);
+                _isReloading = currentReloadingState;
+            }
+
+            SetUseButtonEnabled(!(_isMoving || currentReloadingState));
             if (_isInteracting)
             {
                 if (InteractSystem.CurrentInteractable == null)
@@ -242,6 +250,14 @@ public class PlayerController : NetworkBehaviour
     }
 
     #region RPG parameters methods
+    [Server]
+    public void Heal(float healValue)
+    {
+        _currentHealth += healValue;
+
+        _currentHealth = Mathf.Clamp(_currentHealth, 0.0f, rpgParams.MaxHealth);
+    }
+
     private void InitRPGParams()
     {
         _currentHealth = rpgParams.MaxHealth;
@@ -250,6 +266,9 @@ public class PlayerController : NetworkBehaviour
     private void ReceiveDamage(float damageValue)
     {
         _currentHealth -= damageValue;
+
+        _currentHealth = Mathf.Clamp(_currentHealth, 0.0f, rpgParams.MaxHealth);
+
         notifyLogicAboutDeath(_currentHealth <= 0);
         // notifyLogicAboutDeath();
     }
@@ -280,15 +299,20 @@ public class PlayerController : NetworkBehaviour
         animator.SetDeadState(isDead);
         selfTargetable.isVisibleOnly = isDead;
 
+        if (colliders != null)
+        {
+            foreach (var col in colliders)
+            {
+                col.enabled = !isDead;
+            }
+        }
+
         if (isLocalPlayer)
         {
             Debug.LogFormat("ONCHANGE HEALTH(local):" + value);
             GameLogic.Instance.HUD.SetHP(value, rpgParams.MaxHealth);
         }
     }
-    #endregion
-
-    #region Server actions
     #endregion
 
     #region Client rpc
@@ -321,21 +345,6 @@ public class PlayerController : NetworkBehaviour
         }
         else
         */
-        {
-
-            NetworkIdentity[] identities = NetworkIdentity.FindObjectsOfType<NetworkIdentity>();
-            for (int i = 0, l = identities.Length; i < l; ++i)
-            {
-                if (identities[i].netId == DamagerNetId)
-                {
-                    playerGO = identities[i].gameObject;
-					__attPC = playerGO.GetComponent<PlayerController>();
-					break;
-                }
-            }
-        }
-
-
         if (playerGO == null)
         {
         	Debug.LogFormat("Can't find attacker with id {0}", DamagerNetId);
@@ -346,9 +355,9 @@ public class PlayerController : NetworkBehaviour
         if (_currentHealth <= 0f) {
 			GameLogic.Instance.HUD.AddInfoLine(playerGO.name + " killed " + name);
         }
-        if (isLocalPlayer)
-        {
+        if (isLocalPlayer || (LocalClientController.netId == DamagerNetId)) {
             //show hit on self
+            spawnHit();
         }
 
         var targetController = playerGO.GetComponent<PlayerController>();
@@ -392,6 +401,31 @@ public class PlayerController : NetworkBehaviour
             LineOfSights.TargetingLineOfSight.MaxDistance = targetWeaponParams.FireDistance;
         }
     }
+
+    [ClientRpc]
+    public void RpcSetReloadingState(bool isActive)
+    {
+        animator.SetReloadingState(isActive);
+    }
+
+    [ClientRpc]
+    public void RpcAddAmmoToMainWeapon(int count)
+    {
+        weaponController.AddMainWeaponAmmo(count);
+    }
+
+    [ClientRpc]
+    public void RpcFireAnimationTrigger(int type)
+    {
+        weaponController.ShowFireMuzzle();
+        animator.SetShootTrigger((ShotAnimationType)type);
+    }
+
+    [ClientRpc]
+    public void RpcSetInteractingState(bool isActive)
+    {
+        animator.SetInteractingState(isActive);
+    }
     #endregion
 
     #region Client commands
@@ -402,12 +436,14 @@ public class PlayerController : NetworkBehaviour
     }
 
     [Command]
-    public void CmdSendDamageToPlayer(float damageValue, NetworkInstanceId netId)
+    public void CmdSendDamageToPlayer(float damageValue, NetworkInstanceId netId, int animationType)
     {
         if (_currentHealth <= 0.0f)
         {
             return;
         }
+
+        RpcFireAnimationTrigger(animationType);
 
         var playerGO = NetworkServer.FindLocalObject(netId);
         if (playerGO != null)
@@ -429,6 +465,24 @@ public class PlayerController : NetworkBehaviour
             interactableGO.GetComponent<Interactable>().Interact(this);
         }
     }
+
+    [Command]
+    public void CmdSetWeapon(int weaponId, int clipAmmo, int backpackAmmo)
+    {
+        RpcSetWeaponById(weaponId, clipAmmo, backpackAmmo);
+    }
+
+    [Command]
+    public void CmdSetReloadingState(bool isActive)
+    {
+        RpcSetReloadingState(isActive);
+    }
+
+    [Command]
+    public void CmdSetInteractingState(bool isActive)
+    {
+        RpcSetInteractingState(isActive);
+    }
     #endregion
 
     #region Interact
@@ -448,12 +502,16 @@ public class PlayerController : NetworkBehaviour
         weaponController.IsCanFire = false;
         _isInteracting = true;
         _interactStartTime = Time.time;
+
+        CmdSetInteractingState(true);
     }
 
     public void StopUse()
     {
         _isInteracting = false;
         weaponController.IsCanFire = true;
+
+        CmdSetInteractingState(false);
     }
 
     public void UseItem(Interactable interactable)
@@ -468,6 +526,13 @@ public class PlayerController : NetworkBehaviour
 
     #endregion
 
+    void spawnHit()
+    {
+        var prefab = Resources.Load<GameObject>("HitEffect");
+        var go = Instantiate<GameObject>(prefab, transform.position, prefab.transform.rotation);
+        go.transform.SetParent(transform, true);
+    }
+
     private bool IsInputAvalible()
     {
         return isLocalPlayer && !_isDead;
@@ -479,6 +544,7 @@ public class PlayerController : NetworkBehaviour
             !selfTargetable.additionalParts.Contains(additionalPart))
         {
             selfTargetable.additionalParts.Add(additionalPart);
+            additionalPart.SetVisible(selfTargetable.Visible);
         }
     }
 }

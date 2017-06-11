@@ -38,7 +38,7 @@ Transform:
   m_GameObject: {fileID: 1494431091145542}
   m_LocalRotation: {x: 0.7071068, y: 0, z: 0, w: 0.7071068}
   m_LocalPosition: {x: -0, y: 0.074, z: 0}
-  m_LocalScale: {x: 0.588589, y: 0.5885891, z: 0.5885891}
+  m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 0
@@ -94,7 +94,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   PickupRadius: 1
-  InteractionTime: 1
+  InteractionTime: 0.8
   Params: {fileID: 11400000, guid: e81fae31275c8c7449976e38386f5f81, type: 2}
   ClipAmmo: 10
   BackpackAmmo: 15
@@ -112,21 +112,21 @@ MonoBehaviour:
   m_SceneId:
     m_Value: 0
   m_AssetId:
-    i0: 34
-    i1: 43
-    i2: 174
-    i3: 44
-    i4: 213
-    i5: 82
-    i6: 46
-    i7: 212
-    i8: 139
-    i9: 219
-    i10: 54
-    i11: 185
-    i12: 98
-    i13: 255
-    i14: 206
-    i15: 73
+    i0: 217
+    i1: 99
+    i2: 180
+    i3: 121
+    i4: 252
+    i5: 80
+    i6: 173
+    i7: 132
+    i8: 10
+    i9: 230
+    i10: 252
+    i11: 25
+    i12: 83
+    i13: 19
+    i14: 42
+    i15: 114
   m_ServerOnly: 0
   m_LocalPlayerAuthority: 0

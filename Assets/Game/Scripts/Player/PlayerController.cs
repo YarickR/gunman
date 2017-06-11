@@ -47,7 +47,7 @@ public class PlayerController : NetworkBehaviour
     //----- net params
 
     private bool _isDead = false;
-
+    private bool _isReloading = false;
     private bool _isMoving = false;
 
     private bool _isInteracting = false;
@@ -148,7 +148,14 @@ public class PlayerController : NetworkBehaviour
 
         if (isLocalPlayer)
         {
-            SetUseButtonEnabled(!(_isMoving || weaponController.IsReloading));
+            bool currentReloadingState = weaponController.IsReloading;
+            if (currentReloadingState != _isReloading)
+            {
+                CmdSetReloadingState(currentReloadingState);
+                _isReloading = currentReloadingState;
+            }
+
+            SetUseButtonEnabled(!(_isMoving || currentReloadingState));
             if (_isInteracting)
             {
                 if (InteractSystem.CurrentInteractable == null)
@@ -365,6 +372,12 @@ public class PlayerController : NetworkBehaviour
             LineOfSights.TargetingLineOfSight.MaxDistance = targetWeaponParams.FireDistance;
         }
     }
+
+    [ClientRpc]
+    public void RpcSetReloadingState(bool isActive)
+    {
+        animator.SetReloadingState(isActive);
+    }
     #endregion
 
     #region Client commands
@@ -407,6 +420,12 @@ public class PlayerController : NetworkBehaviour
     public void CmdSetWeapon(int weaponId, int clipAmmo, int backpackAmmo)
     {
         RpcSetWeaponById(weaponId, clipAmmo, backpackAmmo);
+    }
+
+    [Command]
+    public void CmdSetReloadingState(bool isActive)
+    {
+        RpcSetReloadingState(isActive);
     }
     #endregion
 

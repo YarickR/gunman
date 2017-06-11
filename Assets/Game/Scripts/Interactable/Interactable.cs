@@ -31,6 +31,6 @@ public abstract class Interactable : NetworkBehaviour {
 
     public virtual bool CanInteract(PlayerController pc)
     {
-        return true;
+        return gameObject.activeSelf;
     }
 }

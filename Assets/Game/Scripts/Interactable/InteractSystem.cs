@@ -72,6 +72,11 @@ public class InteractSystem : MonoBehaviour
 
         foreach (var interactable in possibleInteractables)
         {
+            if (!interactable.CanInteract(playerController))
+            {
+                continue;
+            }
+
             var delta = interactable.transform.position - transform.position;
             var mag = delta.sqrMagnitude;
 

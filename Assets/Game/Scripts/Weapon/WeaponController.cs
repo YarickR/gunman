@@ -110,8 +110,8 @@ public class WeaponController : MonoBehaviour
             targetView = _mainWeaponView;
         }
 
-        targetView.backpackAmmo = backpackAmmo;
-        targetView.currentClipAmmo = currentClipAmmo;
+        targetView.backpackAmmo = Mathf.Min(backpackAmmo, rpgParams.MaxAmmo);
+        targetView.currentClipAmmo = Mathf.Min(currentClipAmmo, rpgParams.ClipSize);
 
         _lastSet = rpgParams;
     }

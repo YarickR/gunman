@@ -11,7 +11,7 @@ public class GameHUD : MonoBehaviour {
     public EndScreen EndScreen;
     public PlayerController LocalPlayer;
     public Text AmmoValue;
-
+	private float _addLineTS;
     public Button UseButton;
 
     public void SwitchToEnd(bool isVictory, int playerPlace, int maxPlayers) {
@@ -22,7 +22,7 @@ public class GameHUD : MonoBehaviour {
 
 	public void Start() {
 		LocalPlayer = null;
-
+		_addLineTS = 0;
         UseButton.onClick.AddListener(OnUseButtonClicked);
 	}
 
@@ -42,6 +42,7 @@ public class GameHUD : MonoBehaviour {
     public void AddInfoLine(string newLine) {
     	string[] parts = InfoPanel.text.Split('\n');
     	InfoPanel.text = parts[parts.Length - 1] + '\n' + newLine;
+    	_addLineTS = Time.time;
     }
     public void SetLeftAlive(int alive, int total) {
     	LeftAlive.text = alive + "/" + total;
@@ -55,6 +56,17 @@ public class GameHUD : MonoBehaviour {
     	}
     }
 
+    public void Update() {
+    	if (_addLineTS > 0) {
+    		if (Time.time - _addLineTS < 3) {
+				Color __temp =  new Color(InfoPanel.color.r, InfoPanel.color.g, InfoPanel.color.b,1.0f - ((Time.time - _addLineTS) / 3.0f) );
+				InfoPanel.color = __temp;	
+    		} else {
+    			_addLineTS = 0;
+    			InfoPanel.text = "";
+    		};
+    	}
+    }
     public void UpdateInventory(PlayerController player = null) {
     	
     }

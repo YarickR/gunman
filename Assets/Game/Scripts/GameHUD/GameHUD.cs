@@ -31,6 +31,7 @@ public class GameHUD : MonoBehaviour {
         EndScreen.gameObject.SetActive(false);
     }
     public void SetHP(float newHP, float maxHP) {
+    	GCTX.Log("Changing HP to " + newHP);
     	HP.value = (Mathf.Min(Mathf.Max((newHP * 100)/maxHP, 0), 100));
     }
     public void SetTimer(float currValue, float maxValue) {

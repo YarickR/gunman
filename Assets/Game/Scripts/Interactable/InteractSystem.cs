@@ -22,6 +22,7 @@ public class InteractSystem : MonoBehaviour
     public void ClearInteractable()
     {
         setCurrentInteractable(null);
+        pickBestInteractable();
     }
 
     void Awake()
@@ -29,52 +30,93 @@ public class InteractSystem : MonoBehaviour
         playerController = GetComponent<PlayerController>();
     }
 
+    void Update()
+    {
+        if (possibleInteractables.Count > 0)
+        {
+            pickBestInteractable();
+        }
+    }
+
+    List<Interactable> possibleInteractables = new List<Interactable>();
+
     public void TryActivateInteractable(Interactable interactable)
     {
-        if (currentInteractable == null)
-        {
-            setCurrentInteractable(interactable);
-        }
+        possibleInteractables.Add(interactable);
+        pickBestInteractable();
     }
 
     public void TryDeactivateInteractable(Interactable interactable)
     {
-        if (currentInteractable == interactable)
+        possibleInteractables.Remove(interactable);
+        pickBestInteractable();
+    }
+
+    void pickBestInteractable()
+    {
+        Interactable candidate = null;
+        float minDistSqr = float.MaxValue;
+
+        for (int i = 0; i < possibleInteractables.Count;)
         {
-            setCurrentInteractable(null);
+            var inter = possibleInteractables[i];
+            if (inter == null)
+            {
+                possibleInteractables.RemoveAt(i);
+            }
+            else
+            {
+                i++;
+            }
         }
+
+        foreach (var interactable in possibleInteractables)
+        {
+            var delta = interactable.transform.position - transform.position;
+            var mag = delta.sqrMagnitude;
+
+            if (mag < minDistSqr)
+            {
+                candidate = interactable;
+                minDistSqr = mag;
+            }
+        }
+        setCurrentInteractable(candidate);
     }
 
     void setCurrentInteractable(Interactable interactable)
     {
-        currentInteractable = interactable;
-        if (currentInteractable != null)
+        if (currentInteractable != interactable)
         {
-            Debug.LogFormat("Current interactable {0}", currentInteractable);
 
-            if (Selection != null)
+            currentInteractable = interactable;
+            if (currentInteractable != null)
             {
-                Selection.gameObject.SetActive(true);
-                Selection.transform.SetParent(null);
 
-                var anchor = interactable.SelectionAnchor != null ? interactable.SelectionAnchor : interactable.transform ;
-                Selection.transform.SetParent(anchor);
-                Selection.transform.localPosition = Vector3.zero;
-                Selection.transform.SetParent(null, true);
+                if (Selection != null)
+                {
+                    Selection.gameObject.SetActive(true);
+                    Selection.transform.SetParent(null);
+
+                    var anchor = interactable.SelectionAnchor != null ? interactable.SelectionAnchor : interactable.transform;
+                    Selection.transform.SetParent(anchor);
+                    Selection.transform.localPosition = Vector3.zero;
+                    Selection.transform.SetParent(null, true);
+                }
+
+                // playerController.CmdActivateInteractable(interactable.netId);
+            }
+            else
+            {
+                if (Selection != null)
+                {
+                    Selection.gameObject.SetActive(false);
+                }
             }
 
-           // playerController.CmdActivateInteractable(interactable.netId);
+            playerController.SetShowUseButtonState(currentInteractable != null);
         }
-        else
-        {
-            if (Selection != null)
-            {
-                Selection.gameObject.SetActive(false);    
-            }
-        }
-        
-        
 
-        playerController.SetShowUseButtonState(currentInteractable != null);
+        Selection.gameObject.SetActive(interactable != null);
     }
 }

@@ -176,7 +176,6 @@ GameObject:
   m_Component:
   - component: {fileID: 4380992204581352}
   - component: {fileID: 33432802451093824}
-  - component: {fileID: 135264436339481490}
   - component: {fileID: 23800294276979472}
   m_Layer: 0
   m_Name: Selection
@@ -1376,18 +1375,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Selection: {fileID: 1283447050587316}
---- !u!135 &135264436339481490
-SphereCollider:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1283447050587316}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
-  m_Enabled: 1
-  serializedVersion: 2
-  m_Radius: 0.5
-  m_Center: {x: 0, y: 0, z: 0}
 --- !u!136 &136641656820960462
 CapsuleCollider:
   m_ObjectHideFlags: 1

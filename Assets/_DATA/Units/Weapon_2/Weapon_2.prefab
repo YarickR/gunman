@@ -122,7 +122,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 60db703a52302d0488c7bec83e6ca151, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  PickupRadius: 0.1
+  PickupRadius: 1
   InteractionTime: 2
   SelectionAnchor: {fileID: 0}
   Params: {fileID: 11400000, guid: e81fae31275c8c7449976e38386f5f81, type: 2}

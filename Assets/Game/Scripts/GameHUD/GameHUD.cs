@@ -59,11 +59,11 @@ public class GameHUD : MonoBehaviour {
     	
     }
 
-    public void SetAmmo(int current, int backpack)
+    public void SetAmmo(string name, int current, int backpack)
     {
         if (AmmoValue != null)
         {
-            AmmoValue.text = string.Format("Ammo:{0} Backpack:{1}", current, backpack);
+            AmmoValue.text = string.Format("{0}\nAmmo:{1}\nBackpack:{2}", name, current, backpack);
         }
     }
 

@@ -11,6 +11,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4f4daaef367ae8841b1071bdf0743837, type: 3}
   m_Name: SR-1
   m_EditorClassIdentifier: 
+  Name: SR-1
   Damage: 70
   StartFireDelay: 2.5
   RangeOfAiming: 30

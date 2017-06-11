@@ -35,6 +35,20 @@ public class WeaponController : MonoBehaviour
         }
     }
 
+    public string GetCurrentWeaponName
+    {
+        get
+        {
+            var rpgParams = GetTargetParams();
+            if (rpgParams != null)
+            {
+                return rpgParams.Name;
+            }
+
+            return "";
+        }
+    }
+
     public bool HaveMainWeapon
     {
         get
@@ -199,7 +213,7 @@ public class WeaponController : MonoBehaviour
 
         TrySetBaseWeapon();
 
-        GameLogic.Instance.HUD.SetAmmo(GetCurrentAmmo, GetBackpackAmmo);
+        GameLogic.Instance.HUD.SetAmmo(GetCurrentWeaponName, GetCurrentAmmo, GetBackpackAmmo);
     }
 
     private void UpdateAiming()

@@ -110,6 +110,13 @@ public class WeaponController : MonoBehaviour
 
         ShowModel(rpgParams);
 
+        if (rpgParams != playerController.rpgParams.StartWeapon &&
+            playerController.isLocalPlayer &&
+            _mainWeaponRpgParams != null)
+        {
+            playerController.TrySpawnMainWeapon();
+        }
+
         WeaponView targetView;
         if (rpgParams == playerController.rpgParams.StartWeapon)
         {
@@ -164,6 +171,20 @@ public class WeaponController : MonoBehaviour
         {
             targetView.FireVisual();
         }
+    }
+
+    public bool GetMainWeaponParams(ref int weaponId, ref int clipCount, ref int backpackAmmo)
+    {
+        if (_mainWeaponRpgParams == null)
+        {
+            return false;
+        }
+
+        weaponId = _mainWeaponRpgParams.WeaponId;
+        clipCount = _mainWeaponView.currentClipAmmo;
+        backpackAmmo = _mainWeaponView.backpackAmmo;
+
+        return true;
     }
     //----- net
 

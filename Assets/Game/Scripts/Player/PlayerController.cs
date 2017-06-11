@@ -384,6 +384,12 @@ public class PlayerController : NetworkBehaviour
     {
         weaponController.AddMainWeaponAmmo(count);
     }
+
+    [ClientRpc]
+    public void RpcFireAnimationTrigger(int type)
+    {
+        animator.SetShootTrigger((ShotAnimationType)type);
+    }
     #endregion
 
     #region Client commands
@@ -394,12 +400,14 @@ public class PlayerController : NetworkBehaviour
     }
 
     [Command]
-    public void CmdSendDamageToPlayer(float damageValue, NetworkInstanceId netId)
+    public void CmdSendDamageToPlayer(float damageValue, NetworkInstanceId netId, int animationType)
     {
         if (_currentHealth <= 0.0f)
         {
             return;
         }
+
+        RpcFireAnimationTrigger(animationType);
 
         var playerGO = NetworkServer.FindLocalObject(netId);
         if (playerGO != null)

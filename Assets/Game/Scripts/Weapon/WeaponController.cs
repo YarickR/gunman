@@ -283,7 +283,7 @@ public class WeaponController : MonoBehaviour
         var damage = isCrit ? targetParams.Damage * targetParams.CritMultiplier : targetParams.Damage;
 
         targetView.currentClipAmmo -= 1;
-        playerController.CmdSendDamageToPlayer(damage, _lastTarget.PlayerController.netId);
+        playerController.CmdSendDamageToPlayer(damage, _lastTarget.PlayerController.netId, (int)targetParams.FireAnimationType);
 
         _lastFireTime = Time.time;
 

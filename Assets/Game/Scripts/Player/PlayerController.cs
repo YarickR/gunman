@@ -189,6 +189,11 @@ public class PlayerController : NetworkBehaviour
         var moveDirection = computeDirection(input.GetMoveDirection());
         Vector3 moveDelta = moveDirection * Time.deltaTime * CalcMoveSpeed();
 
+        if (transform.position.y > 0.01f)
+        {
+            moveDelta.y = -transform.position.y;
+        }
+
         characterController.Move(moveDelta);
 
         var lookDirection = computeDirection(input.GetLookDirection());

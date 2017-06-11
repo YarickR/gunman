@@ -125,13 +125,22 @@ public class GameLogic : NetworkBehaviour
     {
         Debug.LogFormat("END GAME");
 
+        var fs = GameObject.FindObjectOfType<FireSystem>();
+        if (fs != null)
+        {
+            GameObject.Destroy(fs);
+        }
+
         foreach (var player in activePlayers)
         {
             player.Value.RpcEnd(true, 1, playersCount);
         }
         activePlayers.Clear();
 
-        StartCoroutine(waitAndRestart());
+        if (this != null)
+        {
+            StartCoroutine(waitAndRestart());
+        }
     }
 
     [Server]

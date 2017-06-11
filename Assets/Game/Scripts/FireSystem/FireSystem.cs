@@ -17,6 +17,8 @@ public class FireSystem : NetworkBehaviour {
     public float DamagePeriod = 1;
     public float Damage = 15;
 
+    public float AnnounceInterval = 5;
+
     int activatedStep = -1;
 
     float fromScale;
@@ -25,6 +27,8 @@ public class FireSystem : NetworkBehaviour {
     float duration;
 
     float startTime;
+
+    bool shouldDoAnnounce = true;
 
     HashSet<PlayerController> safePlayers = new HashSet<PlayerController>();
 
@@ -44,6 +48,17 @@ public class FireSystem : NetworkBehaviour {
     void RpcSetScale(float scaleToSet)
     {
         transform.localScale = new Vector3(scaleToSet, transform.localScale.y, scaleToSet);
+    }
+
+    public void AnnounceFire()
+    {
+        // implement logic here
+        Debug.LogFormat("Fire will be in {0} seconds", AnnounceInterval);
+    }
+
+    void OnDestroy()
+    {
+        StopAllCoroutines();
     }
 
     public void Update()
@@ -72,17 +87,29 @@ public class FireSystem : NetworkBehaviour {
             //Debug.LogFormat("time {0} realtime {1} delta {2} PlayTime {3} starttime {4}", Time.time, Time.realtimeSinceStartup, Time.time - Time.realtimeSinceStartup, time, startTime);
 
             var candidateStep = activatedStep + 1;
+            
             if (candidateStep < Steps.Length)
             {
                 var stepData = Steps[candidateStep];
-                if (stepData.StartTime <= time && candidateStep != activatedStep)
-                {
-                    fromScale = transform.localScale.x;
-                    toScale = stepData.Scale;
-                    startScaleTime = Time.time - startTime;
-                    duration = stepData.Duration;
 
-                    activatedStep = candidateStep;
+                if (candidateStep != activatedStep)
+                {
+                    if (shouldDoAnnounce && stepData.StartTime <= time + AnnounceInterval)
+                    {
+                        AnnounceFire();
+                        shouldDoAnnounce = false;
+                    }
+
+                    if (stepData.StartTime <= time)
+                    {
+                        shouldDoAnnounce = true;
+                        fromScale = transform.localScale.x;
+                        toScale = stepData.Scale;
+                        startScaleTime = Time.time - startTime;
+                        duration = stepData.Duration;
+
+                        activatedStep = candidateStep;
+                    }
                 }
             }
         }

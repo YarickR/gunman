@@ -25,7 +25,7 @@ GameObject:
   - component: {fileID: 114614203856814322}
   - component: {fileID: 114541933514261044}
   m_Layer: 0
-  m_Name: FireSystem
+  m_Name: Fire
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -106,6 +106,7 @@ MonoBehaviour:
     Scale: 5
   DamagePeriod: 1
   Damage: 15
+  AnnounceInterval: 5
 --- !u!114 &114614203856814322
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -120,22 +121,22 @@ MonoBehaviour:
   m_SceneId:
     m_Value: 0
   m_AssetId:
-    i0: 20
-    i1: 160
-    i2: 200
-    i3: 244
-    i4: 3
-    i5: 4
-    i6: 180
-    i7: 116
-    i8: 251
-    i9: 224
-    i10: 214
-    i11: 213
-    i12: 129
-    i13: 162
-    i14: 162
-    i15: 191
+    i0: 21
+    i1: 83
+    i2: 127
+    i3: 75
+    i4: 177
+    i5: 190
+    i6: 16
+    i7: 68
+    i8: 203
+    i9: 143
+    i10: 209
+    i11: 14
+    i12: 254
+    i13: 132
+    i14: 247
+    i15: 133
   m_ServerOnly: 0
   m_LocalPlayerAuthority: 0
 --- !u!135 &135792667390090532

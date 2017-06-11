@@ -242,6 +242,14 @@ public class PlayerController : NetworkBehaviour
     }
 
     #region RPG parameters methods
+    [Server]
+    public void Heal(float healValue)
+    {
+        _currentHealth += healValue;
+
+        _currentHealth = Mathf.Clamp(_currentHealth, 0.0f, rpgParams.MaxHealth);
+    }
+
     private void InitRPGParams()
     {
         _currentHealth = rpgParams.MaxHealth;
@@ -250,6 +258,9 @@ public class PlayerController : NetworkBehaviour
     private void ReceiveDamage(float damageValue)
     {
         _currentHealth -= damageValue;
+
+        _currentHealth = Mathf.Clamp(_currentHealth, 0.0f, rpgParams.MaxHealth);
+
         notifyLogicAboutDeath(_currentHealth <= 0);
         // notifyLogicAboutDeath();
     }
@@ -294,9 +305,6 @@ public class PlayerController : NetworkBehaviour
             GameLogic.Instance.HUD.SetHP(value, rpgParams.MaxHealth);
         }
     }
-    #endregion
-
-    #region Server actions
     #endregion
 
     #region Client rpc

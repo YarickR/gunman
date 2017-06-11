@@ -13,13 +13,13 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   StartWeapon: {fileID: 11400000, guid: a6851bf03240b9e4483dab30fd53a972, type: 2}
   MoveAimSlowFactor: 0.5
-  RangeOfView: 90
+  RangeOfView: 100
   ViewDistance: 15
   MaxHealth: 100
   HealthStepDecreasePercent: 0.2
   HealthMoveSpeedDecreasePercentPerStep: 0.1
   HealthRotateSpeedDecreasePercentPerStep: 0.05
   HealthLootDecreasePercentPerStep: 0.05
-  baseMoveSpeed: 2.5
+  baseMoveSpeed: 2
   baseRotateSpeed: 200
   basePickUpTime: 5

@@ -31,6 +31,8 @@ public class PlayerController : NetworkBehaviour
     private CharacterController characterController;
     private Targetable selfTargetable;
 
+    private Collider[] colliders;
+
     [Header("RPG parameters")]
     public PlayerParams rpgParams;
 
@@ -55,6 +57,8 @@ public class PlayerController : NetworkBehaviour
     {
         characterController = GetComponent<CharacterController>();
         selfTargetable = GetComponent<Targetable>();
+
+        colliders = GetComponents<Collider>();
     }
 
     public override void OnStartServer()
@@ -92,7 +96,7 @@ public class PlayerController : NetworkBehaviour
             LineOfSights.VisibilityLineOfSight.MaxAngle = rpgParams.RangeOfView;
             LineOfSights.VisibilityLineOfSight.MaxDistance = rpgParams.ViewDistance;
 
-            //--- remove after net init
+            //--- remove after net init (-:
             //weaponController.InitWithParams(rpgParams.StartWeapon, rpgParams.StartWeapon.ClipSize, rpgParams.StartWeapon.MaxAmmo);
             //LineOfSights.TargetingLineOfSight.MaxAngle = rpgParams.StartWeapon.RangeOfAiming;
             //LineOfSights.TargetingLineOfSight.MaxDistance = rpgParams.StartWeapon.FireDistance;
@@ -269,6 +273,14 @@ public class PlayerController : NetworkBehaviour
         _isDead = isDead;
         animator.SetDeadState(isDead);
         selfTargetable.isVisibleOnly = isDead;
+
+        if (colliders != null)
+        {
+            foreach (var col in colliders)
+            {
+                col.enabled = !isDead;
+            }
+        }
 
         if (isLocalPlayer)
         {

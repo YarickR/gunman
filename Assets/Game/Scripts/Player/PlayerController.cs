@@ -378,6 +378,12 @@ public class PlayerController : NetworkBehaviour
     {
         animator.SetReloadingState(isActive);
     }
+
+    [ClientRpc]
+    public void RpcAddAmmoToMainWeapon(int count)
+    {
+        weaponController.AddMainWeaponAmmo(count);
+    }
     #endregion
 
     #region Client commands

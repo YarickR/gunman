@@ -35,6 +35,14 @@ public class WeaponController : MonoBehaviour
         }
     }
 
+    public bool HaveMainWeapon
+    {
+        get
+        {
+            return _mainWeaponRpgParams != null;
+        }
+    }
+
     public bool IsReloading
     {
         get
@@ -105,6 +113,18 @@ public class WeaponController : MonoBehaviour
         targetView.currentClipAmmo = currentClipAmmo;
 
         _lastSet = rpgParams;
+    }
+
+    public void AddMainWeaponAmmo(int ammoCount)
+    {
+        if (_mainWeaponRpgParams == null)
+        {
+            return;
+        }
+
+        _mainWeaponView.backpackAmmo = Mathf.Min(_mainWeaponView.backpackAmmo + ammoCount, _mainWeaponRpgParams.MaxAmmo);
+
+        TrySetMainWeapon();
     }
 
     private void ShowModel(WeaponParams rpgParams)
@@ -322,6 +342,14 @@ public class WeaponController : MonoBehaviour
         if (GetTargetParams() == _baseWeaponRpgParams && _baseWeaponRpgParams != _lastSet)
         {
             playerController.CmdSetWeapon(_baseWeaponRpgParams.WeaponId, _baseWeaponRpgParams.ClipSize, _baseWeaponRpgParams.MaxAmmo);
+        }
+    }
+
+    private void TrySetMainWeapon()
+    {
+        if (GetTargetParams() == _mainWeaponRpgParams && _mainWeaponRpgParams != _lastSet)
+        {
+            playerController.CmdSetWeapon(_mainWeaponRpgParams.WeaponId, _mainWeaponView.currentClipAmmo, _mainWeaponView.backpackAmmo);
         }
     }
 

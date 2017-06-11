@@ -10,7 +10,7 @@ public class InteractableTrigger : MonoBehaviour
             interactable = transform.parent.GetComponent<Interactable>();
         }
         var pc = other.GetComponent<PlayerController>();
-        if (pc != null && pc.InteractSystem != null && pc.InteractSystem.enabled)
+        if (pc != null && pc.InteractSystem != null && pc.InteractSystem.enabled && interactable.CanInteract(pc))
         {
             pc.InteractSystem.TryActivateInteractable(interactable);
         }

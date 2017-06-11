@@ -7896,6 +7896,36 @@ Prefab:
       propertyPath: m_RootOrder
       value: 32
       objectReference: {fileID: 0}
+    - target: {fileID: 114541933514261044, guid: 15537f4bb1be1044cb8fd10efe84f785,
+        type: 2}
+      propertyPath: Steps.Array.data[0].StartTime
+      value: 20
+      objectReference: {fileID: 0}
+    - target: {fileID: 114541933514261044, guid: 15537f4bb1be1044cb8fd10efe84f785,
+        type: 2}
+      propertyPath: Steps.Array.data[0].Duration
+      value: 30
+      objectReference: {fileID: 0}
+    - target: {fileID: 114541933514261044, guid: 15537f4bb1be1044cb8fd10efe84f785,
+        type: 2}
+      propertyPath: Steps.Array.data[1].StartTime
+      value: 65
+      objectReference: {fileID: 0}
+    - target: {fileID: 114541933514261044, guid: 15537f4bb1be1044cb8fd10efe84f785,
+        type: 2}
+      propertyPath: Steps.Array.data[1].Duration
+      value: 15
+      objectReference: {fileID: 0}
+    - target: {fileID: 114541933514261044, guid: 15537f4bb1be1044cb8fd10efe84f785,
+        type: 2}
+      propertyPath: Steps.Array.data[2].StartTime
+      value: 90
+      objectReference: {fileID: 0}
+    - target: {fileID: 114541933514261044, guid: 15537f4bb1be1044cb8fd10efe84f785,
+        type: 2}
+      propertyPath: Steps.Array.data[2].Scale
+      value: 3
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 15537f4bb1be1044cb8fd10efe84f785, type: 2}
   m_IsPrefabParent: 0

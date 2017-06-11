@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Networking;
-
+using Prototype.NetworkLobby;
 public class PlayerController : NetworkBehaviour
 {
     private static float LOCATION_RANGE = 20.0f;
@@ -42,6 +42,8 @@ public class PlayerController : NetworkBehaviour
     //+++++ net params
     [SyncVar(hook = "OnChangeHealth")]
     private float _currentHealth;
+    [SyncVar(hook = "OnChangeName")]
+    private string _playerName;
     //----- net params
 
     private bool _isDead = false;
@@ -62,15 +64,9 @@ public class PlayerController : NetworkBehaviour
     public override void OnStartServer()
     {
         base.OnStartServer();
-        GCTX.Log(String.Format("OnStartServer({0}, {1})", playerControllerId, netId));
-		NetworkLobbyManager __mgr = NetworkLobbyManager.singleton as NetworkLobbyManager;
-        for (int i = 0; i < __mgr.lobbySlots.Length; i++) {
-        	if (__mgr.lobbySlots[i] != null) {
-				GCTX.Log(String.Format("Checking slot {0}, playerController id = {1}, netId = {2}, name {3}", i, __mgr.lobbySlots[i].playerControllerId, __mgr.lobbySlots[i].netId, __mgr.lobbySlots[i].gameObject.GetComponent<PlayerInfo>().PlayerName.text ));
-        	}
-        }
         notifyLogicAboutSpawn();
         InitRPGParams();
+        _playerName = name;
     }
 
     public override void OnStartClient()
@@ -86,18 +82,7 @@ public class PlayerController : NetworkBehaviour
     public override void OnStartLocalPlayer()
     {
         base.OnStartLocalPlayer();
-        NetworkLobbyManager __mgr = NetworkLobbyManager.singleton as NetworkLobbyManager;
-        for (int i = 0; i < __mgr.lobbySlots.Length; i++) {
-        	if (__mgr.lobbySlots[i].playerControllerId == playerControllerId) {
-				name = __mgr.lobbySlots[i].name;
-				gameObject.name = __mgr.lobbySlots[i].name;
-				break;
-        	}
-        }
-        //name = "Player_" + playerControllerId.ToString();
-
-        if (isLocalPlayer)
-        {
+        if (isLocalPlayer) {
             LocalClientController = this;
 
             cam = PlayerCamera.instance;
@@ -132,7 +117,7 @@ public class PlayerController : NetworkBehaviour
                 InteractSystem.enabled = false;
             }
         }
-
+        CmdGetMyName();
         SetWeaponById(rpgParams.StartWeapon.WeaponId, rpgParams.StartWeapon.ClipSize, rpgParams.StartWeapon.MaxAmmo);
     }
 
@@ -288,6 +273,10 @@ public class PlayerController : NetworkBehaviour
     #endregion
 
     #region network hooks
+    private void OnChangeName(string newName) {
+    	GCTX.Log("OnChangeName: " + newName);
+    	name = newName;
+    }
     private void OnChangeHealth(float value)
     {
         Debug.LogFormat("ONCHANGE HEALTH:" + value);
@@ -318,6 +307,7 @@ public class PlayerController : NetworkBehaviour
     #region Client rpc
 	[ClientRpc]
 	public void RpcSetName(string newName) {
+		GCTX.Log("RpcSetName");
 		gameObject.name = newName;
 		name = newName;
 	}
@@ -337,7 +327,6 @@ public class PlayerController : NetworkBehaviour
 
     	Debug.LogFormat("RpcShotAct: target: {0}, shooter {1}", netId, DamagerNetId);
         GameObject playerGO = ClientScene.FindLocalObject(DamagerNetId);
-		PlayerController __attPC = null;	
         /*
         if (_cachedControllers.ContainsKey(DamagerNetId))
         {
@@ -350,7 +339,7 @@ public class PlayerController : NetworkBehaviour
         	Debug.LogFormat("Can't find attacker with id {0}", DamagerNetId);
             return;
         }
-		GCTX.Log(String.Format("{0} ({4}) deals {3} damage to {1}, {2} HP left", playerGO.GetComponent<PlayerController>().name,  name, _currentHealth, damage, __attPC.name));
+		GCTX.Log(String.Format("{0}  deals {3} damage to {1}, {2} HP left", playerGO.GetComponent<PlayerController>().name,  name, _currentHealth, damage));
 		GameLogic.Instance.HUD.AddInfoLine(playerGO.name + " deals damage to " + name);
         if (_currentHealth <= 0f) {
 			GameLogic.Instance.HUD.AddInfoLine(playerGO.name + " killed " + name);
@@ -362,8 +351,7 @@ public class PlayerController : NetworkBehaviour
 
         var targetController = playerGO.GetComponent<PlayerController>();
         var isVisible = targetController.selfTargetable.Visible;
-        if (isVisible)
-        {
+        if (isVisible) {
             return;
         }
 
@@ -429,6 +417,10 @@ public class PlayerController : NetworkBehaviour
     #endregion
 
     #region Client commands
+    [Command]
+    public void CmdGetMyName() {
+    	RpcSetName(name);
+    }
     [Command]
     public void CmdSendDamageToServer(float damageValue)
     {

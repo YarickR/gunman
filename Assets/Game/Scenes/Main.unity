@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.37311953, g: 0.38074014, b: 0.3587274, a: 1}
+  m_IndirectSpecularColor: {r: 0.373132, g: 0.3807496, b: 0.3587258, a: 1}
 --- !u!157 &3
 LightmapSettings:
   m_ObjectHideFlags: 0
@@ -5176,6 +5176,56 @@ Prefab:
         type: 2}
       propertyPath: m_AnchoredPosition.x
       value: -800.00006
+      objectReference: {fileID: 0}
+    - target: {fileID: 114539549216730450, guid: 2f74358cf348a43a18acb62fba7f45c0,
+        type: 2}
+      propertyPath: m_Color.r
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 114539549216730450, guid: 2f74358cf348a43a18acb62fba7f45c0,
+        type: 2}
+      propertyPath: m_Color.g
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 114539549216730450, guid: 2f74358cf348a43a18acb62fba7f45c0,
+        type: 2}
+      propertyPath: m_Color.b
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 114539549216730450, guid: 2f74358cf348a43a18acb62fba7f45c0,
+        type: 2}
+      propertyPath: m_Color.a
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 114327819512734680, guid: 2f74358cf348a43a18acb62fba7f45c0,
+        type: 2}
+      propertyPath: m_Color.g
+      value: 0.39215687
+      objectReference: {fileID: 0}
+    - target: {fileID: 114327819512734680, guid: 2f74358cf348a43a18acb62fba7f45c0,
+        type: 2}
+      propertyPath: m_Color.r
+      value: 0.039215688
+      objectReference: {fileID: 0}
+    - target: {fileID: 114327819512734680, guid: 2f74358cf348a43a18acb62fba7f45c0,
+        type: 2}
+      propertyPath: m_Color.b
+      value: 0.039215688
+      objectReference: {fileID: 0}
+    - target: {fileID: 114327819512734680, guid: 2f74358cf348a43a18acb62fba7f45c0,
+        type: 2}
+      propertyPath: m_FontData.m_FontSize
+      value: 25
+      objectReference: {fileID: 0}
+    - target: {fileID: 114327819512734680, guid: 2f74358cf348a43a18acb62fba7f45c0,
+        type: 2}
+      propertyPath: m_FontData.m_MinSize
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 114327819512734680, guid: 2f74358cf348a43a18acb62fba7f45c0,
+        type: 2}
+      propertyPath: m_FontData.m_RichText
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 2f74358cf348a43a18acb62fba7f45c0, type: 2}

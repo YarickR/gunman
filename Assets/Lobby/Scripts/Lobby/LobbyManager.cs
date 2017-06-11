@@ -5,7 +5,7 @@ using UnityEngine.Networking;
 using UnityEngine.Networking.Types;
 using UnityEngine.Networking.Match;
 using System.Collections;
-
+using System;
 
 namespace Prototype.NetworkLobby
 {
@@ -82,6 +82,18 @@ namespace Prototype.NetworkLobby
                 prematchCountdown = 0;
                 StartHost();
             }
+			string[] __args = System.Environment.GetCommandLineArgs();
+            for (int __i = 0; __i < __args.Length; __i++) {
+            	if (__args[__i] == "-dedicated") {
+					ChangeTo(null);
+	            	StartServer();
+	            	backDelegate = StopServerClbk;
+	            	SetServerInfo("Dedicated Server", networkAddress);
+	            	break;
+            	};
+           };
+
+
         }
 
         public override void OnLobbyServerSceneChanged(string sceneName)

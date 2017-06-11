@@ -66,7 +66,7 @@ public class PlayerController : NetworkBehaviour
 		NetworkLobbyManager __mgr = NetworkLobbyManager.singleton as NetworkLobbyManager;
         for (int i = 0; i < __mgr.lobbySlots.Length; i++) {
         	if (__mgr.lobbySlots[i] != null) {
-				GCTX.Log(String.Format("Checking slot {0}, playerController id = {1}, netId = {2}, name {3}", i, __mgr.lobbySlots[i].playerControllerId, __mgr.lobbySlots[i].netId, __mgr.lobbySlots[i].gameObject.GetComponent<PlayerInfo>().PlayerName.text ));
+			//	GCTX.Log(String.Format("Checking slot {0}, playerController id = {1}, netId = {2}, name {3}", i, __mgr.lobbySlots[i].playerControllerId, __mgr.lobbySlots[i].netId, __mgr.lobbySlots[i].gameObject.GetComponent<PlayerInfo>().PlayerName.text ));
         	}
         }
         notifyLogicAboutSpawn();

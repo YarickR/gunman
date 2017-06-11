@@ -11,6 +11,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4f4daaef367ae8841b1071bdf0743837, type: 3}
   m_Name: AR-1
   m_EditorClassIdentifier: 
+  Name: AR-1
   Damage: 10
   StartFireDelay: 2
   RangeOfAiming: 45

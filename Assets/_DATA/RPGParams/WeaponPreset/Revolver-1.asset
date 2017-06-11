@@ -11,6 +11,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4f4daaef367ae8841b1071bdf0743837, type: 3}
   m_Name: Revolver-1
   m_EditorClassIdentifier: 
+  Name: Revolver-1
   Damage: 30
   StartFireDelay: 0.1
   RangeOfAiming: 80

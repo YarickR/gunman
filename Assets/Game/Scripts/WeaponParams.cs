@@ -16,6 +16,8 @@ public enum AmmoType
 
 public class WeaponParams : ScriptableObject
 {
+    public string Name;
+
     public float Damage;
 
     [Header("Targeting params")]

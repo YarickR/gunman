@@ -3,7 +3,7 @@ using UnityEngine.Networking;
 
 public class Door : Interactable
 {
-    [SyncVar(hook = "OnChangeIsOpen")]
+   // [SyncVar(hook = "OnChangeIsOpen")]
     public bool IsOpen;
 
     Quaternion initialRotation;

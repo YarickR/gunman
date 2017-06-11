@@ -396,12 +396,12 @@ public class PlayerController : NetworkBehaviour
     }
 
     [ClientRpc]
-    public void RpcSetWeaponById(int weaponId, int clipAmmo, int backpackAmmo)
+    public void RpcSetWeaponById(int weaponId, int clipAmmo, int backpackAmmo, bool isSwitch)
     {
-        SetWeaponById(weaponId, clipAmmo, backpackAmmo);
+        SetWeaponById(weaponId, clipAmmo, backpackAmmo, isSwitch);
     }
 
-    private void SetWeaponById(int weaponId, int clipAmmo, int backpackAmmo)
+    private void SetWeaponById(int weaponId, int clipAmmo, int backpackAmmo, bool isSwitch = false)
     {
         WeaponParams targetWeaponParams = WeaponsList.Instance.GetParamsByID(weaponId);
         if (targetWeaponParams == null)
@@ -409,7 +409,7 @@ public class PlayerController : NetworkBehaviour
             return;
         }
 
-        weaponController.InitWithParams(targetWeaponParams, clipAmmo, backpackAmmo);
+        weaponController.InitWithParams(targetWeaponParams, clipAmmo, backpackAmmo, isSwitch);
 
         if (isLocalPlayer)
         {
@@ -492,9 +492,9 @@ public class PlayerController : NetworkBehaviour
     }
 
     [Command]
-    public void CmdSetWeapon(int weaponId, int clipAmmo, int backpackAmmo)
+    public void CmdSetWeapon(int weaponId, int clipAmmo, int backpackAmmo, bool isSwitch)
     {
-        RpcSetWeaponById(weaponId, clipAmmo, backpackAmmo);
+        RpcSetWeaponById(weaponId, clipAmmo, backpackAmmo, isSwitch);
     }
 
     [Command]

@@ -104,7 +104,7 @@ public class WeaponController : MonoBehaviour
     private float _reloadTime = 0.0f;
 
     //+++++ net
-    public void InitWithParams(WeaponParams rpgParams, int currentClipAmmo, int backpackAmmo)
+    public void InitWithParams(WeaponParams rpgParams, int currentClipAmmo, int backpackAmmo, bool isSwitch = false)
     {
         IsCanFire = true;
 
@@ -112,7 +112,8 @@ public class WeaponController : MonoBehaviour
 
         if (rpgParams != playerController.rpgParams.StartWeapon &&
             playerController.isLocalPlayer &&
-            _mainWeaponRpgParams != null)
+            _mainWeaponRpgParams != null &&
+            !isSwitch)
         {
             playerController.TrySpawnMainWeapon();
         }
@@ -396,7 +397,7 @@ public class WeaponController : MonoBehaviour
     {
         if (GetTargetParams() == _baseWeaponRpgParams && _baseWeaponRpgParams != _lastSet)
         {
-            playerController.CmdSetWeapon(_baseWeaponRpgParams.WeaponId, _baseWeaponRpgParams.ClipSize, _baseWeaponRpgParams.MaxAmmo);
+            playerController.CmdSetWeapon(_baseWeaponRpgParams.WeaponId, _baseWeaponRpgParams.ClipSize, _baseWeaponRpgParams.MaxAmmo, true);
         }
     }
 
@@ -404,7 +405,7 @@ public class WeaponController : MonoBehaviour
     {
         if (GetTargetParams() == _mainWeaponRpgParams && _mainWeaponRpgParams != _lastSet)
         {
-            playerController.CmdSetWeapon(_mainWeaponRpgParams.WeaponId, _mainWeaponView.currentClipAmmo, _mainWeaponView.backpackAmmo);
+            playerController.CmdSetWeapon(_mainWeaponRpgParams.WeaponId, _mainWeaponView.currentClipAmmo, _mainWeaponView.backpackAmmo, true);
         }
     }
 

@@ -50,10 +50,11 @@ public class FireSystem : NetworkBehaviour {
         transform.localScale = new Vector3(scaleToSet, transform.localScale.y, scaleToSet);
     }
 
-    public void AnnounceFire()
-    {
+    public void AnnounceFire() {
         // implement logic here
-        Debug.LogFormat("Fire will be in {0} seconds", AnnounceInterval);
+		foreach( KeyValuePair<NetworkInstanceId, PlayerController> pair in GameLogic.Instance.ActivePlayers) {
+			pair.Value.RpcAnnounceFire(AnnounceInterval, activatedStep + 2);
+		};
     }
 
     void OnDestroy()

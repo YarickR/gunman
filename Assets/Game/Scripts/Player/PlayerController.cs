@@ -328,20 +328,11 @@ public class PlayerController : NetworkBehaviour
     }
 
     [ClientRpc]
-    private void RpcShotAct(NetworkInstanceId DamagerNetId, float damage)
-    {
+    private void RpcShotAct(NetworkInstanceId DamagerNetId, float damage) {
 
     	Debug.LogFormat("RpcShotAct: target: {0}, shooter {1}", netId, DamagerNetId);
         GameObject attackerGO = ClientScene.FindLocalObject(DamagerNetId);
-        /*
-        if (_cachedControllers.ContainsKey(DamagerNetId))
-        {
-            playerGO = _cachedControllers[DamagerNetId];
-        }
-        else
-        */
-        if (attackerGO == null)
-        {
+        if (attackerGO == null) {
         	Debug.LogFormat("Can't find attacker with id {0}", DamagerNetId);
             return;
         }
@@ -356,17 +347,13 @@ public class PlayerController : NetworkBehaviour
         }
 
         var attackerController = attackerGO.GetComponent<PlayerController>();
-        if (attackerController != null)
-        {
-            GCTX.Log(String.Format("{0}  deals {3} damage to {1}, {2} HP left", attackerController.name, name, _currentHealth, damage));
+        if (attackerController != null) {
             var isVisible = attackerController.selfTargetable.Visible;
-            if (isVisible)
-            {
+            if (isVisible) {
                 return;
             }
 
-            if (LocalClientController == null)
-            {
+            if (LocalClientController == null) {
                 return;
             }
 
@@ -424,6 +411,11 @@ public class PlayerController : NetworkBehaviour
     public void RpcSetInteractingState(bool isActive)
     {
         animator.SetInteractingState(isActive);
+    }
+
+    [ClientRpc]
+    public void RpcAnnounceFire(float announceInterval, int fireStep) {
+		GameLogic.Instance.HUD.AddInfoLine(String.Format("Fire step {1} will be in {0} seconds", announceInterval, fireStep));
     }
     #endregion
 

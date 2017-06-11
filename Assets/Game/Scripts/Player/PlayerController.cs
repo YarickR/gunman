@@ -350,7 +350,7 @@ public class PlayerController : NetworkBehaviour
         	Debug.LogFormat("Can't find attacker with id {0}", DamagerNetId);
             return;
         }
-		GCTX.Log(String.Format("{0} ({4}) deals {3} damage to {1}, {2} HP left", playerGO.GetComponent<PlayerController>().name,  name, _currentHealth, damage, __attPC.name));
+		//GCTX.Log(String.Format("{0} ({4}) deals {3} damage to {1}, {2} HP left", playerGO.GetComponent<PlayerController>().name,  name, _currentHealth, damage, __attPC.name));
 		GameLogic.Instance.HUD.AddInfoLine(playerGO.name + " deals damage to " + name);
         if (_currentHealth <= 0f) {
 			GameLogic.Instance.HUD.AddInfoLine(playerGO.name + " killed " + name);

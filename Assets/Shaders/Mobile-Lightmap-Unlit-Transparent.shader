@@ -18,40 +18,9 @@ SubShader {
 	ZWrite Off
 	Blend SrcAlpha OneMinusSrcAlpha 
 	
-	// Non-lightmapped
-	Pass {
-		Tags { "LightMode" = "Vertex" }
-		Lighting Off
-		SetTexture [_MainTex] {
-			constantColor (1,1,1,1)
-			combine texture, constant // UNITY_OPAQUE_ALPHA_FFP
-		}  
-	}
-	
-	// Lightmapped, encoded as dLDR
-	Pass {
-		Tags { "LightMode" = "VertexLM" }
-
-		Lighting Off
-		BindChannels {
-			Bind "Vertex", vertex
-			Bind "texcoord1", texcoord0 // lightmap uses 2nd uv
-			Bind "texcoord", texcoord1 // main uses 1st uv
-		}
-		
-		SetTexture [unity_Lightmap] {
-			matrix [unity_LightmapMatrix]
-			combine texture
-		}
-		SetTexture [_MainTex] {
-			constantColor (1,1,1,1)
-			combine texture * previous DOUBLE, constant // UNITY_OPAQUE_ALPHA_FFP
-		}
-	}
-	
 	// Lightmapped, encoded as RGBM
 	Pass {
-		Tags { "LIGHTMODE"="VertexLMRGBM" "RenderType"="Opaque" }
+		Tags { "RenderType"="Opaque" }
 		CGPROGRAM
 		#pragma vertex vert
 		#pragma fragment frag

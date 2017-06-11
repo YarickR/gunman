@@ -398,6 +398,12 @@ public class PlayerController : NetworkBehaviour
         weaponController.ShowFireMuzzle();
         animator.SetShootTrigger((ShotAnimationType)type);
     }
+
+    [ClientRpc]
+    public void RpcSetInteractingState(bool isActive)
+    {
+        animator.SetInteractingState(isActive);
+    }
     #endregion
 
     #region Client commands
@@ -449,6 +455,12 @@ public class PlayerController : NetworkBehaviour
     {
         RpcSetReloadingState(isActive);
     }
+
+    [Command]
+    public void CmdSetInteractingState(bool isActive)
+    {
+        RpcSetInteractingState(isActive);
+    }
     #endregion
 
     #region Interact
@@ -468,12 +480,16 @@ public class PlayerController : NetworkBehaviour
         weaponController.IsCanFire = false;
         _isInteracting = true;
         _interactStartTime = Time.time;
+
+        CmdSetInteractingState(true);
     }
 
     public void StopUse()
     {
         _isInteracting = false;
         weaponController.IsCanFire = true;
+
+        CmdSetInteractingState(false);
     }
 
     public void UseItem(Interactable interactable)

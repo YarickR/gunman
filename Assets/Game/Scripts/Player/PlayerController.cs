@@ -17,7 +17,6 @@ public class PlayerController : NetworkBehaviour
     public PlayerInput input;
     public PlayerAnimator animator;
     public WeaponController weaponController;
-    public MuzzleFlash muzzleFlash;
     public ProcessLineOfSights LineOfSights;
     public List<Container> MapContainers;
     public bool IsMoving
@@ -388,6 +387,7 @@ public class PlayerController : NetworkBehaviour
     [ClientRpc]
     public void RpcFireAnimationTrigger(int type)
     {
+        weaponController.ShowFireMuzzle();
         animator.SetShootTrigger((ShotAnimationType)type);
     }
     #endregion

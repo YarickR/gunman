@@ -24,7 +24,7 @@ MonoBehaviour:
   ReloadTime: 0
   CritChance: 0
   CritMultiplier: 1
-  InHandsModel: {fileID: 1913468561089224, guid: 4d38e7bad15a77f4586398ae7e4e851b,
+  InHandsModel: {fileID: 1012699796744922, guid: 4d38e7bad15a77f4586398ae7e4e851b,
     type: 2}
   PicablePrefab: {fileID: 1257498985784566, guid: fed6a7aa623325f439eabda4bf2d4c87,
     type: 2}

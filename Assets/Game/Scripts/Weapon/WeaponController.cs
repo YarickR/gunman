@@ -89,6 +89,7 @@ public class WeaponController : MonoBehaviour
 
     private float _reloadTime = 0.0f;
 
+    //+++++ net
     public void InitWithParams(WeaponParams rpgParams, int currentClipAmmo, int backpackAmmo)
     {
         IsCanFire = true;
@@ -126,6 +127,31 @@ public class WeaponController : MonoBehaviour
 
         TrySetMainWeapon();
     }
+
+    public void ShowFireMuzzle()
+    {
+        var targetParams = GetTargetParams();
+        if (targetParams == null)
+        {
+            return;
+        }
+
+        WeaponView targetView;
+        if (targetParams == _mainWeaponRpgParams)
+        {
+            targetView = _mainWeaponView;
+        }
+        else
+        {
+            targetView = _baseWeaponView;
+        }
+
+        if (targetView != null && targetView.muzzle != null)
+        {
+            targetView.FireVisual();
+        }
+    }
+    //----- net
 
     private void ShowModel(WeaponParams rpgParams)
     {
@@ -286,12 +312,6 @@ public class WeaponController : MonoBehaviour
         playerController.CmdSendDamageToPlayer(damage, _lastTarget.PlayerController.netId, (int)targetParams.FireAnimationType);
 
         _lastFireTime = Time.time;
-
-		if (playerController.muzzleFlash != null) {
-        	playerController.muzzleFlash.Flash();
-        } else {
-        	Debug.Log("No muzzle flash instantiated");
-        }
 
     }
 

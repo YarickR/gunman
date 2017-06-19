@@ -53,7 +53,22 @@ namespace Prototype.NetworkLobby
 
         public void RemovePlayer(LobbyPlayer player)
         {
-            _players.Remove(player);
+            if (player == null)
+            {
+                for (int i = 0; i < _players.Count; ++i)
+                {
+                    if (_players[i] == null)
+                    {
+                        _players.RemoveAt(i);
+                        i -= 1;
+                    }
+                }
+            }
+            else if (_players.Contains(player))
+            {
+                _players.Remove(player);
+            }
+            
             PlayerListModified();
         }
 

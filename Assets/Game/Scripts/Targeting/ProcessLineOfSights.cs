@@ -3,7 +3,11 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class ProcessLineOfSights : MonoBehaviour {
+public class ProcessLineOfSights : MonoBehaviour
+{
+    [SerializeField, Tooltip("Layers of objects which are not transparent for viewing")]
+    private LayerMask _cullingMask = -1;
+
     public LineOfSight VisibilityLineOfSight;
     public LineOfSight TargetingLineOfSight;
 
@@ -167,14 +171,14 @@ public class ProcessLineOfSights : MonoBehaviour {
         {
             RaycastHit hit;
 
-            if (Physics.Raycast(transform.position, direction, out hit, maxDistance))
+            if (Physics.Raycast(transform.position, direction, out hit, maxDistance, _cullingMask))
             {
                 return hit.collider == col;
             }
         }
         else
         {
-            int hitsCount = Physics.RaycastNonAlloc(transform.position, direction, hits, maxDistance);
+            int hitsCount = Physics.RaycastNonAlloc(transform.position, direction, hits, maxDistance, _cullingMask);
             //Debug.DrawRay(transform.position, delta, Color.red);
 
             Array.Sort<RaycastHit>(hits, 0, hitsCount, sortByHitDistanceComparer);

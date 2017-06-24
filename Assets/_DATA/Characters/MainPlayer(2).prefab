@@ -1301,6 +1301,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 003817594572c4ab49dd2803dd14cdb2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _cullingMask:
+    serializedVersion: 2
+    m_Bits: 4294964703
   VisibilityLineOfSight: {fileID: 114757307021700092}
   TargetingLineOfSight: {fileID: 114100874141396420}
   IgnoreTarget: {fileID: 0}

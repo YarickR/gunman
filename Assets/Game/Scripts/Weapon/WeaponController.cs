@@ -275,7 +275,7 @@ public class WeaponController : MonoBehaviour
             if (_isFirstEmptyTarget)
             {
                 _isFirstEmptyTarget = false;
-                _currentAimProcent = _currentAimProcent * targetParams.DropTargetPercent;
+                _currentAimProcent = _currentAimProcent * (1.0f - targetParams.DropTargetPercent);
             }
 
             _currentAimProcent -= Time.deltaTime / targetParams.StartFireDelay;

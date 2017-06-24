@@ -371,6 +371,7 @@ public class PlayerController : NetworkBehaviour
         if (_currentHealth <= 0f) {
 			GameLogic.Instance.HUD.AddInfoLine(attackerGO.name + " killed " + name);
         }
+
         if (isLocalPlayer || (LocalClientController.netId == DamagerNetId)) {
             //show hit on self
             spawnHit();
@@ -556,10 +557,6 @@ public class PlayerController : NetworkBehaviour
         InteractSystem.ClearInteractable();
         StopUse();
     }
-    #endregion
-
-    #region Client weapon
-
     #endregion
 
     void spawnHit()

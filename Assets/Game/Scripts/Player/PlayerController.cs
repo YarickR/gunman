@@ -342,11 +342,13 @@ public class PlayerController : NetworkBehaviour
 
     #region Client rpc
 	[ClientRpc]
-	public void RpcSetName(string newName) {
+	public void RpcSetName(string newName)
+    {
 		GCTX.Log("RpcSetName");
 		gameObject.name = newName;
 		name = newName;
 	}
+
     [ClientRpc]
     public void RpcEnd(bool isVictory, int place, int maxPlayersCount)
     {
@@ -452,9 +454,11 @@ public class PlayerController : NetworkBehaviour
 
     #region Client commands
     [Command]
-    public void CmdGetMyName() {
+    public void CmdGetMyName()
+    {
     	RpcSetName(name);
     }
+
     [Command]
     public void CmdSendDamageToServer(float damageValue)
     {

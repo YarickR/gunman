@@ -9,13 +9,13 @@ using UnityEngine.SceneManagement;
 public class GameLogic : NetworkBehaviour
 {
     public GameHUD HUD;
+
     [Range(0, 60)]
     public float EndGameDuration = 10f;
 
     int playersCount = 0;
 
     Dictionary<NetworkInstanceId, PlayerController> activePlayers = new Dictionary<NetworkInstanceId, PlayerController>();
-
     public Dictionary<NetworkInstanceId, PlayerController> ActivePlayers
     {
         get { return activePlayers; }
@@ -86,6 +86,7 @@ public class GameLogic : NetworkBehaviour
         }
     }
 
+    #region Server only
     [Server]
     void PlayerSpawned(PlayerController player)
     {
@@ -94,6 +95,12 @@ public class GameLogic : NetworkBehaviour
             playersCount += 1;
             activePlayers[player.netId] = player;
             Debug.LogFormat("SPAWN PLAYER {0}/{1}", activePlayers.Count, playersCount);
+
+            RpcSetAliveCount(activePlayers.Count);
+            if (NetworkServer.localClientActive)
+            {
+                HUD.SetLeftAlive(activePlayers.Count);
+            }
         }
     }
 
@@ -102,12 +109,17 @@ public class GameLogic : NetworkBehaviour
     {
         if (activePlayers.ContainsKey(player.netId))
         {
-
             Debug.LogFormat("KILL PLAYER {0}/{1}", activePlayers.Count, playersCount);
             player.RpcEnd(false, activePlayers.Count, playersCount);
             activePlayers.Remove(player.netId);
             
             checkWinConditions();
+
+            RpcSetAliveCount(activePlayers.Count);
+            if (NetworkServer.localClientActive)
+            {
+                HUD.SetLeftAlive(activePlayers.Count);
+            }
         }
     }
 
@@ -150,4 +162,13 @@ public class GameLogic : NetworkBehaviour
         yield return new WaitForSeconds(EndGameDuration);
         LobbyManager.s_Singleton.ServerReturnToLobby();
     }
+    #endregion
+
+    #region Client rpc
+    [ClientRpc]
+    public void RpcSetAliveCount(int alivePlayerCount)
+    {
+        HUD.SetLeftAlive(alivePlayerCount);
+    }
+    #endregion
 }

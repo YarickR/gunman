@@ -3,33 +3,73 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using System;
-public class GameHUD : MonoBehaviour {
+
+public class GameHUD : MonoBehaviour
+{
+    private enum HUDState
+    {
+        Alive,
+        Dead,
+    }
+
+    [Header("Base elements")]
+    public GameObject BaseContainer;
+    public Text InfoPanel;
+    public Text LeftAlive;
+
+    [Header("Alive elements")]
+    public GameObject AliveContainer;
     public JoystickPlayerInput Joystick;
-    public Slider HP, Timer;
-    public GameObject Weap1, Cons1, Ammo1;
-    public Text InfoPanel, LeftAlive;
-    public EndScreen EndScreen;
-    public PlayerController LocalPlayer;
+    public Slider HP;
+    public Slider Timer;
     public Text AmmoValue;
-	private float _addLineTS;
     public Button UseButton;
 
-    public void SwitchToEnd(bool isVictory, int playerPlace, int maxPlayers) {
-        Joystick.gameObject.SetActive(false);
-        EndScreen.SetEndStatus(isVictory, playerPlace, maxPlayers);
-        EndScreen.gameObject.SetActive(true);
-    }
+    [Header("Death screen elements")]
+    public GameObject DeathContainer;
+    public EndScreen EndScreen;
+    
+    [Header("Runtime element")]
+    public PlayerController LocalPlayer;
+    
+	private float _addLineTS;
 
-	public void Start() {
-		LocalPlayer = null;
-		_addLineTS = 0;
+    public void Start()
+    {
+        LocalPlayer = null;
+        _addLineTS = 0;
         UseButton.onClick.AddListener(OnUseButtonClicked);
-	}
-
-    public void SwitchToLive() {
-        Joystick.gameObject.SetActive(true);
-        EndScreen.gameObject.SetActive(false);
     }
+
+    private void SwitchToState(HUDState newState)
+    {
+        switch (newState)
+        {
+            case HUDState.Alive:
+                AliveContainer.SetActive(true);
+                DeathContainer.SetActive(false);
+                break;
+
+            case HUDState.Dead:
+            default:
+                AliveContainer.SetActive(false);
+                DeathContainer.SetActive(true);
+                break;
+        }
+    }
+
+    public void SwitchToEnd(bool isVictory, int playerPlace, int maxPlayers)
+    {
+        EndScreen.SetEndStatus(isVictory, playerPlace, maxPlayers);
+
+        SwitchToState(HUDState.Dead);
+    }
+
+    public void SwitchToLive()
+    {
+        SwitchToState(HUDState.Alive);
+    }
+
     public void SetHP(float newHP, float maxHP) {
     	GCTX.Log("Changing HP to " + newHP);
     	HP.value = (Mathf.Min(Mathf.Max((newHP * 100)/maxHP, 0), 100));
@@ -45,8 +85,10 @@ public class GameHUD : MonoBehaviour {
     	InfoPanel.text = parts[parts.Length - 1] + '\n' + newLine;
     	_addLineTS = Time.time;
     }
-    public void SetLeftAlive(int alive, int total) {
-    	LeftAlive.text = alive + "/" + total;
+
+    public void SetLeftAlive(int alive)
+    {
+    	LeftAlive.text = alive.ToString();
     }
     public void UpdateHUD(PlayerController player = null) {
     	if (player == null ) {
@@ -67,9 +109,6 @@ public class GameHUD : MonoBehaviour {
     			InfoPanel.text = "";
     		};
     	}
-    }
-    public void UpdateInventory(PlayerController player = null) {
-    	
     }
 
     public void SetAmmo(string name, int current, int backpack)

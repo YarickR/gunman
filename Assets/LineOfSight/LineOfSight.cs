@@ -88,6 +88,7 @@ public class LineOfSight : MonoBehaviour
     private Vector3[] _vertices;
     private int[] _triangles;
     private Mesh _mesh;
+    private Transform _transform;
 
     private void Start()
     {
@@ -95,6 +96,7 @@ public class LineOfSight : MonoBehaviour
         _mesh = GetComponent<MeshFilter>().mesh;
         _meshRenderer = GetComponent<MeshRenderer>();
         _meshRenderer.material = Material;
+        _transform = this.transform;
     }
 
     private void Update()
@@ -126,14 +128,17 @@ public class LineOfSight : MonoBehaviour
 
         _hits.Clear();
 
+        var upVector = _transform.up;
+        var forwardVector = _transform.forward;
+
         for (int i = 0; i < numberOfRays; i++)
         {
-            Vector3 direction = Quaternion.AngleAxis(currentAngle, transform.up)*transform.forward;
+            Vector3 direction = Quaternion.AngleAxis(currentAngle, upVector) * forwardVector;
             RaycastHit hit;
 
-            if (Physics.Raycast(transform.position, direction, out hit, _maxDistance, _cullingMask) == false)
+            if (Physics.Raycast(_transform.position, direction, out hit, _maxDistance, _cullingMask) == false)
             {
-                hit.point = transform.position + (direction*_maxDistance);
+                hit.point = _transform.position + (direction * _maxDistance);
             }
 
             _hits.Add(hit);

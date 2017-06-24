@@ -21,7 +21,7 @@ GameObject:
   - component: {fileID: 4146068560499002}
   - component: {fileID: 114518944761843804}
   - component: {fileID: 114449749295395238}
-  m_Layer: 0
+  m_Layer: 11
   m_Name: Ammo_1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -38,7 +38,7 @@ GameObject:
   - component: {fileID: 4940425261113168}
   - component: {fileID: 33854937104667724}
   - component: {fileID: 23099206010049550}
-  m_Layer: 0
+  m_Layer: 11
   m_Name: Model
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -52,8 +52,8 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1198082686367992}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 8.801497, y: 4.425956, z: 32.640858}
-  m_LocalScale: {x: 2, y: 2, z: 2}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 4940425261113168}
   m_Father: {fileID: 0}
@@ -65,13 +65,13 @@ Transform:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1925462160416278}
-  m_LocalRotation: {x: 0.37465715, y: 0.37465715, z: 0.5996933, w: 0.5996933}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 45.000015, y: 45.00002, z: 45}
+  m_LocalRotation: {x: 0.08527031, y: 0.38887352, z: 0.5012461, w: 0.768283}
+  m_LocalPosition: {x: 0, y: 0.45, z: 0}
+  m_LocalScale: {x: 80, y: 80, z: 80}
   m_Children: []
   m_Father: {fileID: 4146068560499002}
   m_RootOrder: 0
-  m_LocalEulerAnglesHint: {x: 0, y: 63.99, z: 90}
+  m_LocalEulerAnglesHint: {x: -15, y: 45, z: 60}
 --- !u!23 &23099206010049550
 MeshRenderer:
   m_ObjectHideFlags: 1
@@ -124,6 +124,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   PickupRadius: 1
   InteractionTime: 0.1
+  SelectionAnchor: {fileID: 0}
   backpackAmmoAdd: 10
 --- !u!114 &114518944761843804
 MonoBehaviour:

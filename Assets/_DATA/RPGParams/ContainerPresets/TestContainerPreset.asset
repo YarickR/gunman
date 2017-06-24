@@ -1,0 +1,23 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c847530b9c04f4941ba868a5e53d65fd, type: 3}
+  m_Name: TestContainerPreset
+  m_EditorClassIdentifier: 
+  emptyDropWeight: 10
+  elements:
+  - weight: 2
+    target: {fileID: 114191834232322262, guid: 8af2ddacecf2d4342b95ecdd81f7eb6b, type: 2}
+  - weight: 3
+    target: {fileID: 114015518027882042, guid: 74a46df5f3c8e4245b0e625864636bfd, type: 2}
+  - weight: 5
+    target: {fileID: 114449749295395238, guid: 8a4676a6d1b7e1341bceb7808815f753, type: 2}
+  - weight: 10
+    target: {fileID: 114619138349044850, guid: 58917800408df4b489ec33cc2efdc6f7, type: 2}

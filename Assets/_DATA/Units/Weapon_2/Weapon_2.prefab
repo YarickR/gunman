@@ -21,7 +21,7 @@ GameObject:
   - component: {fileID: 4873663890584150}
   - component: {fileID: 33555832694691644}
   - component: {fileID: 23944048840805276}
-  m_Layer: 0
+  m_Layer: 11
   m_Name: Weapon_2 (1)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -38,7 +38,7 @@ GameObject:
   - component: {fileID: 4805551850110158}
   - component: {fileID: 114191878881395358}
   - component: {fileID: 114331036339303108}
-  m_Layer: 0
+  m_Layer: 11
   m_Name: Weapon_2
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -51,23 +51,23 @@ Transform:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1947372869972802}
-  m_LocalRotation: {x: 0.7071068, y: 0, z: 0, w: 0.7071068}
-  m_LocalPosition: {x: -0, y: 0, z: 0}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 4873663890584150}
   m_Father: {fileID: 0}
   m_RootOrder: 0
-  m_LocalEulerAnglesHint: {x: 90, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!4 &4873663890584150
 Transform:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1035276458990248}
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: -0, z: -0.126}
-  m_LocalScale: {x: 0.588589, y: 0.5885893, z: 0.5885893}
+  m_LocalRotation: {x: 0.7071068, y: 0, z: 0, w: 0.7071068}
+  m_LocalPosition: {x: -0.18, y: 0.1, z: 0}
+  m_LocalScale: {x: 0.58, y: 0.58, z: 0.58}
   m_Children: []
   m_Father: {fileID: 4805551850110158}
   m_RootOrder: 0

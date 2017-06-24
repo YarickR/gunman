@@ -64,7 +64,7 @@ public class WeaponParams : ScriptableObject
 
 
 #if UNITY_EDITOR
-    [MenuItem("RPGParams/Params/Create weapon params", false, 100)]
+    [MenuItem("RPGParams/Params/Create weapon params", false, 200)]
     public static void CreatePlayerParams()
     {
         CreateScriptableObject.Create<WeaponParams>();

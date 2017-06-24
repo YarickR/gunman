@@ -21,7 +21,7 @@ GameObject:
   - component: {fileID: 4822988620404408}
   - component: {fileID: 33764655786974384}
   - component: {fileID: 23439036512499690}
-  m_Layer: 0
+  m_Layer: 11
   m_Name: Weapon_1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -38,7 +38,7 @@ GameObject:
   - component: {fileID: 4908845689884194}
   - component: {fileID: 114678735344266992}
   - component: {fileID: 114619138349044850}
-  m_Layer: 0
+  m_Layer: 11
   m_Name: Weapon_1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -52,7 +52,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1825778878088822}
   m_LocalRotation: {x: 0.6682249, y: -0.0043145167, z: -0.0048033306, w: 0.7439314}
-  m_LocalPosition: {x: -0.12487559, y: 0.12269739, z: 0.06578625}
+  m_LocalPosition: {x: -0.125, y: 0.1, z: 0.05}
   m_LocalScale: {x: 2.7142954, y: 2.7142963, z: 2.7142963}
   m_Children: []
   m_Father: {fileID: 4908845689884194}

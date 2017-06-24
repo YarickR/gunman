@@ -31,6 +31,7 @@ public class ContainerParams : ScriptableObject
         }
 
         int rollValue = UnityEngine.Random.Range(0, overallWeight);
+        //Debug.Log(string.Format("preset:{0} Chances:{1} - {2} ", name, rollValue, overallWeight));
 
         for (int i = 0; i < elements.Count; ++i)
         {

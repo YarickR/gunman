@@ -20,8 +20,11 @@ public class ContainerOnStartGenerate : MonoBehaviour
         Interactable rolledObj = preset.Roll();
         if (rolledObj == null)
         {
+            //Debug.Log(string.Format("GO:{0} rolled:null", name));
             return;
         }
+
+        //Debug.Log(string.Format("GO:{0} rolled:{1}", name, rolledObj.name));
 
         var targetObj = GameObject.Instantiate(rolledObj.gameObject, transform.position, transform.rotation);
         NetworkServer.Spawn(targetObj);

@@ -38,6 +38,8 @@ GameObject:
   - component: {fileID: 4927947211834198}
   - component: {fileID: 33301385604704714}
   - component: {fileID: 23420067084849474}
+  - component: {fileID: 111322520010162552}
+  - component: {fileID: 114678057238529972}
   m_Layer: 11
   m_Name: Model
   m_TagString: Untagged
@@ -71,7 +73,7 @@ Transform:
   m_Children: []
   m_Father: {fileID: 4434653494628384}
   m_RootOrder: 0
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 342, z: 0}
 --- !u!23 &23420067084849474
 MeshRenderer:
   m_ObjectHideFlags: 1
@@ -111,6 +113,21 @@ MeshFilter:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1566850300144120}
   m_Mesh: {fileID: 4300000, guid: c595d36a02ed1cf41965b6cf4a53da81, type: 3}
+--- !u!111 &111322520010162552
+Animation:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1566850300144120}
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Animation: {fileID: 7400000, guid: 16b3e6a4d0089204ab4e58173d4cabad, type: 2}
+  m_Animations:
+  - {fileID: 7400000, guid: 16b3e6a4d0089204ab4e58173d4cabad, type: 2}
+  m_WrapMode: 0
+  m_PlayAutomatically: 1
+  m_AnimatePhysics: 0
+  m_CullingType: 0
 --- !u!114 &114015518027882042
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -126,6 +143,18 @@ MonoBehaviour:
   InteractionTime: 1.5
   SelectionAnchor: {fileID: 0}
   addHealth: 50
+--- !u!114 &114678057238529972
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1566850300144120}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 04aa62ede6ebeea4883758a9177f462d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  animationController: {fileID: 111322520010162552}
 --- !u!114 &114845019289463220
 MonoBehaviour:
   m_ObjectHideFlags: 1

@@ -64,6 +64,8 @@ namespace Prototype.NetworkLobby
 
         void Start()
         {
+            UnityEngine.Random.InitState((int)DateTime.Now.Ticks);
+
             var wList = WeaponsList.Instance;
 
             s_Singleton = this;

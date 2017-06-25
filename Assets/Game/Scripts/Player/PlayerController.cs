@@ -130,6 +130,7 @@ public class PlayerController : NetworkBehaviour
     public void UpdateTimer(float currValue, float maxValue) {
     	GameLogic.Instance.HUD.SetTimer(currValue, maxValue);
     }
+
     private void Update()
     {
         if (IsInputAvalible())
@@ -447,7 +448,8 @@ public class PlayerController : NetworkBehaviour
     }
 
     [ClientRpc]
-    public void RpcAnnounceFire(float announceInterval, int fireStep) {
+    public void RpcAnnounceFire(float announceInterval, int fireStep)
+    {
 		GameLogic.Instance.HUD.AddInfoLine(String.Format("Fire step {1} will be in {0} seconds", announceInterval, fireStep));
     }
     #endregion

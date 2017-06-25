@@ -11,7 +11,8 @@ public struct FireSystemStep
     public float Scale;
 }
 
-public class FireSystem : NetworkBehaviour {
+public class FireSystem : NetworkBehaviour
+{
     public FireSystemStep[] Steps;
 
     public float DamagePeriod = 1;
@@ -26,31 +27,69 @@ public class FireSystem : NetworkBehaviour {
     float startScaleTime;
     float duration;
 
-    float startTime;
+    private float _startTime;
 
-    bool shouldDoAnnounce = true;
+    private double _startServerTimeOnServer;
+    private double _startServerTimeOnClient;
 
-    HashSet<PlayerController> safePlayers = new HashSet<PlayerController>();
+    private bool _shouldDoAnnounce = true;
+
+    private HashSet<PlayerController> _safePlayers = new HashSet<PlayerController>();
+    private List<PlayerController> _cachedPlayers = new List<PlayerController>();
 
     public override void OnStartServer()
     {
         base.OnStartServer();
         if (isServer)
         {
-            startTime = Time.time;
+            _startTime = Time.time;
+            _startServerTimeOnServer = Network.time;
             fromScale = transform.localScale.x;
             StartCoroutine(DamageAll());
             StartCoroutine(UpdateScale());
+
+            if (NetworkServer.localClientActive)
+            {
+                _startServerTimeOnClient = _startServerTimeOnServer;
+                GameLogic.Instance.HUD.SetZoneData(Steps, _startServerTimeOnClient);
+            }
         }
     }
 
+    public override void OnStartLocalPlayer()
+    {
+        base.OnStartLocalPlayer();
+
+        //get current state on client
+        CmdRequestServerStatTime();
+    }
+
+    #region Command
+    [Command]
+    private void CmdRequestServerStatTime()
+    {
+        RpcSetServerStartTime(_startServerTimeOnServer);
+    }
+    #endregion
+
+    #region ClientRpc
     [ClientRpc]
     void RpcSetScale(float scaleToSet)
     {
         transform.localScale = new Vector3(scaleToSet, transform.localScale.y, scaleToSet);
     }
 
-    public void AnnounceFire() {
+    [ClientRpc]
+    private void RpcSetServerStartTime(double serverStartTime)
+    {
+        _startServerTimeOnClient = serverStartTime;
+
+        GameLogic.Instance.HUD.SetZoneData(Steps,_startServerTimeOnClient);
+    }
+    #endregion
+
+    private void AnnounceFire()
+    {
         // implement logic here
 		foreach( KeyValuePair<NetworkInstanceId, PlayerController> pair in GameLogic.Instance.ActivePlayers) {
 			pair.Value.RpcAnnounceFire(AnnounceInterval, activatedStep + 2);
@@ -66,7 +105,7 @@ public class FireSystem : NetworkBehaviour {
     {
         if (isServer && activatedStep > -1)
         {
-            var normalizedTime = Mathf.Clamp01((Time.time - startScaleTime - startTime) / duration);
+            var normalizedTime = Mathf.Clamp01((Time.time - startScaleTime - _startTime) / duration);
             var scaleToSet = Mathf.Lerp(fromScale, toScale, normalizedTime);
 
             if (transform.localScale.x != scaleToSet)
@@ -83,7 +122,7 @@ public class FireSystem : NetworkBehaviour {
         {
             yield return new WaitForSecondsRealtime(0.5f);
 
-            var time = Time.time - startTime;
+            var time = Time.time - _startTime;
 
             //Debug.LogFormat("time {0} realtime {1} delta {2} PlayTime {3} starttime {4}", Time.time, Time.realtimeSinceStartup, Time.time - Time.realtimeSinceStartup, time, startTime);
 
@@ -93,30 +132,34 @@ public class FireSystem : NetworkBehaviour {
             {
                 var stepData = Steps[candidateStep];
 
-                if (candidateStep != activatedStep)
+                if (candidateStep == activatedStep)
                 {
-                    if (shouldDoAnnounce && stepData.StartTime <= time + AnnounceInterval)
+                    if (_shouldDoAnnounce && stepData.StartTime <= time + AnnounceInterval)
                     {
                         AnnounceFire();
-                        shouldDoAnnounce = false;
+                        _shouldDoAnnounce = false;
                     }
 
                     if (stepData.StartTime <= time)
                     {
-                        shouldDoAnnounce = true;
+                        _shouldDoAnnounce = true;
                         fromScale = transform.localScale.x;
                         toScale = stepData.Scale;
-                        startScaleTime = Time.time - startTime;
+                        startScaleTime = Time.time - _startTime;
                         duration = stepData.Duration;
 
                         activatedStep = candidateStep;
                     }
                 }
             }
+            else
+            {
+                //all steps completed
+                break;
+            }
         }
     }
-
-    List<PlayerController> cachedPlayers = new List<PlayerController>();
+    
     IEnumerator DamageAll()
     {
         while (enabled)
@@ -124,12 +167,12 @@ public class FireSystem : NetworkBehaviour {
             yield return new WaitForSeconds(DamagePeriod);
             if (enabled)
             {
-                cachedPlayers.Clear();
+                _cachedPlayers.Clear();
 
-                cachedPlayers.AddRange(GameLogic.Instance.ActivePlayers.Values);
-                foreach (var p in cachedPlayers)
+                _cachedPlayers.AddRange(GameLogic.Instance.ActivePlayers.Values);
+                foreach (var p in _cachedPlayers)
                 {
-                    if (!safePlayers.Contains(p))
+                    if (!_safePlayers.Contains(p))
                     {
                         p.FireDamage(Damage, this.netId);
                     }
@@ -143,7 +186,7 @@ public class FireSystem : NetworkBehaviour {
         var pc = other.GetComponent<PlayerController>();
         if (pc != null)
         {
-            safePlayers.Add(pc);
+            _safePlayers.Add(pc);
         }
     }
 
@@ -152,7 +195,7 @@ public class FireSystem : NetworkBehaviour {
         var pc = other.GetComponent<PlayerController>();
         if (pc != null)
         {
-            safePlayers.Remove(pc);
+            _safePlayers.Remove(pc);
         }
     }
 }

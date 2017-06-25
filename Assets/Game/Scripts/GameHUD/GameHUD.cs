@@ -16,6 +16,7 @@ public class GameHUD : MonoBehaviour
     public GameObject BaseContainer;
     public Text InfoPanel;
     public Text LeftAlive;
+    public ZoneWidget ZoneProgress;
 
     [Header("Alive elements")]
     public GameObject AliveContainer;
@@ -137,4 +138,11 @@ public class GameHUD : MonoBehaviour
             LocalPlayer.StartUse();
         }
     }
+
+    //+++ zone widget
+    public void SetZoneData(FireSystemStep[] steps, double serverStartTime)
+    {
+        ZoneProgress.SetFireSystemData(steps, serverStartTime);
+    }
+    //--- zone widget
 }

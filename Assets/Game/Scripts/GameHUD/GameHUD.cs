@@ -142,7 +142,7 @@ public class GameHUD : MonoBehaviour
     //+++ zone widget
     public void SetZoneData(FireSystemStep[] steps, double serverStartTime)
     {
-        ZoneProgress.SetFireSystemData(steps, serverStartTime);
+        //ZoneProgress.SetFireSystemData(steps, serverStartTime);
     }
     //--- zone widget
 }

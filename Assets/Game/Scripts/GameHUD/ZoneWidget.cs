@@ -131,7 +131,7 @@ public class ZoneWidget : MonoBehaviour
             int minutes = (int)secondsOverall / 60;
             int seconds = (int)secondsOverall % 60;
 
-            timeToStartZone.text = string.Format("{0}:{1}", minutes, seconds);
+            timeToStartZone.text = string.Format("{0}:{1:00}", minutes, seconds);
             yield return new WaitForSeconds(0.5f);
             secondsOverall -= 0.5f;
         }
@@ -139,17 +139,19 @@ public class ZoneWidget : MonoBehaviour
 
     private IEnumerator StartProgress(float endSecond, float startSeconds, float currentSeconds)
     {
-        var currentSecondsInInterval = currentSeconds - startSeconds;
         var overallSeconds = endSecond - startSeconds;
-        progressSlider.value = Mathf.Clamp01(currentSecondsInInterval / overallSeconds);
+        var currentInterval = (currentSeconds - startSeconds) / overallSeconds;
+        progressSlider.value = Mathf.Clamp01(currentInterval);
 
-        while (currentSecondsInInterval > 0.0f)
+        while (currentInterval < 1.0f)
         {
-            yield return new WaitForSeconds(0.5f);
+            yield return new WaitForSeconds(0.1f);
 
-            currentSecondsInInterval -= 0.5f;
+            currentInterval += 0.1f / overallSeconds;
 
-            progressSlider.value = Mathf.Clamp01(currentSecondsInInterval / overallSeconds);
+            progressSlider.value = Mathf.Clamp01(currentInterval);
         }
+
+        progressSlider.value = 1f;
     }
 }

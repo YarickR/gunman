@@ -94,13 +94,10 @@ public class GameLogic : NetworkBehaviour
         {
             playersCount += 1;
             activePlayers[player.netId] = player;
-            Debug.LogFormat("SPAWN PLAYER {0}/{1}", activePlayers.Count, playersCount);
 
-            RpcSetAliveCount(activePlayers.Count);
-            if (NetworkServer.localClientActive)
-            {
-                HUD.SetLeftAlive(activePlayers.Count);
-            }
+            player.RpcUpdateAliveCount(activePlayers.Count);
+
+            Debug.LogFormat("SPAWN PLAYER {0}/{1}", activePlayers.Count, playersCount);
         }
     }
 
@@ -112,14 +109,10 @@ public class GameLogic : NetworkBehaviour
             Debug.LogFormat("KILL PLAYER {0}/{1}", activePlayers.Count, playersCount);
             player.RpcEnd(false, activePlayers.Count, playersCount);
             activePlayers.Remove(player.netId);
-            
-            checkWinConditions();
 
-            RpcSetAliveCount(activePlayers.Count);
-            if (NetworkServer.localClientActive)
-            {
-                HUD.SetLeftAlive(activePlayers.Count);
-            }
+            player.RpcUpdateAliveCount(activePlayers.Count);
+
+            checkWinConditions();
         }
     }
 
@@ -162,13 +155,14 @@ public class GameLogic : NetworkBehaviour
         yield return new WaitForSeconds(EndGameDuration);
         LobbyManager.s_Singleton.ServerReturnToLobby();
     }
-    #endregion
 
-    #region Client rpc
-    [ClientRpc]
-    public void RpcSetAliveCount(int alivePlayerCount)
+    public void SendAlivePlayerCount(PlayerController player)
     {
-        HUD.SetLeftAlive(alivePlayerCount);
+        player.RpcUpdateAliveCount(activePlayers.Count);
+        if (NetworkServer.localClientActive)
+        {
+            player.UpdateAliveCount(activePlayers.Count);
+        }
     }
     #endregion
 }

@@ -84,7 +84,7 @@ public class FireSystem : NetworkBehaviour
     {
         _startServerTimeOnClient = serverStartTime;
 
-        GameLogic.Instance.HUD.SetZoneData(Steps,_startServerTimeOnClient);
+        GameLogic.Instance.HUD.SetZoneData(Steps, _startServerTimeOnClient);
     }
     #endregion
 
@@ -132,7 +132,7 @@ public class FireSystem : NetworkBehaviour
             {
                 var stepData = Steps[candidateStep];
 
-                if (candidateStep == activatedStep)
+                if (candidateStep != activatedStep)
                 {
                     if (_shouldDoAnnounce && stepData.StartTime <= time + AnnounceInterval)
                     {
@@ -151,11 +151,11 @@ public class FireSystem : NetworkBehaviour
                         activatedStep = candidateStep;
                     }
                 }
-            }
-            else
-            {
-                //all steps completed
-                break;
+                else
+                {
+                    //last step achieved
+                    break;
+                }
             }
         }
     }

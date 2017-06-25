@@ -84,7 +84,8 @@ public class PlayerController : NetworkBehaviour
     public override void OnStartLocalPlayer()
     {
         base.OnStartLocalPlayer();
-        if (isLocalPlayer) {
+        if (isLocalPlayer)
+        {
             LocalClientController = this;
 
             cam = PlayerCamera.instance;
@@ -123,6 +124,8 @@ public class PlayerController : NetworkBehaviour
                 InteractSystem.enabled = false;
             }
         }
+
+        CmdGetAliveCount();
         CmdGetMyName();
         SetWeaponById(rpgParams.StartWeapon.WeaponId, rpgParams.StartWeapon.ClipSize, rpgParams.StartWeapon.MaxAmmo);
     }
@@ -342,7 +345,18 @@ public class PlayerController : NetworkBehaviour
     #endregion
 
     #region Client rpc
-	[ClientRpc]
+    [ClientRpc]
+    public void RpcUpdateAliveCount(int alivePlayersCount)
+    {
+        UpdateAliveCount(alivePlayersCount);
+    }
+
+    public void UpdateAliveCount(int alivePlayersCount)
+    {
+        GameLogic.Instance.HUD.SetLeftAlive(alivePlayersCount);
+    }
+
+    [ClientRpc]
 	public void RpcSetName(string newName)
     {
 		GCTX.Log("RpcSetName");
@@ -455,6 +469,12 @@ public class PlayerController : NetworkBehaviour
     #endregion
 
     #region Client commands
+    [Command]
+    private void CmdGetAliveCount()
+    {
+        GameLogic.Instance.SendAlivePlayerCount(this);
+    }
+
     [Command]
     public void CmdGetMyName()
     {

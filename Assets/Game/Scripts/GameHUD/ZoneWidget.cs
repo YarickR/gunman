@@ -83,23 +83,23 @@ public class ZoneWidget : MonoBehaviour
 
     public void SetFireSystemData(FireSystemStep[] steps, double serverStartTime)
     {
-        _steps = steps;
-        _serverStartTime = serverStartTime;
+        //_steps = steps;
+        //_serverStartTime = serverStartTime;
 
-        _serverTimeDelta = Time.time - System.Convert.ToSingle(Network.time - _serverStartTime);
+        //_serverTimeDelta = Time.time - System.Convert.ToSingle(Network.time - _serverStartTime);
 
-        _stepTimings.Clear();
-        _stepState.Clear();
-        _currentStateIndex = 0;
-        for (int i = 0; i < steps.Length; ++i)
-        {
-            var stepStartTime = steps[i].StartTime;
-            _stepTimings.Add(stepStartTime);
-            _stepState[i * 2] = ZoneState.Wait;
+        //_stepTimings.Clear();
+        //_stepState.Clear();
+        //_currentStateIndex = 0;
+        //for (int i = 0; i < steps.Length; ++i)
+        //{
+        //    var stepStartTime = steps[i].StartTime;
+        //    _stepTimings.Add(stepStartTime);
+        //    _stepState[i * 2] = ZoneState.Wait;
 
-            _stepTimings.Add(stepStartTime + steps[i].Duration);
-            _stepState[(i * 2) + 1] = ZoneState.Movihg;
-        }
+        //    _stepTimings.Add(stepStartTime + steps[i].Duration);
+        //    _stepState[(i * 2) + 1] = ZoneState.Movihg;
+        //}
     }
 
     private void SetState(ZoneState state)

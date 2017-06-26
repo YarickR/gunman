@@ -43,16 +43,16 @@ public class FireSystem : NetworkBehaviour
         if (isServer)
         {
             _startTime = Time.time;
-            _startServerTimeOnServer = Network.time;
+            //_startServerTimeOnServer = Network.time;
             fromScale = transform.localScale.x;
             StartCoroutine(DamageAll());
             StartCoroutine(UpdateScale());
 
-            if (NetworkServer.localClientActive)
-            {
-                _startServerTimeOnClient = _startServerTimeOnServer;
-                GameLogic.Instance.HUD.SetZoneData(Steps, _startServerTimeOnClient);
-            }
+            //if (NetworkServer.localClientActive)
+            //{
+            //    _startServerTimeOnClient = _startServerTimeOnServer;
+            //    GameLogic.Instance.HUD.SetZoneData(Steps, _startServerTimeOnClient);
+            //}
         }
     }
 

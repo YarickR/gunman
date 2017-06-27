@@ -9,7 +9,7 @@ public class PlayerController : NetworkBehaviour
     private static float LOCATION_RANGE = 20.0f;
     private static float LOCATION_RANGE_SQR = LOCATION_RANGE * LOCATION_RANGE;
 
-    private static PlayerController LocalClientController;
+    public static PlayerController LocalClientController { get; private set; }
 
     public Transform cameraPlaceHolder;
 
@@ -184,6 +184,11 @@ public class PlayerController : NetworkBehaviour
 
     private void OnDestroy()
     {
+        if (isLocalPlayer)
+        {
+            LocalClientController = null;
+        }
+
         notifyLogicAboutDeath(true);
     }
 

@@ -110,7 +110,10 @@ public class GameLogic : NetworkBehaviour
             player.RpcEnd(false, activePlayers.Count, playersCount);
             activePlayers.Remove(player.netId);
 
-            player.RpcUpdateAliveCount(activePlayers.Count);
+            if (PlayerController.LocalClientController != null)
+            {
+                PlayerController.LocalClientController.RpcUpdateAliveCount(activePlayers.Count);
+            }
 
             checkWinConditions();
         }

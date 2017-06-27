@@ -12,6 +12,7 @@ namespace Prototype.NetworkLobby
     public class LobbyPlayer : NetworkLobbyPlayer
     {
         static Color[] Colors = new Color[] { Color.magenta, Color.red, Color.cyan, Color.blue, Color.green, Color.yellow };
+
         //used on server to avoid assigning the same color to two player
         static List<int> _colorInUse = new List<int>();
 
@@ -30,6 +31,9 @@ namespace Prototype.NetworkLobby
         [SyncVar(hook = "OnMyColor")]
         public Color playerColor = Color.white;
 
+        [SyncVar(hook = "OnMyReady")]
+        public bool isPlayerReady = false;
+
         public Color OddRowColor = new Color(250.0f / 255.0f, 250.0f / 255.0f, 250.0f / 255.0f, 1.0f);
         public Color EvenRowColor = new Color(180.0f / 255.0f, 180.0f / 255.0f, 180.0f / 255.0f, 1.0f);
 
@@ -41,6 +45,15 @@ namespace Prototype.NetworkLobby
         //static Color OddRowColor = new Color(250.0f / 255.0f, 250.0f / 255.0f, 250.0f / 255.0f, 1.0f);
         //static Color EvenRowColor = new Color(180.0f / 255.0f, 180.0f / 255.0f, 180.0f / 255.0f, 1.0f);
 
+        public override void OnStartClient()
+        {
+            base.OnStartClient();
+
+            if (!isLocalPlayer)
+            {
+                OnClientReady(isPlayerReady);
+            }
+        }
 
         public override void OnClientEnterLobby()
         {
@@ -57,6 +70,7 @@ namespace Prototype.NetworkLobby
             }
             else
             {
+                //wild fking shit
                 SetupOtherPlayer();
             }
 
@@ -78,7 +92,7 @@ namespace Prototype.NetworkLobby
             //if we return from a game, color of text can still be the one for "Ready"
             readyButton.transform.GetChild(0).GetComponent<Text>().color = Color.white;
 
-           SetupLocalPlayer();
+            SetupLocalPlayer();
         }
 
         void ChangeReadyButtonColor(Color c)
@@ -114,6 +128,8 @@ namespace Prototype.NetworkLobby
 
             if (playerColor == Color.white)
                 CmdColorChange();
+
+            CmdSetReady(false);
 
             ChangeReadyButtonColor(JoinColor);
 
@@ -200,6 +216,11 @@ namespace Prototype.NetworkLobby
             colorButton.GetComponent<Image>().color = newColor;
         }
 
+        public void OnMyReady(bool value)
+        {
+            OnClientReady(value);
+        }
+
         //===== UI Handler
 
         //Note that those handler use Command function, as we need to change the value on the server not locally
@@ -211,6 +232,8 @@ namespace Prototype.NetworkLobby
 
         public void OnReadyClicked()
         {
+            CmdSetReady(true);
+
             SendReadyToBeginMessage();
         }
 
@@ -248,44 +271,43 @@ namespace Prototype.NetworkLobby
         {
             CheckRemoveButton();
         }
-
         //====== Server Command
 
         [Command]
         public void CmdColorChange()
         {
             int idx = System.Array.IndexOf(Colors, playerColor);
-
-            int inUseIdx = _colorInUse.IndexOf(idx);
-
             if (idx < 0) idx = 0;
 
-            idx = (idx + 1) % Colors.Length;
+            //int inUseIdx = _colorInUse.IndexOf(idx);
 
-            bool alreadyInUse = false;
+            //idx = (idx + 1) % Colors.Length;
+            idx = Random.Range(0, Colors.Length);
 
-            do
-            {
-                alreadyInUse = false;
-                for (int i = 0; i < _colorInUse.Count; ++i)
-                {
-                    if (_colorInUse[i] == idx)
-                    {//that color is already in use
-                        alreadyInUse = true;
-                        idx = (idx + 1) % Colors.Length;
-                    }
-                }
-            }
-            while (alreadyInUse);
+            //bool alreadyInUse = false;
 
-            if (inUseIdx >= 0)
-            {//if we already add an entry in the colorTabs, we change it
-                _colorInUse[inUseIdx] = idx;
-            }
-            else
-            {//else we add it
-                _colorInUse.Add(idx);
-            }
+            //do
+            //{
+            //    alreadyInUse = false;
+            //    for (int i = 0; i < _colorInUse.Count; ++i)
+            //    {
+            //        if (_colorInUse[i] == idx)
+            //        {//that color is already in use
+            //            alreadyInUse = true;
+            //            idx = (idx + 1) % Colors.Length;
+            //        }
+            //    }
+            //}
+            //while (alreadyInUse);
+
+            //if (inUseIdx >= 0)
+            //{//if we already add an entry in the colorTabs, we change it
+            //    _colorInUse[inUseIdx] = idx;
+            //}
+            //else
+            //{//else we add it
+            //    _colorInUse.Add(idx);
+            //}
 
             playerColor = Colors[idx];
         }
@@ -294,6 +316,12 @@ namespace Prototype.NetworkLobby
         public void CmdNameChanged(string name)
         {
             playerName = name;
+        }
+
+        [Command]
+        public void CmdSetReady(bool value)
+        {
+            isPlayerReady = value;
         }
 
         //Cleanup thing when get destroy (which happen when client kick or disconnect)

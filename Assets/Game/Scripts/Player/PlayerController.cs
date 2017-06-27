@@ -189,7 +189,7 @@ public class PlayerController : NetworkBehaviour
             LocalClientController = null;
         }
 
-        notifyLogicAboutDeath(true);
+        notifyLogicAboutDeath();
     }
 
     #region Movement
@@ -268,19 +268,22 @@ public class PlayerController : NetworkBehaviour
         _currentHealth = rpgParams.MaxHealth;
     }
 
-    void ReceiveDamage(float damageValue)
+    void ReceiveDamage(float damageValue, NetworkInstanceId damagerId)
     {
         _currentHealth -= damageValue;
 
         _currentHealth = Mathf.Clamp(_currentHealth, 0.0f, rpgParams.MaxHealth);
 
-        notifyLogicAboutDeath(_currentHealth <= 0);
-        // notifyLogicAboutDeath();
+        if (_currentHealth <= 0)
+        {
+            RpcMessageKilledBy(damagerId);
+            notifyLogicAboutDeath();
+        }
     }
 
     public void FireDamage(float damageValue, NetworkInstanceId fireID)
     {
-        ReceiveDamage(damageValue);
+        ReceiveDamage(damageValue, fireID);
         RpcShotAct(fireID, damageValue);
     }
 
@@ -289,12 +292,9 @@ public class PlayerController : NetworkBehaviour
         GameLogic.Instance.OnPlayerAlive(this, isLocalPlayer);
     }
 
-    private void notifyLogicAboutDeath(bool isDead)
+    private void notifyLogicAboutDeath()
     {
-        if (isDead)
-        {
-            GameLogic.Instance.OnPlayerDeath(this, isLocalPlayer);
-        }
+        GameLogic.Instance.OnPlayerDeath(this, isLocalPlayer);
     }
     #endregion
 
@@ -351,6 +351,16 @@ public class PlayerController : NetworkBehaviour
 
     #region Client rpc
     [ClientRpc]
+    private void RpcMessageKilledBy(NetworkInstanceId killerId)
+    {
+        GameObject attackerGO = ClientScene.FindLocalObject(killerId);
+        if (attackerGO != null)
+        {
+            GameLogic.Instance.HUD.AddInfoLine(attackerGO.name + " killed " + name);
+        }
+    }
+
+    [ClientRpc]
     public void RpcUpdateAliveCount(int alivePlayersCount)
     {
         UpdateAliveCount(alivePlayersCount);
@@ -387,11 +397,6 @@ public class PlayerController : NetworkBehaviour
         if (attackerGO == null) {
         	Debug.LogFormat("Can't find attacker with id {0}", DamagerNetId);
             return;
-        }
-		
-		GameLogic.Instance.HUD.AddInfoLine(attackerGO.name + " deals damage to " + name);
-        if (_currentHealth <= 0f) {
-			GameLogic.Instance.HUD.AddInfoLine(attackerGO.name + " killed " + name);
         }
 
         if (isLocalPlayer || (LocalClientController.netId == DamagerNetId)) {
@@ -489,7 +494,7 @@ public class PlayerController : NetworkBehaviour
     [Command]
     public void CmdSendDamageToServer(float damageValue)
     {
-        ReceiveDamage(damageValue);
+        ReceiveDamage(damageValue, this.netId);
     }
 
     [Command]
@@ -506,7 +511,7 @@ public class PlayerController : NetworkBehaviour
         if (playerGO != null)
         {
             var targetController = playerGO.GetComponent<PlayerController>();
-            targetController.ReceiveDamage(damageValue);
+            targetController.ReceiveDamage(damageValue, this.netId);
 			targetController.RpcShotAct(this.netId, damageValue);
         }
     }

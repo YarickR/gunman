@@ -21,7 +21,6 @@ public class GameLogic : NetworkBehaviour
         get { return activePlayers; }
     }
 
-    public PlayerController LocalPlayer;
     public static GameLogic Instance
     {
         get
@@ -72,9 +71,6 @@ public class GameLogic : NetworkBehaviour
         {
             PlayerSpawned(player);
         }
-        if (localPlayer) {
-        	LocalPlayer = player;
-        };
     }
 
     public void OnPlayerDeath(PlayerController player, bool localPlayer)

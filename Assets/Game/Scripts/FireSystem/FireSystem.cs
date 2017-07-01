@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Networking;
+using Prototype.NetworkLobby;
 
 [System.Serializable]
 public struct FireSystemStep
@@ -40,20 +41,25 @@ public class FireSystem : NetworkBehaviour
     public override void OnStartServer()
     {
         base.OnStartServer();
-        if (isServer)
-        {
-            _startTime = Time.time;
-            //_startServerTimeOnServer = Network.time;
-            fromScale = transform.localScale.x;
-            StartCoroutine(DamageAll());
-            StartCoroutine(UpdateScale());
 
-            //if (NetworkServer.localClientActive)
-            //{
-            //    _startServerTimeOnClient = _startServerTimeOnServer;
-            //    GameLogic.Instance.HUD.SetZoneData(Steps, _startServerTimeOnClient);
-            //}
-        }
+        //var context = LobbyManager.Instance.battleServerContext;
+        //Debug.LogErrorFormat("context {0}", context == null);
+        //if (context != null)
+        //{
+        //    Debug.LogErrorFormat("context battle state {0}", context.battleState == null);
+        //}
+
+        _startTime = Time.time;
+        //_startServerTimeOnServer = Network.time;
+        fromScale = transform.localScale.x;
+        StartCoroutine(DamageAll());
+        StartCoroutine(UpdateScale());
+
+        //if (NetworkServer.localClientActive)
+        //{
+        //    _startServerTimeOnClient = _startServerTimeOnServer;
+        //    GameLogic.Instance.HUD.SetZoneData(Steps, _startServerTimeOnClient);
+        //}
     }
 
     public override void OnStartLocalPlayer()

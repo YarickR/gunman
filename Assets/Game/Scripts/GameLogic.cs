@@ -25,7 +25,7 @@ public class GameLogic : NetworkBehaviour
     {
         get
         {
-            return LobbyManager.s_Singleton.GameLogic;
+            return LobbyManager.Instance.GameLogic;
         }
     }
 
@@ -152,7 +152,7 @@ public class GameLogic : NetworkBehaviour
     IEnumerator waitAndRestart()
     {
         yield return new WaitForSeconds(EndGameDuration);
-        LobbyManager.s_Singleton.ServerReturnToLobby();
+        LobbyManager.Instance.ServerReturnToLobby();
     }
 
     public void SendAlivePlayerCount(PlayerController player)

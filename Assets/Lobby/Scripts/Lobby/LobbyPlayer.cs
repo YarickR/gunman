@@ -59,10 +59,10 @@ namespace Prototype.NetworkLobby
         {
             base.OnClientEnterLobby();
 
-            if (LobbyManager.s_Singleton != null) LobbyManager.s_Singleton.OnPlayersNumberModified(1);
+            if (LobbyManager.Instance != null) LobbyManager.Instance.OnPlayersNumberModified(1);
 
             LobbyPlayerList._instance.AddPlayer(this);
-            LobbyPlayerList._instance.DisplayDirectServerWarning(isServer && LobbyManager.s_Singleton.matchMaker == null);
+            LobbyPlayerList._instance.DisplayDirectServerWarning(isServer && LobbyManager.Instance.matchMaker == null);
 
             if (isLocalPlayer)
             {
@@ -79,7 +79,7 @@ namespace Prototype.NetworkLobby
             OnMyName(playerName);
             OnMyColor(playerColor);
 
-            if (Application.isEditor && LobbyManager.s_Singleton.StartMode == LobbyManager.StartModeT.SinglePlayer)
+            if (Application.isEditor && LobbyManager.Instance.StartMode == LobbyManager.StartModeT.SinglePlayer)
             {
                 SendReadyToBeginMessage();
             }
@@ -155,7 +155,7 @@ namespace Prototype.NetworkLobby
 
             //when OnClientEnterLobby is called, the loval PlayerController is not yet created, so we need to redo that here to disable
             //the add button if we reach maxLocalPlayer. We pass 0, as it was already counted on OnClientEnterLobby
-            if (LobbyManager.s_Singleton != null) LobbyManager.s_Singleton.OnPlayersNumberModified(0);
+            if (LobbyManager.Instance != null) LobbyManager.Instance.OnPlayersNumberModified(0);
         }
 
         //This enable/disable the remove button depending on if that is the only local player or not
@@ -249,7 +249,7 @@ namespace Prototype.NetworkLobby
                 RemovePlayer();
             }
             else if (isServer)
-                LobbyManager.s_Singleton.KickPlayer(connectionToClient);
+                LobbyManager.Instance.KickPlayer(connectionToClient);
                 
         }
 
@@ -262,8 +262,8 @@ namespace Prototype.NetworkLobby
         [ClientRpc]
         public void RpcUpdateCountdown(int countdown)
         {
-            LobbyManager.s_Singleton.countdownPanel.UIText.text = "Match Starting in " + countdown;
-            LobbyManager.s_Singleton.countdownPanel.gameObject.SetActive(countdown != 0);
+            LobbyManager.Instance.countdownPanel.UIText.text = "Match Starting in " + countdown;
+            LobbyManager.Instance.countdownPanel.gameObject.SetActive(countdown != 0);
         }
 
         [ClientRpc]
@@ -332,7 +332,7 @@ namespace Prototype.NetworkLobby
                 LobbyPlayerList._instance.RemovePlayer(this);
             }
             
-            if (LobbyManager.s_Singleton != null) LobbyManager.s_Singleton.OnPlayersNumberModified(-1);
+            if (LobbyManager.Instance != null) LobbyManager.Instance.OnPlayersNumberModified(-1);
 
             int idx = System.Array.IndexOf(Colors, playerColor);
 

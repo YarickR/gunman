@@ -4,6 +4,8 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Networking;
 using Prototype.NetworkLobby;
+using Battle;
+
 public class PlayerController : NetworkBehaviour
 {
     private static float LOCATION_RANGE = 20.0f;
@@ -55,18 +57,26 @@ public class PlayerController : NetworkBehaviour
 
     private bool _isDropedWeapon = false;
 
+    private BattleServerContext _serverContext;
+    private BattleClientContext _clientContext;
+
     void Awake()
     {
         characterController = GetComponent<CharacterController>();
         selfTargetable = GetComponent<Targetable>();
-
         colliders = GetComponents<Collider>();
     }
 
     public override void OnStartServer()
     {
         base.OnStartServer();
+
+        _serverContext = LobbyManager.Instance.battleServerContext;
+        _serverContext.RegisterPlayerController(this);
+
+        //to do: delete after realize context scheme
         notifyLogicAboutSpawn();
+
         InitRPGParams();
         _playerName = name;
     }
@@ -189,6 +199,12 @@ public class PlayerController : NetworkBehaviour
             LocalClientController = null;
         }
 
+        if (_serverContext != null)
+        {
+            _serverContext.battleState.UnregisterPlayer(this);
+        }
+
+        //to do: delete after realize context scheme
         notifyLogicAboutDeath();
     }
 
@@ -277,6 +293,10 @@ public class PlayerController : NetworkBehaviour
         if (_currentHealth <= 0)
         {
             RpcMessageKilledBy(damagerId);
+
+            _serverContext.battleState.UnregisterPlayer(this);
+
+            //to do: delete after realize context scheme
             notifyLogicAboutDeath();
         }
     }

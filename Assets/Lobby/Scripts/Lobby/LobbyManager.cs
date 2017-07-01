@@ -6,6 +6,7 @@ using UnityEngine.Networking.Types;
 using UnityEngine.Networking.Match;
 using System.Collections;
 using System;
+using Battle;
 
 namespace Prototype.NetworkLobby
 {
@@ -21,7 +22,7 @@ namespace Prototype.NetworkLobby
 
         static short MsgKicked = MsgType.Highest + 1;
 
-        static public LobbyManager s_Singleton;
+        static public LobbyManager Instance;
 
         [Header("Unity UI Lobby")]
         [Tooltip("Time in second between all players ready & match start")]
@@ -38,7 +39,11 @@ namespace Prototype.NetworkLobby
         public LobbyCountdownPanel countdownPanel;
         public GameObject addPlayerButton;
 
+        public BattleServerContext battleServerContext;
+        public BattleClientContext battleClientContext;
+
         public GameLogic GameLogic;
+        public GameHUD HUD;
 
         protected RectTransform currentPanel;
 
@@ -68,7 +73,7 @@ namespace Prototype.NetworkLobby
 
             var wList = WeaponsList.Instance;
 
-            s_Singleton = this;
+            Instance = this;
             _lobbyHooks = GetComponent<Prototype.NetworkLobby.LobbyHook>();
             currentPanel = mainMenuPanel;
 
@@ -98,6 +103,24 @@ namespace Prototype.NetworkLobby
 
         }
 
+        public override void ServerChangeScene(string sceneName)
+        {
+            if (battleServerContext != null && !sceneName.Equals(playScene))
+            {
+                battleServerContext.Dispose();
+                battleServerContext = null;
+            }
+
+            base.ServerChangeScene(sceneName);
+        }
+
+        //callback after scene loaded on server
+        public override void OnServerSceneChanged(string sceneName)
+        {
+            base.OnServerSceneChanged(sceneName);
+        }
+
+        //dumb callback after initing all clients
         public override void OnLobbyServerSceneChanged(string sceneName)
         {
             base.OnLobbyServerSceneChanged(sceneName);
@@ -107,7 +130,8 @@ namespace Prototype.NetworkLobby
         {
             if (SceneManager.GetSceneAt(0).name == lobbyScene)
             {
-                
+                battleClientContext = null;
+
                 if (topPanel.isInGame)
                 {
                     ChangeTo(lobbyPanel);
@@ -386,6 +410,12 @@ namespace Prototype.NetworkLobby
 
         public IEnumerator ServerCountdownCoroutine()
         {
+            //---
+            var battleState = BattleState.Create();
+            battleServerContext = new BattleServerContext(battleState);
+            NetworkServer.Spawn(battleState.gameObject);
+            //---
+
             float remainingTime = prematchCountdown;
             int floorTime = Mathf.FloorToInt(remainingTime);
 
@@ -421,6 +451,10 @@ namespace Prototype.NetworkLobby
             ServerChangeScene(playScene);
         }
 
+        public void CreateBattleClientContext(BattleState state)
+        {
+            battleClientContext = new BattleClientContext(HUD, state);
+        }
         // ----------------- Client callbacks ------------------
 
         public override void OnClientConnect(NetworkConnection conn)

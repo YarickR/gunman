@@ -132,7 +132,6 @@ public class PlayerController : NetworkBehaviour
             }
         }
 
-        CmdGetAliveCount();
         CmdGetMyName();
         SetWeaponById(rpgParams.StartWeapon.WeaponId, rpgParams.StartWeapon.ClipSize, rpgParams.StartWeapon.MaxAmmo);
     }
@@ -378,18 +377,6 @@ public class PlayerController : NetworkBehaviour
     }
 
     [ClientRpc]
-    public void RpcUpdateAliveCount(int alivePlayersCount)
-    {
-        UpdateAliveCount(alivePlayersCount);
-    }
-
-    //to do delete
-    public void UpdateAliveCount(int alivePlayersCount)
-    {
-        //GameLogic.Instance.HUD.SetLeftAlive(alivePlayersCount);
-    }
-
-    [ClientRpc]
 	public void RpcSetName(string newName)
     {
 		GCTX.Log("RpcSetName");
@@ -497,11 +484,6 @@ public class PlayerController : NetworkBehaviour
     #endregion
 
     #region Client commands
-    [Command]
-    private void CmdGetAliveCount()
-    {
-        GameLogic.Instance.SendAlivePlayerCount(this);
-    }
 
     [Command]
     public void CmdGetMyName()

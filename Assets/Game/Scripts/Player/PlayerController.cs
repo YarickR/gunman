@@ -44,8 +44,6 @@ public class PlayerController : NetworkBehaviour
     //+++++ net params
     [SyncVar(hook = "OnChangeHealth")]
     private float _currentHealth;
-    [SyncVar(hook = "OnChangeName")]
-    private string _playerName;
     //----- net params
 
     private bool _isDead = false;
@@ -78,7 +76,6 @@ public class PlayerController : NetworkBehaviour
         notifyLogicAboutSpawn();
 
         InitRPGParams();
-        _playerName = name;
     }
 
     public override void OnStartClient()

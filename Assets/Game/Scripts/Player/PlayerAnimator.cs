@@ -18,7 +18,7 @@ public class PlayerAnimator : MonoBehaviour
     private static int TRIGGER_FIRE = Animator.StringToHash("Fire");
     private static int IS_INTERACTING = Animator.StringToHash("IsInteracting");
 
-    private static int RELOAD_LAYER_INDEX = 1;
+    private const int RELOAD_LAYER_INDEX = 1;
 
     public Animator animator;
 

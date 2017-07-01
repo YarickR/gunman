@@ -91,6 +91,7 @@ public class GameHUD : MonoBehaviour
     {
     	LeftAlive.text = alive.ToString();
     }
+
     public void UpdateHUD(PlayerController player = null) {
     	if (player == null ) {
     		player = LocalPlayer;

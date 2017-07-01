@@ -451,9 +451,14 @@ namespace Prototype.NetworkLobby
             ServerChangeScene(playScene);
         }
 
-        public void CreateBattleClientContext(BattleState state)
+        public BattleClientContext CreateBattleClientContext(BattleState state)
         {
-            battleClientContext = new BattleClientContext(HUD, state);
+            if (battleClientContext == null)
+            {
+                battleClientContext = new BattleClientContext(HUD, state, ClientScene.localPlayers[0].playerControllerId);
+            }
+
+            return battleClientContext;
         }
         // ----------------- Client callbacks ------------------
 

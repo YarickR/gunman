@@ -13,8 +13,8 @@ namespace Battle
 
     public interface IServerBattleState
     {
-        void RegisterPlayer(PlayerController player);
-        void UnregisterPlayer(PlayerController player);
+        void RegisterAlivePlayer(PlayerController player);
+        void UnregisterAlivePlayer(PlayerController player);
     }
 
     public class BattleState : NetworkBehaviour, IServerBattleState, IClientBattleState
@@ -28,60 +28,60 @@ namespace Battle
             return go.GetComponent<BattleState>();
         }
 
-        private Dictionary<NetworkInstanceId, PlayerController> _allPlayers = new Dictionary<NetworkInstanceId, PlayerController>();
+        //server only data
+        private Dictionary<NetworkInstanceId, PlayerController> _alivePlayers = new Dictionary<NetworkInstanceId, PlayerController>();
 
-        private Dictionary<NetworkInstanceId, PlayerController> activePlayers = new Dictionary<NetworkInstanceId, PlayerController>();
-        public Dictionary<NetworkInstanceId, PlayerController> ActivePlayers
-        {
-            get { return activePlayers; }
-        }
+        //server->client data
+        [SyncVar(hook = "OnChangeAlivePlayersCount")]
+        public int _alivePlayersCount = 0;
 
-        public override void OnStartServer()
-        {
-            base.OnStartServer();
-
-            var allNetObjects = NetworkServer.objects;
-            foreach (var element in allNetObjects)
-            {
-                var controller = element.Value.gameObject.GetComponent<PlayerController>();
-                if (controller != null)
-                {
-                    RegisterPlayer(controller);
-                }
-            }
-        }
+        //client only data
+        private GameHUDProvider _gameHUDProvider = null;
 
         public override void OnStartClient()
         {
             base.OnStartClient();
 
-            LobbyManager.Instance.CreateBattleClientContext(this);
+            var clientContext = LobbyManager.Instance.CreateBattleClientContext(this);
+            _gameHUDProvider = clientContext.gameHUDProvider;
+
+            OnChangeAlivePlayersCount(_alivePlayersCount);
         }
 
-        public void RegisterPlayer(PlayerController player)
+        public void RegisterAlivePlayer(PlayerController player)
         {
             if (player.netId == NetworkInstanceId.Invalid || player.playerControllerId == -1)
             {
                 return;
             }
 
-            if (!_allPlayers.ContainsKey(player.netId))
+            if (!_alivePlayers.ContainsKey(player.netId))
             {
-                _allPlayers[player.netId] = player;
+                _alivePlayers[player.netId] = player;
+                _alivePlayersCount = _alivePlayers.Count;
             }
         }
 
-        public void UnregisterPlayer(PlayerController player)
+        public void UnregisterAlivePlayer(PlayerController player)
         {
             if(player.netId == NetworkInstanceId.Invalid || player.playerControllerId == -1)
             {
                 return;
             }
 
-            if (_allPlayers.ContainsKey(player.netId))
+            if (_alivePlayers.ContainsKey(player.netId))
             {
-                _allPlayers.Remove(player.netId);
+                _alivePlayers.Remove(player.netId);
+                _alivePlayersCount = _alivePlayers.Count;
             }
         }
+
+        #region SyncVar
+        private void OnChangeAlivePlayersCount(int newCount)
+        {
+            _alivePlayersCount = newCount;
+            _gameHUDProvider.SetAliveCount(_alivePlayersCount);
+        }
+        #endregion
     }
 }

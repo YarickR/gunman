@@ -22,12 +22,12 @@ namespace Battle
 
         public void RegisterPlayerController(PlayerController player)
         {
-            battleState.RegisterPlayer(player);
+            battleState.RegisterAlivePlayer(player);
         }
 
         public void UnregisterPlayerController(PlayerController player)
         {
-            battleState.UnregisterPlayer(player);
+            battleState.UnregisterAlivePlayer(player);
         }
 
         public void Dispose()
@@ -44,11 +44,14 @@ namespace Battle
         public IClientBattleState battleState { get { return _battleState; } }
         private readonly BattleState _battleState;
 
+        public readonly GameHUDProvider gameHUDProvider;
         public readonly GameHUD gameHUD;
 
-        public BattleClientContext(GameHUD hud, BattleState state)
+        public BattleClientContext(GameHUD hud, BattleState state, short targetPlayerId)
         {
             gameHUD = hud;
+            gameHUDProvider = new GameHUDProvider(gameHUD, targetPlayerId);
+
             _battleState = state;
         }
     }

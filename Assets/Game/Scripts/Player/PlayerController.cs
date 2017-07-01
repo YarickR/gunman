@@ -198,7 +198,7 @@ public class PlayerController : NetworkBehaviour
 
         if (_serverContext != null)
         {
-            _serverContext.battleState.UnregisterPlayer(this);
+            _serverContext.battleState.UnregisterAlivePlayer(this);
         }
 
         //to do: delete after realize context scheme
@@ -291,7 +291,7 @@ public class PlayerController : NetworkBehaviour
         {
             RpcMessageKilledBy(damagerId);
 
-            _serverContext.battleState.UnregisterPlayer(this);
+            _serverContext.battleState.UnregisterAlivePlayer(this);
 
             //to do: delete after realize context scheme
             notifyLogicAboutDeath();
@@ -383,9 +383,10 @@ public class PlayerController : NetworkBehaviour
         UpdateAliveCount(alivePlayersCount);
     }
 
+    //to do delete
     public void UpdateAliveCount(int alivePlayersCount)
     {
-        GameLogic.Instance.HUD.SetLeftAlive(alivePlayersCount);
+        //GameLogic.Instance.HUD.SetLeftAlive(alivePlayersCount);
     }
 
     [ClientRpc]

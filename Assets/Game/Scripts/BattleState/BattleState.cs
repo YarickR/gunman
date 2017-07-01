@@ -13,6 +13,8 @@ namespace Battle
 
     public interface IServerBattleState
     {
+        IEnumerable<KeyValuePair<NetworkInstanceId, PlayerController>> alivePlayers { get; }
+
         void RegisterAlivePlayer(PlayerController player);
         void UnregisterAlivePlayer(PlayerController player);
     }
@@ -30,6 +32,13 @@ namespace Battle
 
         //server only data
         private Dictionary<NetworkInstanceId, PlayerController> _alivePlayers = new Dictionary<NetworkInstanceId, PlayerController>();
+        public IEnumerable<KeyValuePair<NetworkInstanceId, PlayerController>> alivePlayers
+        {
+            get
+            {
+                return _alivePlayers;
+            }
+        }
 
         //server->client data
         [SyncVar(hook = "OnChangeAlivePlayersCount")]

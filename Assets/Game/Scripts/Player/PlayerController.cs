@@ -475,12 +475,6 @@ public class PlayerController : NetworkBehaviour
     {
         animator.SetInteractingState(isActive);
     }
-
-    [ClientRpc]
-    public void RpcAnnounceFire(float announceInterval, int fireStep)
-    {
-		GameLogic.Instance.HUD.AddInfoLine(String.Format("Fire step {1} will be in {0} seconds", announceInterval, fireStep));
-    }
     #endregion
 
     #region Client commands

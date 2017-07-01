@@ -20,5 +20,10 @@ namespace Battle
         {
             _gameHUD.SetLeftAlive(aliveCount);
         }
+
+        public void AnnounceFire(float announceInterval, int fireStep)
+        {
+            _gameHUD.AddInfoLine(string.Format("Fire step {1} will be in {0} seconds", announceInterval, fireStep));
+        }
     }
 }

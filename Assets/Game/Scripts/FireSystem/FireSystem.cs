@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Networking;
 using Prototype.NetworkLobby;
+using Battle;
 
 [System.Serializable]
 public struct FireSystemStep
@@ -30,52 +31,33 @@ public class FireSystem : NetworkBehaviour
 
     private float _startTime;
 
-    private double _startServerTimeOnServer;
-    private double _startServerTimeOnClient;
-
     private bool _shouldDoAnnounce = true;
 
     private HashSet<PlayerController> _safePlayers = new HashSet<PlayerController>();
-    private List<PlayerController> _cachedPlayers = new List<PlayerController>();
+
+    private BattleServerContext _serverContext;
+    private BattleClientContext _clientContext;
 
     public override void OnStartServer()
     {
         base.OnStartServer();
 
-        //var context = LobbyManager.Instance.battleServerContext;
-        //Debug.LogErrorFormat("context {0}", context == null);
-        //if (context != null)
-        //{
-        //    Debug.LogErrorFormat("context battle state {0}", context.battleState == null);
-        //}
-
+        _serverContext = LobbyManager.Instance.battleServerContext;
         _startTime = Time.time;
-        //_startServerTimeOnServer = Network.time;
+
         fromScale = transform.localScale.x;
         StartCoroutine(DamageAll());
         StartCoroutine(UpdateScale());
-
-        //if (NetworkServer.localClientActive)
-        //{
-        //    _startServerTimeOnClient = _startServerTimeOnServer;
-        //    GameLogic.Instance.HUD.SetZoneData(Steps, _startServerTimeOnClient);
-        //}
     }
 
-    public override void OnStartLocalPlayer()
+    public override void OnStartClient()
     {
-        base.OnStartLocalPlayer();
+        base.OnStartClient();
 
-        //get current state on client
-        CmdRequestServerStatTime();
+        _clientContext = LobbyManager.Instance.battleClientContext;
     }
 
     #region Command
-    [Command]
-    private void CmdRequestServerStatTime()
-    {
-        RpcSetServerStartTime(_startServerTimeOnServer);
-    }
     #endregion
 
     #region ClientRpc
@@ -86,20 +68,15 @@ public class FireSystem : NetworkBehaviour
     }
 
     [ClientRpc]
-    private void RpcSetServerStartTime(double serverStartTime)
+    void RpcAnnounceFire(float announceInterval, int fireStep)
     {
-        _startServerTimeOnClient = serverStartTime;
-
-        GameLogic.Instance.HUD.SetZoneData(Steps, _startServerTimeOnClient);
+        _clientContext.gameHUDProvider.AnnounceFire(announceInterval, fireStep);
     }
     #endregion
 
     private void AnnounceFire()
     {
-        // implement logic here
-		foreach( KeyValuePair<NetworkInstanceId, PlayerController> pair in GameLogic.Instance.ActivePlayers) {
-			pair.Value.RpcAnnounceFire(AnnounceInterval, activatedStep + 2);
-		};
+        RpcAnnounceFire(AnnounceInterval, activatedStep + 2);
     }
 
     void OnDestroy()
@@ -173,14 +150,11 @@ public class FireSystem : NetworkBehaviour
             yield return new WaitForSeconds(DamagePeriod);
             if (enabled)
             {
-                _cachedPlayers.Clear();
-
-                _cachedPlayers.AddRange(GameLogic.Instance.ActivePlayers.Values);
-                foreach (var p in _cachedPlayers)
+                foreach (var p in _serverContext.battleState.alivePlayers)
                 {
-                    if (!_safePlayers.Contains(p))
+                    if (!_safePlayers.Contains(p.Value))
                     {
-                        p.FireDamage(Damage, this.netId);
+                        p.Value.FireDamage(Damage, netId);
                     }
                 }
             }

@@ -22,17 +22,28 @@ namespace Battle
 
         public void RegisterPlayerController(PlayerController player)
         {
-            battleState.RegisterAlivePlayer(player);
+            if (isRealPlayerController(player))
+            {
+                battleState.RegisterAlivePlayer(player);
+            }
         }
 
         public void UnregisterPlayerController(PlayerController player)
         {
-            battleState.UnregisterAlivePlayer(player);
+            if (isRealPlayerController(player))
+            {
+                battleState.UnregisterAlivePlayer(player);
+            }
         }
 
         public void Dispose()
         {
             NetworkServer.Destroy(_battleState.gameObject);
+        }
+
+        private bool isRealPlayerController(PlayerController player)
+        {
+            return player.netId != NetworkInstanceId.Invalid && player.playerControllerId != -1;
         }
     }
 

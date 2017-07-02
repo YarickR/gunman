@@ -82,6 +82,8 @@ public class PlayerController : NetworkBehaviour
     {
         base.OnStartClient();
 
+        _clientContext = LobbyManager.Instance.battleClientContext;
+
         if (!isLocalPlayer)
         {
             SetWeaponById(rpgParams.StartWeapon.WeaponId, rpgParams.StartWeapon.ClipSize, rpgParams.StartWeapon.MaxAmmo);
@@ -125,6 +127,7 @@ public class PlayerController : NetworkBehaviour
         }
         else
         {
+            Debug.LogError("start local non local");
             LineOfSights.gameObject.SetActive(false);
             if (InteractSystem != null)
             {
@@ -478,7 +481,6 @@ public class PlayerController : NetworkBehaviour
     #endregion
 
     #region Client commands
-
     [Command]
     public void CmdGetMyName()
     {

@@ -11,6 +11,14 @@ public struct FireSystemStep
     public float StartTime;
     public float Duration; 
     public float Scale;
+
+    public float OverallStageTime { get { return StartTime + Duration; } }
+}
+
+public enum ZoneState
+{
+    Wait,
+    Movihg,
 }
 
 public class FireSystem : NetworkBehaviour
@@ -24,14 +32,18 @@ public class FireSystem : NetworkBehaviour
 
     int activatedStep = -1;
 
-    float fromScale;
-    float toScale;
-    float startScaleTime;
-    float duration;
+    // +++ workaround for start initit on clients
+    [SyncVar]
+    private float _startStageTime;
+    [SyncVar]
+    private float _endStageTime;
+    [SyncVar]
+    private ZoneState _stageState;
+    // --- workaround for start initit on clients
 
     private float _startTime;
-
-    private bool _shouldDoAnnounce = true;
+    private float _startStepTime;
+    private int _currentStepIndex;
 
     private HashSet<PlayerController> _safePlayers = new HashSet<PlayerController>();
 
@@ -43,11 +55,13 @@ public class FireSystem : NetworkBehaviour
         base.OnStartServer();
 
         _serverContext = LobbyManager.Instance.battleServerContext;
-        _startTime = Time.time;
 
-        fromScale = transform.localScale.x;
+        _currentStepIndex = -1;
+        _startTime = Time.time;
+        
         StartCoroutine(DamageAll());
-        StartCoroutine(UpdateScale());
+
+        StartNextStep();
     }
 
     public override void OnStartClient()
@@ -55,20 +69,34 @@ public class FireSystem : NetworkBehaviour
         base.OnStartClient();
 
         _clientContext = LobbyManager.Instance.battleClientContext;
+        _clientContext.gameHUDProvider.SetZoneStageData(_startStageTime, _endStageTime, _stageState);
     }
 
-    #region Command
-    #endregion
+    [Server]
+    public void SendStateDataToClients(float startTime, float endTime, ZoneState state)
+    {
+        _startStageTime = startTime;
+        _endStageTime = endTime;
+        _stageState = state;
+
+        RpcStartStage(startTime, endTime, state);
+    }
 
     #region ClientRpc
     [ClientRpc]
-    void RpcSetScale(float scaleToSet)
+    private void RpcSetScale(float scaleToSet)
     {
         transform.localScale = new Vector3(scaleToSet, transform.localScale.y, scaleToSet);
     }
 
     [ClientRpc]
-    void RpcAnnounceFire(float announceInterval, int fireStep)
+    private void RpcStartStage(float startTime, float endTime, ZoneState state)
+    {
+        _clientContext.gameHUDProvider.SetZoneStageData(startTime, endTime, state);
+    }
+
+    [ClientRpc]
+    private void RpcAnnounceFire(float announceInterval, int fireStep)
     {
         _clientContext.gameHUDProvider.AnnounceFire(announceInterval, fireStep);
     }
@@ -76,7 +104,7 @@ public class FireSystem : NetworkBehaviour
 
     private void AnnounceFire()
     {
-        RpcAnnounceFire(AnnounceInterval, activatedStep + 2);
+        RpcAnnounceFire(AnnounceInterval, _currentStepIndex + 2);
     }
 
     void OnDestroy()
@@ -84,65 +112,79 @@ public class FireSystem : NetworkBehaviour
         StopAllCoroutines();
     }
 
-    public void Update()
+    private void StartNextStep()
     {
-        if (isServer && activatedStep > -1)
+        if (_currentStepIndex > -1)
         {
-            var normalizedTime = Mathf.Clamp01((Time.time - startScaleTime - _startTime) / duration);
-            var scaleToSet = Mathf.Lerp(fromScale, toScale, normalizedTime);
+            _startStepTime += Steps[_currentStepIndex].OverallStageTime;
+        }
+        else
+        {
+            _startStepTime = _startTime;
+        }
+
+        _currentStepIndex += 1;
+
+        if (_currentStepIndex < Steps.Length)
+        {
+            StartCoroutine(WaitStage(_currentStepIndex));
+        }
+    }
+
+    IEnumerator WaitStage(int targetStepIndex)
+    {
+        FireSystemStep targetStep = Steps[targetStepIndex];
+        float time = Time.time - _startTime;
+
+        SendStateDataToClients(_startStepTime, _startStepTime + targetStep.StartTime, ZoneState.Wait);
+
+        bool shouldDoAnnounce = true;
+
+        while (time < targetStep.StartTime)
+        {
+            if (shouldDoAnnounce && targetStep.StartTime <= time + AnnounceInterval)
+            {
+                AnnounceFire();
+                shouldDoAnnounce = false;
+            }
+
+            yield return new WaitForSecondsRealtime(0.5f);
+            time = Time.time - _startTime;
+        }
+
+        StartCoroutine(MoveStage(targetStepIndex));
+    }
+
+    IEnumerator MoveStage(int targetStepIndex)
+    {
+        FireSystemStep targetStep = Steps[targetStepIndex];
+        float time = Time.time - _startTime;
+
+        SendStateDataToClients(_startStepTime + targetStep.StartTime, _startStepTime + targetStep.OverallStageTime, ZoneState.Movihg);
+
+        float fromScale = transform.localScale.x;
+
+        while (time <= targetStep.OverallStageTime)
+        {
+            var normalizedTime = Mathf.Clamp01((time - targetStep.StartTime) / targetStep.Duration);
+            var scaleToSet = Mathf.Lerp(fromScale, targetStep.Scale, normalizedTime);
 
             if (transform.localScale.x != scaleToSet)
             {
                 transform.localScale = new Vector3(scaleToSet, transform.localScale.y, scaleToSet);
                 RpcSetScale(scaleToSet);
             }
+
+            yield return null;
+            time = Time.time - _startTime;
         }
+
+        transform.localScale = new Vector3(targetStep.Scale, transform.localScale.y, targetStep.Scale);
+        RpcSetScale(targetStep.Scale);
+
+        StartNextStep();
     }
 
-    IEnumerator UpdateScale()
-    {
-        while (true)
-        {
-            yield return new WaitForSecondsRealtime(0.5f);
-
-            var time = Time.time - _startTime;
-
-            //Debug.LogFormat("time {0} realtime {1} delta {2} PlayTime {3} starttime {4}", Time.time, Time.realtimeSinceStartup, Time.time - Time.realtimeSinceStartup, time, startTime);
-
-            var candidateStep = activatedStep + 1;
-            
-            if (candidateStep < Steps.Length)
-            {
-                var stepData = Steps[candidateStep];
-
-                if (candidateStep != activatedStep)
-                {
-                    if (_shouldDoAnnounce && stepData.StartTime <= time + AnnounceInterval)
-                    {
-                        AnnounceFire();
-                        _shouldDoAnnounce = false;
-                    }
-
-                    if (stepData.StartTime <= time)
-                    {
-                        _shouldDoAnnounce = true;
-                        fromScale = transform.localScale.x;
-                        toScale = stepData.Scale;
-                        startScaleTime = Time.time - _startTime;
-                        duration = stepData.Duration;
-
-                        activatedStep = candidateStep;
-                    }
-                }
-                else
-                {
-                    //last step achieved
-                    break;
-                }
-            }
-        }
-    }
-    
     IEnumerator DamageAll()
     {
         while (enabled)

@@ -85,11 +85,6 @@ namespace Battle
 
         void IServerBattleState.RegisterAlivePlayer(PlayerController player)
         {
-            if (player.netId == NetworkInstanceId.Invalid || player.playerControllerId == -1)
-            {
-                return;
-            }
-
             if (!_alivePlayers.ContainsKey(player.netId))
             {
                 _alivePlayers[player.netId] = player;
@@ -99,11 +94,6 @@ namespace Battle
 
         void IServerBattleState.UnregisterAlivePlayer(PlayerController player)
         {
-            if(player.netId == NetworkInstanceId.Invalid || player.playerControllerId == -1)
-            {
-                return;
-            }
-
             if (_alivePlayers.ContainsKey(player.netId))
             {
                 _alivePlayers.Remove(player.netId);

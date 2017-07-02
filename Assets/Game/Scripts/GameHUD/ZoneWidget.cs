@@ -5,12 +5,6 @@ using UnityEngine.UI;
 
 public class ZoneWidget : MonoBehaviour
 {
-    private enum ZoneState
-    {
-        Wait,
-        Movihg,
-    }
-
     public Slider progressSlider;
     public Text timeToStartZone;
 

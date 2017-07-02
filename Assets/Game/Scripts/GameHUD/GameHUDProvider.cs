@@ -25,5 +25,12 @@ namespace Battle
         {
             _gameHUD.AddInfoLine(string.Format("Fire step {1} will be in {0} seconds", announceInterval, fireStep));
         }
+
+        public void SetZoneStageData(float startTime, float endTime, ZoneState state)
+        {
+            //Debug.LogErrorFormat("Set state:{0}", state);
+
+            _gameHUD.SetZoneStageData(startTime, endTime, state);
+        }
     }
 }

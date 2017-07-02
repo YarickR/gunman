@@ -9,56 +9,6 @@ public class ZoneWidget : MonoBehaviour
     public Text timeToStartZone;
 
     private ZoneState _currentState = ZoneState.Wait;
-    private int _currentStateIndex;
-
-    private FireSystemStep[] _steps = null;
-    private double _serverStartTime = 0;
-
-    private float _serverTimeDelta = 0;
-    private float _targetTime = 0;
-    private List<float> _stepTimings = new List<float>();
-    private Dictionary<int, ZoneState> _stepState = new Dictionary<int, ZoneState>();
-
-    private void Update()
-    {
-        if (_steps == null)
-        {
-            return;
-        }
-
-        var targetTime = Time.time - _serverTimeDelta;
-        var newStateIndex = _currentStateIndex;
-        for (int i = _currentStateIndex; i < _stepTimings.Count; ++i)
-        {
-            if (_stepTimings[i] > targetTime)
-            {
-                newStateIndex = i;
-                break;
-            }
-        }
-
-        if (newStateIndex != _currentStateIndex)
-        {
-            _currentStateIndex = newStateIndex;
-
-            StopAllCoroutines();
-            var state = _stepState[_currentStateIndex];
-
-            switch (state)
-            {
-                case ZoneState.Movihg:
-                    StartCoroutine(StartProgress(_stepTimings[_currentStateIndex], _stepTimings[_currentStateIndex - 1], targetTime));
-                    break;
-
-                case ZoneState.Wait:
-                default:
-                    StartCoroutine(StartTimer(_stepTimings[_currentStateIndex] - targetTime));
-                    break;
-            }
-
-            SetState(state);
-        }
-    }
 
     private void OnEnable()
     {
@@ -67,33 +17,27 @@ public class ZoneWidget : MonoBehaviour
 
     private void OnDisable()
     {
-        _steps = null;
-        _serverStartTime = 0;
-        _serverTimeDelta = 0;
         _currentState = ZoneState.Wait;
-
         StopAllCoroutines();
     }
 
-    public void SetFireSystemData(FireSystemStep[] steps, double serverStartTime)
+    public void SetFireSystemData(float startTime, float endTime, ZoneState state)
     {
-        //_steps = steps;
-        //_serverStartTime = serverStartTime;
+        StopAllCoroutines();
 
-        //_serverTimeDelta = Time.time - System.Convert.ToSingle(Network.time - _serverStartTime);
+        switch (state)
+        {
+            case ZoneState.Movihg:
+                StartCoroutine(StartProgress(endTime, startTime));
+                break;
 
-        //_stepTimings.Clear();
-        //_stepState.Clear();
-        //_currentStateIndex = 0;
-        //for (int i = 0; i < steps.Length; ++i)
-        //{
-        //    var stepStartTime = steps[i].StartTime;
-        //    _stepTimings.Add(stepStartTime);
-        //    _stepState[i * 2] = ZoneState.Wait;
+            case ZoneState.Wait:
+            default:
+                StartCoroutine(StartTimer(endTime - startTime));
+                break;
+        }
 
-        //    _stepTimings.Add(stepStartTime + steps[i].Duration);
-        //    _stepState[(i * 2) + 1] = ZoneState.Movihg;
-        //}
+        SetState(state);
     }
 
     private void SetState(ZoneState state)
@@ -113,7 +57,6 @@ public class ZoneWidget : MonoBehaviour
                 timeToStartZone.gameObject.SetActive(true);
                 break;
         }
-
     }
 
     private IEnumerator StartTimer(float totalSeconds)
@@ -131,19 +74,18 @@ public class ZoneWidget : MonoBehaviour
         }
     }
 
-    private IEnumerator StartProgress(float endSecond, float startSeconds, float currentSeconds)
+    private IEnumerator StartProgress(float endSecond, float startSeconds)
     {
         var overallSeconds = endSecond - startSeconds;
-        var currentInterval = (currentSeconds - startSeconds) / overallSeconds;
-        progressSlider.value = Mathf.Clamp01(currentInterval);
+        var currTime = 0.0f;
 
-        while (currentInterval < 1.0f)
+        while (currTime <= overallSeconds)
         {
-            yield return new WaitForSeconds(0.1f);
-
-            currentInterval += 0.1f / overallSeconds;
-
+            currTime += Time.deltaTime;
+            var currentInterval = currTime / overallSeconds;
             progressSlider.value = Mathf.Clamp01(currentInterval);
+
+            yield return null;
         }
 
         progressSlider.value = 1f;

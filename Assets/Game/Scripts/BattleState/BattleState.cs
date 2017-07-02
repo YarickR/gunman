@@ -9,6 +9,7 @@ namespace Battle
     public interface IClientBattleState
     {
         float GetServerTime();
+        float SetverTimeToLocal(float serverTime);
     }
 
     public interface IServerBattleState
@@ -34,7 +35,6 @@ namespace Battle
         private bool _isServerWithLocalPlayer = false;
 
         private Dictionary<NetworkInstanceId, PlayerController> _alivePlayers = new Dictionary<NetworkInstanceId, PlayerController>();
-        
 
         //server->client data
         [SyncVar(hook = "OnChangeAlivePlayersCount")]
@@ -125,6 +125,11 @@ namespace Battle
         float IClientBattleState.GetServerTime()
         {
             return Time.time + _serverTimeDelta;
+        }
+
+        float IClientBattleState.SetverTimeToLocal(float serverTime)
+        {
+            return serverTime + _serverTimeDelta;
         }
         #endregion
     }

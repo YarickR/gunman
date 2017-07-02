@@ -28,8 +28,6 @@ namespace Battle
 
         public void SetZoneStageData(float startTime, float endTime, ZoneState state)
         {
-            //Debug.LogErrorFormat("Set state:{0}", state);
-
             _gameHUD.SetZoneStageData(startTime, endTime, state);
         }
     }

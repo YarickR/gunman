@@ -69,7 +69,10 @@ public class FireSystem : NetworkBehaviour
         base.OnStartClient();
 
         _clientContext = LobbyManager.Instance.battleClientContext;
-        _clientContext.gameHUDProvider.SetZoneStageData(_startStageTime, _endStageTime, _stageState);
+
+        var clientStartTime = _clientContext.battleState.SetverTimeToLocal(_startStageTime);
+        var clientEndTime = _clientContext.battleState.SetverTimeToLocal(_endStageTime);
+        _clientContext.gameHUDProvider.SetZoneStageData(clientStartTime, clientEndTime, _stageState);
     }
 
     [Server]
@@ -92,7 +95,10 @@ public class FireSystem : NetworkBehaviour
     [ClientRpc]
     private void RpcStartStage(float startTime, float endTime, ZoneState state)
     {
-        _clientContext.gameHUDProvider.SetZoneStageData(startTime, endTime, state);
+        var clientStartTime = _clientContext.battleState.SetverTimeToLocal(startTime);
+        var clientEndTime = _clientContext.battleState.SetverTimeToLocal(endTime);
+
+        _clientContext.gameHUDProvider.SetZoneStageData(clientStartTime, clientEndTime, state);
     }
 
     [ClientRpc]
@@ -136,7 +142,14 @@ public class FireSystem : NetworkBehaviour
         FireSystemStep targetStep = Steps[targetStepIndex];
         float time = Time.time - _startTime;
 
-        SendStateDataToClients(_startStepTime, _startStepTime + targetStep.StartTime, ZoneState.Wait);
+        //to do спорно мб переписить
+        var delay = targetStep.StartTime;
+        if (targetStepIndex > 0)
+        {
+            delay -= Steps[targetStepIndex - 1].OverallStageTime;
+        }
+
+        SendStateDataToClients(_startStepTime, _startStepTime + delay, ZoneState.Wait);
 
         bool shouldDoAnnounce = true;
 
@@ -160,7 +173,7 @@ public class FireSystem : NetworkBehaviour
         FireSystemStep targetStep = Steps[targetStepIndex];
         float time = Time.time - _startTime;
 
-        SendStateDataToClients(_startStepTime + targetStep.StartTime, _startStepTime + targetStep.OverallStageTime, ZoneState.Movihg);
+        SendStateDataToClients(_startTime + targetStep.StartTime, _startTime + targetStep.OverallStageTime, ZoneState.Movihg);
 
         float fromScale = transform.localScale.x;
 

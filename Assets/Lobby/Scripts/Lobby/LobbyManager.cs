@@ -451,12 +451,19 @@ namespace Prototype.NetworkLobby
             ServerChangeScene(playScene);
         }
 
-        public BattleClientContext CreateBattleClientContext(BattleState state)
+        /// <summary>
+        /// Create client context only from battle scene
+        /// </summary>
+        /// <param name="state"></param>
+        /// <returns></returns>
+        public BattleClientContext CreateBattleClientContext(BattleState state, bool force = false)
         {
-            if (battleClientContext == null)
+            if (!force && SceneManager.GetSceneAt(0).name == lobbyScene)
             {
-                battleClientContext = new BattleClientContext(HUD, state, ClientScene.localPlayers[0].playerControllerId);
+                return null;
             }
+
+            battleClientContext = new BattleClientContext(HUD, state, ClientScene.localPlayers[0].playerControllerId);
 
             return battleClientContext;
         }
@@ -477,7 +484,6 @@ namespace Prototype.NetworkLobby
                 SetServerInfo("Client", networkAddress);
             }
         }
-
 
         public override void OnClientDisconnect(NetworkConnection conn)
         {

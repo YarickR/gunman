@@ -8,7 +8,7 @@ namespace Battle
 {
     public interface IClientBattleState
     {
-
+        float GetServerTime();
     }
 
     public interface IServerBattleState
@@ -31,8 +31,51 @@ namespace Battle
         }
 
         //server only data
+        private bool _isServerWithLocalPlayer = false;
+
         private Dictionary<NetworkInstanceId, PlayerController> _alivePlayers = new Dictionary<NetworkInstanceId, PlayerController>();
-        public IEnumerable<KeyValuePair<NetworkInstanceId, PlayerController>> alivePlayers
+        
+
+        //server->client data
+        [SyncVar(hook = "OnChangeAlivePlayersCount")]
+        private int _alivePlayersCount = 0;
+
+        [SyncVar(hook = "OnSetStartServerTime")]
+        private float _startServerTime;
+
+        //client only data
+        private bool _isClientInited = false;
+        private GameHUDProvider _gameHUDProvider = null;
+        private float _serverTimeDelta = 0.0f;
+
+        public override void OnStartServer()
+        {
+            base.OnStartServer();
+
+            _startServerTime = Time.time;
+
+            //workaround for support client+server on one instance
+            _isServerWithLocalPlayer = NetworkServer.localClientActive;
+        }
+
+        public override void OnStartClient()
+        {
+            base.OnStartClient();
+
+            var clientContext = LobbyManager.Instance.CreateBattleClientContext(this, _isServerWithLocalPlayer);
+            _isClientInited = clientContext != null;
+
+            if (_isClientInited)
+            {
+                _gameHUDProvider = clientContext.gameHUDProvider;
+
+                OnChangeAlivePlayersCount(_alivePlayersCount);
+                OnSetStartServerTime(_startServerTime);
+            }
+        }
+
+        #region IServerBattleState
+        IEnumerable<KeyValuePair<NetworkInstanceId, PlayerController>> IServerBattleState.alivePlayers
         {
             get
             {
@@ -40,24 +83,7 @@ namespace Battle
             }
         }
 
-        //server->client data
-        [SyncVar(hook = "OnChangeAlivePlayersCount")]
-        public int _alivePlayersCount = 0;
-
-        //client only data
-        private GameHUDProvider _gameHUDProvider = null;
-
-        public override void OnStartClient()
-        {
-            base.OnStartClient();
-
-            var clientContext = LobbyManager.Instance.CreateBattleClientContext(this);
-            _gameHUDProvider = clientContext.gameHUDProvider;
-
-            OnChangeAlivePlayersCount(_alivePlayersCount);
-        }
-
-        public void RegisterAlivePlayer(PlayerController player)
+        void IServerBattleState.RegisterAlivePlayer(PlayerController player)
         {
             if (player.netId == NetworkInstanceId.Invalid || player.playerControllerId == -1)
             {
@@ -71,7 +97,7 @@ namespace Battle
             }
         }
 
-        public void UnregisterAlivePlayer(PlayerController player)
+        void IServerBattleState.UnregisterAlivePlayer(PlayerController player)
         {
             if(player.netId == NetworkInstanceId.Invalid || player.playerControllerId == -1)
             {
@@ -84,12 +110,31 @@ namespace Battle
                 _alivePlayersCount = _alivePlayers.Count;
             }
         }
+        #endregion
 
         #region SyncVar
         private void OnChangeAlivePlayersCount(int newCount)
         {
             _alivePlayersCount = newCount;
-            _gameHUDProvider.SetAliveCount(_alivePlayersCount);
+
+            if (_isClientInited)
+            {
+                _gameHUDProvider.SetAliveCount(_alivePlayersCount);
+            }
+        }
+
+        private void OnSetStartServerTime(float startServerTime)
+        {
+            _startServerTime = startServerTime;
+
+            _serverTimeDelta = Time.time - _startServerTime;
+        }
+        #endregion
+
+        #region IClientBattleState
+        float IClientBattleState.GetServerTime()
+        {
+            return Time.time + _serverTimeDelta;
         }
         #endregion
     }

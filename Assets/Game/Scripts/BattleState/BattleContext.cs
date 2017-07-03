@@ -52,17 +52,21 @@ namespace Battle
     /// </summary>
     public class BattleClientContext
     {
+        //have wierd bug with double init in furst fight in the room
         public IClientBattleState battleState { get { return _battleState; } }
-        private readonly BattleState _battleState;
+        private BattleState _battleState;
 
         public readonly GameHUDProvider gameHUDProvider;
         public readonly GameHUD gameHUD;
 
-        public BattleClientContext(GameHUD hud, BattleState state, short targetPlayerId)
+        public BattleClientContext(GameHUD hud, short targetPlayerId)
         {
             gameHUD = hud;
             gameHUDProvider = new GameHUDProvider(gameHUD, targetPlayerId);
+        }
 
+        public void SetBattleState(BattleState state)
+        {
             _battleState = state;
         }
     }

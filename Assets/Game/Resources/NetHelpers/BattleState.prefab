@@ -84,3 +84,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b789126c09bd23d4184b317fd004c080, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  EndGameDuration: 3

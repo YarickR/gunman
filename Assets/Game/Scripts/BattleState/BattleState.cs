@@ -67,14 +67,11 @@ namespace Battle
         {
             base.OnStartClient();
 
-            Debug.LogError("OnStartClient");
-
-            var clientContext = LobbyManager.Instance.CreateBattleClientContext(this, _isServerWithLocalPlayer);
+            var clientContext = LobbyManager.Instance.CreateBattleClientContext(this);
             _isClientInited = clientContext != null;
 
             if (_isClientInited)
             {
-                Debug.LogError("OnStartClient GOOD");
                 _gameHUDProvider = clientContext.gameHUDProvider;
 
                 OnChangeAlivePlayersCount(_alivePlayersCount);

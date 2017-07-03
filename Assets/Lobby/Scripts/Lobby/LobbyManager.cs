@@ -85,8 +85,11 @@ namespace Prototype.NetworkLobby
 
             if (Application.isEditor && StartMode == LobbyManager.StartModeT.SinglePlayer)
             {
+                prematchCountdown = 0.0f;
                 StartHost();
             }
+
+            //hook start
 			string[] __args = System.Environment.GetCommandLineArgs();
             for (int __i = 0; __i < __args.Length; __i++) {
             	if (__args[__i] == "-dedicated") {
@@ -95,10 +98,8 @@ namespace Prototype.NetworkLobby
 	            	backDelegate = StopServerClbk;
 	            	SetServerInfo("Dedicated Server", networkAddress);
 	            	break;
-            	};
-           };
-
-
+            	}
+           }
         }
 
         public override void ServerChangeScene(string sceneName)
@@ -457,12 +458,12 @@ namespace Prototype.NetworkLobby
         /// <returns></returns>
         public BattleClientContext CreateBattleClientContext(BattleState state, bool force = false)
         {
-            if (!force && SceneManager.GetSceneAt(0).name == lobbyScene)
+            if (battleClientContext == null)
             {
-                return null;
+                battleClientContext = new BattleClientContext(HUD, ClientScene.localPlayers[0].playerControllerId);
             }
 
-            battleClientContext = new BattleClientContext(HUD, state, ClientScene.localPlayers[0].playerControllerId);
+            battleClientContext.SetBattleState(state);
 
             return battleClientContext;
         }

@@ -10,9 +10,9 @@ public class InteractableTrigger : MonoBehaviour
             interactable = transform.parent.GetComponent<Interactable>();
         }
         var pc = other.GetComponent<PlayerController>();
-        if (pc != null && pc.InteractSystem != null && pc.InteractSystem.enabled && interactable.CanInteract(pc))
+        if (pc != null && pc._interactSystem != null && pc._interactSystem.enabled && interactable.CanInteract(pc))
         {
-            pc.InteractSystem.TryActivateInteractable(interactable);
+            pc._interactSystem.TryActivateInteractable(interactable);
         }
     }
 
@@ -23,9 +23,9 @@ public class InteractableTrigger : MonoBehaviour
             interactable = transform.parent.GetComponent<Interactable>();
         }
         var pc = other.GetComponent<PlayerController>();
-        if (pc != null && pc.InteractSystem != null && pc.InteractSystem.enabled)
+        if (pc != null && pc._interactSystem != null && pc._interactSystem.enabled)
         {
-            pc.InteractSystem.TryDeactivateInteractable(interactable);
+            pc._interactSystem.TryDeactivateInteractable(interactable);
         }
     }
 }

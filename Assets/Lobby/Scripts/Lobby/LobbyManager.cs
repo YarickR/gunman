@@ -42,7 +42,6 @@ namespace Prototype.NetworkLobby
         public BattleServerContext battleServerContext;
         public BattleClientContext battleClientContext;
 
-        public GameLogic GameLogic;
         public GameHUD HUD;
 
         protected RectTransform currentPanel;
@@ -86,7 +85,6 @@ namespace Prototype.NetworkLobby
 
             if (Application.isEditor && StartMode == LobbyManager.StartModeT.SinglePlayer)
             {
-                prematchCountdown = 0;
                 StartHost();
             }
 			string[] __args = System.Environment.GetCommandLineArgs();
@@ -130,6 +128,7 @@ namespace Prototype.NetworkLobby
         {
             if (SceneManager.GetSceneAt(0).name == lobbyScene)
             {
+                HUD.Reset();
                 battleClientContext = null;
 
                 if (topPanel.isInGame)

@@ -37,9 +37,14 @@ public class GameHUD : MonoBehaviour
 
     public void Start()
     {
-        LocalPlayer = null;
         _addLineTS = 0;
         UseButton.onClick.AddListener(OnUseButtonClicked);
+    }
+
+    public void Reset()
+    {
+        ZoneProgress.StopAllCoroutines();
+        SwitchToState(HUDState.Alive);
     }
 
     private void SwitchToState(HUDState newState)
@@ -90,15 +95,6 @@ public class GameHUD : MonoBehaviour
     public void SetLeftAlive(int alive)
     {
     	LeftAlive.text = alive.ToString();
-    }
-
-    public void UpdateHUD(PlayerController player = null) {
-    	if (player == null ) {
-    		player = LocalPlayer;
-    	};
-    	if (player) {
-    		
-    	}
     }
 
     public void Update() {

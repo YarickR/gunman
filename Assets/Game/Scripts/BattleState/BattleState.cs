@@ -31,10 +31,15 @@ namespace Battle
             return go.GetComponent<BattleState>();
         }
 
+        //battle settings
+        [Range(0, 60)]
+        public float EndGameDuration = 10f;
+
         //server only data
         private bool _isServerWithLocalPlayer = false;
 
         private Dictionary<NetworkInstanceId, PlayerController> _alivePlayers = new Dictionary<NetworkInstanceId, PlayerController>();
+        private int _overallPlayers = 0;
 
         //server->client data
         [SyncVar(hook = "OnChangeAlivePlayersCount")]
@@ -62,16 +67,52 @@ namespace Battle
         {
             base.OnStartClient();
 
+            Debug.LogError("OnStartClient");
+
             var clientContext = LobbyManager.Instance.CreateBattleClientContext(this, _isServerWithLocalPlayer);
             _isClientInited = clientContext != null;
 
             if (_isClientInited)
             {
+                Debug.LogError("OnStartClient GOOD");
                 _gameHUDProvider = clientContext.gameHUDProvider;
 
                 OnChangeAlivePlayersCount(_alivePlayersCount);
                 OnSetStartServerTime(_startServerTime);
             }
+        }
+
+        [Server]
+        private void EndBattle()
+        {
+            //need valid hierarhi
+            var fs = GameObject.FindObjectOfType<FireSystem>();
+            if (fs != null)
+            {
+                fs.StopAllCoroutines();
+                fs.enabled = false;
+            }
+
+            if (_alivePlayersCount > 0)
+            {
+                var enumeraor = _alivePlayers.GetEnumerator();
+                if (enumeraor.MoveNext())
+                {
+                    enumeraor.Current.Value.RpcEnd(true, _alivePlayersCount, _overallPlayers);
+                }
+            }
+
+            if (this != null)
+            {
+                StartCoroutine(waitAndRestart());
+            }
+        }
+
+        [Server]
+        IEnumerator waitAndRestart()
+        {
+            yield return new WaitForSeconds(EndGameDuration);
+            LobbyManager.Instance.ServerReturnToLobby();
         }
 
         #region IServerBattleState
@@ -87,6 +128,7 @@ namespace Battle
         {
             if (!_alivePlayers.ContainsKey(player.netId))
             {
+                _overallPlayers += 1;
                 _alivePlayers[player.netId] = player;
                 _alivePlayersCount = _alivePlayers.Count;
             }
@@ -96,8 +138,15 @@ namespace Battle
         {
             if (_alivePlayers.ContainsKey(player.netId))
             {
+                player.RpcEnd(false, _alivePlayersCount, _overallPlayers);
+
                 _alivePlayers.Remove(player.netId);
                 _alivePlayersCount = _alivePlayers.Count;
+
+                if (_alivePlayersCount <= 1)
+                {
+                    EndBattle();
+                } 
             }
         }
         #endregion

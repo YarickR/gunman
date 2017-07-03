@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Prototype.NetworkLobby;
 
 public class WeaponController : MonoBehaviour
 {
@@ -235,7 +236,7 @@ public class WeaponController : MonoBehaviour
 
         TrySetBaseWeapon();
 
-        GameLogic.Instance.HUD.SetAmmo(GetCurrentWeaponName, GetCurrentAmmo, GetBackpackAmmo);
+        LobbyManager.Instance.battleClientContext.gameHUD.SetAmmo(GetCurrentWeaponName, GetCurrentAmmo, GetBackpackAmmo);
     }
 
     private void UpdateAiming()

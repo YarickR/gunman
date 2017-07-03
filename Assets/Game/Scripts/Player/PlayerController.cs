@@ -28,10 +28,10 @@ public class PlayerController : NetworkBehaviour
         }
     }
 
-    private CharacterController characterController;
-    private Targetable selfTargetable;
+    private CharacterController _characterController;
+    private Targetable _selfTargetable;
 
-    private Collider[] colliders;
+    private Collider[] _colliders;
 
     [Header("RPG parameters")]
     public PlayerParams rpgParams;
@@ -39,7 +39,7 @@ public class PlayerController : NetworkBehaviour
     [Header("Current weapon params")]
     public WeaponParams weaponParams;
 
-    public InteractSystem InteractSystem;
+    public InteractSystem _interactSystem;
 
     //+++++ net params
     [SyncVar(hook = "OnChangeHealth")]
@@ -58,11 +58,14 @@ public class PlayerController : NetworkBehaviour
     private BattleServerContext _serverContext;
     private BattleClientContext _clientContext;
 
-    void Awake()
+    private bool _isInited = false;
+
+    private void Awake()
     {
-        characterController = GetComponent<CharacterController>();
-        selfTargetable = GetComponent<Targetable>();
-        colliders = GetComponents<Collider>();
+        _characterController = GetComponent<CharacterController>();
+        _selfTargetable = GetComponent<Targetable>();
+        _colliders = GetComponents<Collider>();
+        _interactSystem = GetComponent<InteractSystem>();
     }
 
     public override void OnStartServer()
@@ -71,9 +74,6 @@ public class PlayerController : NetworkBehaviour
 
         _serverContext = LobbyManager.Instance.battleServerContext;
         _serverContext.RegisterPlayerController(this);
-
-        //to do: delete after realize context scheme
-        notifyLogicAboutSpawn();
 
         InitRPGParams();
     }
@@ -84,67 +84,53 @@ public class PlayerController : NetworkBehaviour
 
         _clientContext = LobbyManager.Instance.battleClientContext;
 
-        if (!isLocalPlayer)
-        {
-            SetWeaponById(rpgParams.StartWeapon.WeaponId, rpgParams.StartWeapon.ClipSize, rpgParams.StartWeapon.MaxAmmo);
-        }
+        LineOfSights.gameObject.SetActive(false);
+        _interactSystem.enabled = false;
+
+        SetWeaponById(rpgParams.StartWeapon.WeaponId, rpgParams.StartWeapon.ClipSize, rpgParams.StartWeapon.MaxAmmo);//wierd call before local player inited
+
+        _isInited = true;
     }
 
     public override void OnStartLocalPlayer()
     {
         base.OnStartLocalPlayer();
-        if (isLocalPlayer)
-        {
-            LocalClientController = this;
 
-            cam = PlayerCamera.instance;
-            cam.SetFollowTransform(cameraPlaceHolder);
-            LineOfSights.gameObject.SetActive(true);
-            LineOfSights.IgnoreTarget = selfTargetable;
-            LineOfSights.VisibilityLineOfSight.MaxAngle = rpgParams.RangeOfView;
-            LineOfSights.VisibilityLineOfSight.MaxDistance = rpgParams.ViewDistance;
+        _clientContext = LobbyManager.Instance.battleClientContext;
 
-            //--- remove after net init (-:
-            //weaponController.InitWithParams(rpgParams.StartWeapon, rpgParams.StartWeapon.ClipSize, rpgParams.StartWeapon.MaxAmmo);
-            //LineOfSights.TargetingLineOfSight.MaxAngle = rpgParams.StartWeapon.RangeOfAiming;
-            //LineOfSights.TargetingLineOfSight.MaxDistance = rpgParams.StartWeapon.FireDistance;
-            SetWeaponById(rpgParams.StartWeapon.WeaponId, rpgParams.StartWeapon.ClipSize, rpgParams.StartWeapon.MaxAmmo);
-            //---
+        LocalClientController = this;
 
-            if (InteractSystem == null)
-            {
-                InteractSystem = GetComponent<InteractSystem>();
-                if (InteractSystem == null)
-                {
-                    InteractSystem = gameObject.AddComponent<InteractSystem>();
-                }
-            }
-            InteractSystem.enabled = true;
+        cam = PlayerCamera.instance;
+        cam.SetFollowTransform(cameraPlaceHolder);
 
-            GameLogic.Instance.HUD.LocalPlayer = this;
-            GameLogic.Instance.HUD.SwitchToLive();
-            GameLogic.Instance.HUD.SetHP(_currentHealth, rpgParams.MaxHealth);
-        }
-        else
-        {
-            Debug.LogError("start local non local");
-            LineOfSights.gameObject.SetActive(false);
-            if (InteractSystem != null)
-            {
-                InteractSystem.enabled = false;
-            }
-        }
+        LineOfSights.gameObject.SetActive(true);
+        LineOfSights.IgnoreTarget = _selfTargetable;
+        LineOfSights.VisibilityLineOfSight.MaxAngle = rpgParams.RangeOfView;
+        LineOfSights.VisibilityLineOfSight.MaxDistance = rpgParams.ViewDistance;
+
+        SetWeaponById(rpgParams.StartWeapon.WeaponId, rpgParams.StartWeapon.ClipSize, rpgParams.StartWeapon.MaxAmmo);
+
+        _interactSystem.enabled = true;
+
+        _clientContext.gameHUD.LocalPlayer = this;
+        _clientContext.gameHUD.SwitchToLive();
+        _clientContext.gameHUD.SetHP(_currentHealth, rpgParams.MaxHealth);
 
         CmdGetMyName();
-        SetWeaponById(rpgParams.StartWeapon.WeaponId, rpgParams.StartWeapon.ClipSize, rpgParams.StartWeapon.MaxAmmo);
     }
 
-    public void UpdateTimer(float currValue, float maxValue) {
-    	GameLogic.Instance.HUD.SetTimer(currValue, maxValue);
+    public void UpdateTimer(float currValue, float maxValue)
+    {
+        _clientContext.gameHUD.SetTimer(currValue, maxValue);
     }
 
     private void Update()
     {
+        if (!_isInited || !isLocalPlayer)
+        {
+            return;
+        }
+
         if (IsInputAvalible())
         {
             ApplyMove();
@@ -157,37 +143,34 @@ public class PlayerController : NetworkBehaviour
 #endif
         }
 
-        if (isLocalPlayer)
+        bool currentReloadingState = weaponController.IsReloading;
+        if (currentReloadingState != _isReloading)
         {
-            bool currentReloadingState = weaponController.IsReloading;
-            if (currentReloadingState != _isReloading)
-            {
-                CmdSetReloadingState(currentReloadingState);
-                _isReloading = currentReloadingState;
-            }
+            CmdSetReloadingState(currentReloadingState);
+            _isReloading = currentReloadingState;
+        }
 
-            SetUseButtonEnabled(!(_isMoving || currentReloadingState));
-            if (_isInteracting)
+        SetUseButtonEnabled(!(_isMoving || currentReloadingState));
+        if (_isInteracting)
+        {
+            if (_interactSystem.CurrentInteractable == null)
             {
-                if (InteractSystem.CurrentInteractable == null)
-                {
-                    StopUse();
-                }
-                else
-                {
-                    float time = Time.time - _interactStartTime;
-                    float maxTime = InteractSystem.CurrentInteractable.InteractionTime;
-                    UpdateTimer(time, maxTime);
-                    if (time > maxTime)
-                    {
-                        UseItem(InteractSystem.CurrentInteractable);
-                    }
-                }
+                StopUse();
             }
             else
             {
-                UpdateTimer(weaponController.AimProgress, 1);
+                float time = Time.time - _interactStartTime;
+                float maxTime = _interactSystem.CurrentInteractable.InteractionTime;
+                UpdateTimer(time, maxTime);
+                if (time > maxTime)
+                {
+                    UseItem(_interactSystem.CurrentInteractable);
+                }
             }
+        }
+        else
+        {
+            UpdateTimer(weaponController.AimProgress, 1);
         }
     }
 
@@ -202,9 +185,6 @@ public class PlayerController : NetworkBehaviour
         {
             _serverContext.battleState.UnregisterAlivePlayer(this);
         }
-
-        //to do: delete after realize context scheme
-        notifyLogicAboutDeath();
     }
 
     #region Movement
@@ -218,7 +198,7 @@ public class PlayerController : NetworkBehaviour
             moveDelta.y = -transform.position.y;
         }
 
-        characterController.Move(moveDelta);
+        _characterController.Move(moveDelta);
 
         var lookDirection = computeDirection(input.GetLookDirection());
         if (lookDirection.sqrMagnitude < 0.01f)
@@ -294,9 +274,6 @@ public class PlayerController : NetworkBehaviour
             RpcMessageKilledBy(damagerId);
 
             _serverContext.battleState.UnregisterAlivePlayer(this);
-
-            //to do: delete after realize context scheme
-            notifyLogicAboutDeath();
         }
     }
 
@@ -304,16 +281,6 @@ public class PlayerController : NetworkBehaviour
     {
         ReceiveDamage(damageValue, fireID);
         RpcShotAct(fireID, damageValue);
-    }
-
-    private void notifyLogicAboutSpawn()
-    {
-        GameLogic.Instance.OnPlayerAlive(this, isLocalPlayer);
-    }
-
-    private void notifyLogicAboutDeath()
-    {
-        GameLogic.Instance.OnPlayerDeath(this, isLocalPlayer);
     }
     #endregion
 
@@ -344,11 +311,11 @@ public class PlayerController : NetworkBehaviour
             StartCoroutine(DelayedHide());
         }
 
-        selfTargetable.isVisibleOnly = isDead;
+        _selfTargetable.isVisibleOnly = isDead;
 
-        if (colliders != null)
+        if (_colliders != null)
         {
-            foreach (var col in colliders)
+            foreach (var col in _colliders)
             {
                 col.enabled = !isDead;
             }
@@ -363,7 +330,7 @@ public class PlayerController : NetworkBehaviour
             }
 
             Debug.LogFormat("ONCHANGE HEALTH(local):" + value);
-            GameLogic.Instance.HUD.SetHP(value, rpgParams.MaxHealth);
+            _clientContext.gameHUD.SetHP(value, rpgParams.MaxHealth);
         }
     }
     #endregion
@@ -375,7 +342,7 @@ public class PlayerController : NetworkBehaviour
         GameObject attackerGO = ClientScene.FindLocalObject(killerId);
         if (attackerGO != null)
         {
-            GameLogic.Instance.HUD.AddInfoLine(attackerGO.name + " killed " + name);
+            _clientContext.gameHUD.AddInfoLine(attackerGO.name + " killed " + name);
         }
     }
 
@@ -393,7 +360,7 @@ public class PlayerController : NetworkBehaviour
         if (isLocalPlayer)
         {
             Debug.LogFormat("RpcEnd {0}/{1}", isVictory, place, maxPlayersCount);
-            GameLogic.Instance.HUD.SwitchToEnd(isVictory, place, maxPlayersCount);
+            _clientContext.gameHUD.SwitchToEnd(isVictory, place, maxPlayersCount);
         }
     }
 
@@ -414,7 +381,7 @@ public class PlayerController : NetworkBehaviour
 
         var attackerController = attackerGO.GetComponent<PlayerController>();
         if (attackerController != null) {
-            var isVisible = attackerController.selfTargetable.Visible;
+            var isVisible = attackerController._selfTargetable.Visible;
             if (isVisible) {
                 return;
             }
@@ -557,12 +524,12 @@ public class PlayerController : NetworkBehaviour
     #region Interact
     public void SetUseButtonEnabled(bool enabled)
     {
-        GameLogic.Instance.HUD.SetUseButtonInteractable(enabled);
+        _clientContext.gameHUD.SetUseButtonInteractable(enabled);
     }
 
     public void SetShowUseButtonState(bool visible)
     {
-        GameLogic.Instance.HUD.SetShowUseButton(visible);
+        _clientContext.gameHUD.SetShowUseButton(visible);
     }
 
     public void StartUse()
@@ -586,7 +553,7 @@ public class PlayerController : NetworkBehaviour
     public void UseItem(Interactable interactable)
     {
         CmdActivateInteractable(interactable.netId);
-        InteractSystem.ClearInteractable();
+        _interactSystem.ClearInteractable();
         StopUse();
     }
     #endregion
@@ -606,10 +573,10 @@ public class PlayerController : NetworkBehaviour
     public void RegisterAdditionalRenderPart(VisiblePart additionalPart)
     {
         if (additionalPart != null &&
-            !selfTargetable.additionalParts.Contains(additionalPart))
+            !_selfTargetable.additionalParts.Contains(additionalPart))
         {
-            selfTargetable.additionalParts.Add(additionalPart);
-            additionalPart.SetVisible(selfTargetable.Visible);
+            _selfTargetable.additionalParts.Add(additionalPart);
+            additionalPart.SetVisible(_selfTargetable.Visible);
         }
     }
 

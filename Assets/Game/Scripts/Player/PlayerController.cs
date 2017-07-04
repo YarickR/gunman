@@ -184,7 +184,7 @@ public class PlayerController : NetworkBehaviour
             LocalClientController = null;
         }
 
-        if (isServer && _serverContext != null)
+        if (_serverContext != null)
         {
             _serverContext.battleState.UnregisterAlivePlayer(this);
         }

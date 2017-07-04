@@ -41,9 +41,13 @@ public class PlayerController : NetworkBehaviour
 
     public InteractSystem _interactSystem;
 
+    public string PlayerName { get { return _playerName; } }
     //+++++ net params
     [SyncVar(hook = "OnChangeHealth")]
     private float _currentHealth;
+
+    [SyncVar(hook = "OnSetPlayerName")]
+    private string _playerName;
     //----- net params
 
     private bool _isDead = false;
@@ -92,7 +96,7 @@ public class PlayerController : NetworkBehaviour
 
         SetWeaponById(rpgParams.StartWeapon.WeaponId, rpgParams.StartWeapon.ClipSize, rpgParams.StartWeapon.MaxAmmo);//wierd call before local player inited
 
-        _isInited = true;
+        OnSetPlayerName(_playerName);
     }
 
     public override void OnStartLocalPlayer()
@@ -119,7 +123,7 @@ public class PlayerController : NetworkBehaviour
         _clientContext.gameHUD.SwitchToLive();
         _clientContext.gameHUD.SetHP(_currentHealth, rpgParams.MaxHealth);
 
-        CmdGetMyName();
+        _isInited = true;
     }
 
     public void UpdateTimer(float currValue, float maxValue)
@@ -288,11 +292,6 @@ public class PlayerController : NetworkBehaviour
     #endregion
 
     #region network hooks
-    private void OnChangeName(string newName) {
-    	GCTX.Log("OnChangeName: " + newName);
-    	name = newName;
-    }
-    
     private IEnumerator DelayedHide()
     {
         yield return new WaitForSeconds(3.0f);
@@ -336,6 +335,18 @@ public class PlayerController : NetworkBehaviour
             _clientContext.gameHUD.SetHP(value, rpgParams.MaxHealth);
         }
     }
+
+    [Server]
+    public void SetPlayerName(string playerName)
+    {
+        _playerName = playerName;
+        name = _playerName;
+    }
+
+    private void OnSetPlayerName(string value)
+    {
+        name = _playerName;
+    }
     #endregion
 
     #region Client rpc
@@ -348,14 +359,6 @@ public class PlayerController : NetworkBehaviour
             _clientContext.gameHUD.AddInfoLine(attackerGO.name + " killed " + name);
         }
     }
-
-    [ClientRpc]
-	public void RpcSetName(string newName)
-    {
-		GCTX.Log("RpcSetName");
-		gameObject.name = newName;
-		name = newName;
-	}
 
     [ClientRpc]
     public void RpcEnd(bool isVictory, int place, int maxPlayersCount)
@@ -451,12 +454,6 @@ public class PlayerController : NetworkBehaviour
     #endregion
 
     #region Client commands
-    [Command]
-    public void CmdGetMyName()
-    {
-    	RpcSetName(name);
-    }
-
     [Command]
     public void CmdSendDamageToServer(float damageValue)
     {

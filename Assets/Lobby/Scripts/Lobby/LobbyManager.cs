@@ -389,7 +389,9 @@ namespace Prototype.NetworkLobby
 
             if (_lobbyHooks)
                 _lobbyHooks.OnLobbyServerSceneLoadedForPlayer(this, lobbyPlayer, gamePlayer);
-            gamePlayer.GetComponent<PlayerController>().name = lobbyPlayer.GetComponent<LobbyPlayer>().playerName;
+
+            gamePlayer.GetComponent<PlayerController>().SetPlayerName(lobbyPlayer.GetComponent<LobbyPlayer>().playerName);
+
             return true;
         }
 

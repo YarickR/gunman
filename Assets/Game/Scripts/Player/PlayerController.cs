@@ -75,6 +75,9 @@ public class PlayerController : NetworkBehaviour
         _serverContext = LobbyManager.Instance.battleServerContext;
         _serverContext.RegisterPlayerController(this);
 
+        LineOfSights.gameObject.SetActive(false);
+        _interactSystem.enabled = false;
+
         InitRPGParams();
     }
 
@@ -181,7 +184,7 @@ public class PlayerController : NetworkBehaviour
             LocalClientController = null;
         }
 
-        if (_serverContext != null)
+        if (isServer && _serverContext != null)
         {
             _serverContext.battleState.UnregisterAlivePlayer(this);
         }

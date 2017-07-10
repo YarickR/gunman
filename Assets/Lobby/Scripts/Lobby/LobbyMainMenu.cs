@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.Networking;
 using System.Collections;
 
 namespace Prototype.NetworkLobby
@@ -28,7 +29,11 @@ namespace Prototype.NetworkLobby
 
         public void OnClickHost()
         {
-            lobbyManager.StartHost();
+            ConnectionConfig config = new ConnectionConfig();
+            config.AddChannel(QosType.ReliableSequenced);
+            config.AddChannel(QosType.Unreliable);
+
+            lobbyManager.StartHost(config, lobbyManager.maxPlayers);
         }
 
         public void OnClickJoin()
@@ -36,7 +41,12 @@ namespace Prototype.NetworkLobby
             lobbyManager.ChangeTo(lobbyPanel);
 
             lobbyManager.networkAddress = ipInput.text;
-            lobbyManager.StartClient();
+
+            ConnectionConfig config = new ConnectionConfig();
+            config.AddChannel(QosType.ReliableSequenced);
+            config.AddChannel(QosType.Unreliable);
+
+            lobbyManager.StartClient(null, config);
 
             lobbyManager.backDelegate = lobbyManager.StopClientClbk;
             lobbyManager.DisplayIsConnecting();
@@ -47,7 +57,12 @@ namespace Prototype.NetworkLobby
         public void OnClickDedicated()
         {
             lobbyManager.ChangeTo(null);
-            lobbyManager.StartServer();
+
+            ConnectionConfig config = new ConnectionConfig();
+            config.AddChannel(QosType.ReliableSequenced);
+            config.AddChannel(QosType.Unreliable);
+
+            lobbyManager.StartServer(config, lobbyManager.maxPlayers);
 
             lobbyManager.backDelegate = lobbyManager.StopServerClbk;
 

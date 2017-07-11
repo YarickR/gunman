@@ -14,6 +14,7 @@ namespace Battle
 
     public interface IServerBattleState
     {
+        Dictionary<NetworkInstanceId, PlayerController> GetCopyOfAlivePlayers();
         IEnumerable<KeyValuePair<NetworkInstanceId, PlayerController>> alivePlayers { get; }
 
         void RegisterAlivePlayer(PlayerController player);
@@ -113,6 +114,11 @@ namespace Battle
         }
 
         #region IServerBattleState
+        Dictionary<NetworkInstanceId, PlayerController> IServerBattleState.GetCopyOfAlivePlayers()
+        {
+            return new Dictionary<NetworkInstanceId, PlayerController>(_alivePlayers);
+        }
+
         IEnumerable<KeyValuePair<NetworkInstanceId, PlayerController>> IServerBattleState.alivePlayers
         {
             get

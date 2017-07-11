@@ -205,7 +205,8 @@ public class FireSystem : NetworkBehaviour
             yield return new WaitForSeconds(DamagePeriod);
             if (enabled)
             {
-                foreach (var p in _serverContext.battleState.alivePlayers)
+                var allAlivePlayersCopy = _serverContext.battleState.GetCopyOfAlivePlayers();
+                foreach (var p in allAlivePlayersCopy)
                 {
                     if (!_safePlayers.Contains(p.Value))
                     {

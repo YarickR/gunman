@@ -29,11 +29,7 @@ namespace Prototype.NetworkLobby
 
         public void OnClickHost()
         {
-            ConnectionConfig config = new ConnectionConfig();
-            config.AddChannel(QosType.ReliableSequenced);
-            config.AddChannel(QosType.Unreliable);
-
-            lobbyManager.StartHost(config, lobbyManager.maxPlayers);
+            lobbyManager.StartHostCustom();
         }
 
         public void OnClickJoin()
@@ -42,11 +38,7 @@ namespace Prototype.NetworkLobby
 
             lobbyManager.networkAddress = ipInput.text;
 
-            ConnectionConfig config = new ConnectionConfig();
-            config.AddChannel(QosType.ReliableSequenced);
-            config.AddChannel(QosType.Unreliable);
-
-            lobbyManager.StartClient(null, config);
+            lobbyManager.StartJoinCustom();
 
             lobbyManager.backDelegate = lobbyManager.StopClientClbk;
             lobbyManager.DisplayIsConnecting();
@@ -58,11 +50,7 @@ namespace Prototype.NetworkLobby
         {
             lobbyManager.ChangeTo(null);
 
-            ConnectionConfig config = new ConnectionConfig();
-            config.AddChannel(QosType.ReliableSequenced);
-            config.AddChannel(QosType.Unreliable);
-
-            lobbyManager.StartServer(config, lobbyManager.maxPlayers);
+            lobbyManager.StartDedicatedCustom();
 
             lobbyManager.backDelegate = lobbyManager.StopServerClbk;
 

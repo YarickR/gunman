@@ -94,7 +94,7 @@ namespace Prototype.NetworkLobby
             for (int __i = 0; __i < __args.Length; __i++) {
             	if (__args[__i] == "-dedicated") {
 					ChangeTo(null);
-	            	StartServer();
+                    StartDedicatedCustom();
 	            	backDelegate = StopServerClbk;
 	            	SetServerInfo("Dedicated Server", networkAddress);
 	            	break;
@@ -497,6 +497,34 @@ namespace Prototype.NetworkLobby
         {
             ChangeTo(mainMenuPanel);
             infoPanel.Display("Cient error : " + (errorCode == 6 ? "timeout" : string.Format("{0}({1})", (NetworkError)errorCode, errorCode)), "Close", null);
+        }
+
+        // custom creation
+        public void StartHostCustom()
+        {
+            ConnectionConfig config = new ConnectionConfig();
+            config.AddChannel(QosType.ReliableSequenced);
+            config.AddChannel(QosType.Unreliable);
+
+            StartHost(config, maxPlayers);
+        }
+
+        public void StartJoinCustom()
+        {
+            ConnectionConfig config = new ConnectionConfig();
+            config.AddChannel(QosType.ReliableSequenced);
+            config.AddChannel(QosType.Unreliable);
+
+            StartClient(null, config);
+        }
+
+        public void StartDedicatedCustom()
+        {
+            ConnectionConfig config = new ConnectionConfig();
+            config.AddChannel(QosType.ReliableSequenced);
+            config.AddChannel(QosType.Unreliable);
+
+            StartServer(config, maxPlayers);
         }
     }
 }
